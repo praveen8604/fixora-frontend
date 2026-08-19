@@ -77,177 +77,231 @@ const Dashboard = () => {
   const pendingServices =
     getServiceCount("in-progress") + getServiceCount("received");
 
+  const hour = dayjs().hour();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
+  const overviewMetrics = [
+    {
+      label: "Users",
+      value: getUserCount("all_users"),
+      accent: "#50589C",
+      soft: "#EEF0FA",
+    },
+    {
+      label: "Open services",
+      value: pendingServices,
+      accent: "#D97706",
+      soft: "#FFF6E9",
+    },
+    {
+      label: "Completed",
+      value: getServiceCount("completed"),
+      accent: "#0F9F6E",
+      soft: "#E8F8F1",
+    },
+    {
+      label: "Revenue",
+      value: dashboardOrderCount?.totalDeliveredOrder || 0,
+      accent: "#0EA5E9",
+      soft: "#E8F6FE",
+    },
+  ];
+
   return (
     <AnimatedContent>
-      <div className="pb-10">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between mt-4 mb-6 pb-5 border-b border-[#E2E8F0]">
+      <div className="w-full pt-6 pb-12">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between mb-8 dash-enter dash-d1">
           <div>
-            <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#50589C] mb-1.5">
-              Operations
+            <p className="flex items-center gap-2 text-[12px] font-medium text-[#50589C] mb-2">
+              <span className="dash-live" />
+              Live operations
             </p>
-            <h1 className="text-[22px] font-semibold text-[#211e27] leading-tight">
-              Overview
+            <h1 className="text-[28px] font-semibold tracking-tight text-[#1B2559] leading-none">
+              {greeting}
             </h1>
-            <p className="text-sm text-[#A3AED0] mt-1">
-              Users, service volume, and request status
+            <p className="mt-2 text-[15px] text-[#64748B]">
+              Operations summary for {selectedDate.format("dddd, D MMMM")}
             </p>
           </div>
           <OverviewDate value={selectedDate} onChange={setSelectedDate} />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-8 mb-8">
-          {[
-            { label: "Users", value: getUserCount("all_users") },
-            { label: "Open services", value: pendingServices },
-            { label: "Completed", value: getServiceCount("completed") },
-            {
-              label: "Revenue",
-              value: dashboardOrderCount?.totalDeliveredOrder || 0,
-            },
-          ].map((item, index) => (
-            <div
-              key={item.label}
-              className={`lg:pl-6 ${
-                index === 0 ? "lg:pl-0" : "lg:border-l lg:border-[#E2E8F0]"
-              }`}
-            >
-              <p className="text-[11px] tracking-[0.14em] uppercase text-[#A3AED0] mb-1.5">
-                {item.label}
-              </p>
-              <p className="text-2xl font-semibold tabular-nums text-[#211e27]">
-                {Number(item.value || 0).toLocaleString()}
-              </p>
+        <div className="kpi-shine-card mb-8 dash-enter dash-d2">
+          <div className="kpi-shine-inner dash-overview">
+            <div className="grid grid-cols-2 lg:grid-cols-4">
+              {overviewMetrics.map((item, index) => (
+                <div
+                  key={item.label}
+                  className={`dash-metric-cell px-6 py-6 ${
+                    index % 2 === 1 ? "border-l border-[#EEF1F6]" : ""
+                  } ${
+                    index > 1 ? "border-t border-[#EEF1F6] lg:border-t-0" : ""
+                  } ${index === 2 ? "lg:border-l lg:border-[#EEF1F6]" : ""} ${
+                    index === 3 ? "lg:border-l lg:border-[#EEF1F6]" : ""
+                  }`}
+                  style={{ background: item.soft }}
+                >
+                  <p className="flex items-center gap-2 text-[13px] text-[#64748B] mb-3">
+                    <span
+                      className="h-2 w-2 rounded-full"
+                      style={{ background: item.accent }}
+                    />
+                    {item.label}
+                  </p>
+                  <p
+                    className="text-[32px] leading-none font-semibold tracking-tight tabular-nums"
+                    style={{ color: item.accent }}
+                  >
+                    {Number(item.value || 0).toLocaleString()}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
-        <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-3">
-          Directory
-        </p>
-        <div className="grid gap-3 mb-7 xl:grid-cols-4 md:grid-cols-2">
-          <Link to="/users" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title="Total Users"
-              title2="Total Users"
-              Icon={FaUser}
-              price={getUserCount("all_users")}
-              loading={loadingOrderAmount}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-            />
-          </Link>
-          <Link to="/users/customer" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title="Total Customers"
-              title2="Total Customers"
-              Icon={FaUser}
-              cash={todayCashPayment || 0}
-              card={todayCardPayment || 0}
-              credit={todayCreditPayment || 0}
-              price={getUserCount("customer")}
-              loading={loadingOrderAmount}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-            />
-          </Link>
-          <Link to="/users/technician" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title="Total Technician"
-              title2="Total Technician"
-              Icon={FaTools}
-              price={getUserCount("technician") + getUserCount("admin") || 0}
-              loading={loadingOrderAmount}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-            />
-          </Link>
-          <Link to="/users/rider" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title="Total Rider"
-              title2="Total Rider"
-              Icon={FaMotorcycle}
-              price={getUserCount("rider")}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              loading={loadingOrderAmount}
-            />
-          </Link>
+        <div className="mb-8 dash-enter dash-d3">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[15px] font-medium text-[#1B2559]">People</h2>
+            <Link
+              to="/users"
+              className="text-[13px] text-[#50589C] hover:text-[#1B2559]"
+            >
+              View all
+            </Link>
+          </div>
+          <div className="grid gap-4 xl:grid-cols-4 md:grid-cols-2 dash-stagger">
+            <Link to="/users" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title="Total Users"
+                title2="Total users"
+                Icon={FaUser}
+                price={getUserCount("all_users")}
+                loading={loadingOrderAmount}
+                accent="#50589C"
+                accentSoft="#EEF0FA"
+              />
+            </Link>
+            <Link to="/users/customer" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title="Total Customers"
+                title2="Customers"
+                Icon={FaUser}
+                cash={todayCashPayment || 0}
+                card={todayCardPayment || 0}
+                credit={todayCreditPayment || 0}
+                price={getUserCount("customer")}
+                loading={loadingOrderAmount}
+                accent="#0EA5E9"
+                accentSoft="#E8F6FE"
+              />
+            </Link>
+            <Link to="/users/technician" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title="Total Technician"
+                title2="Technicians"
+                Icon={FaTools}
+                price={getUserCount("technician") + getUserCount("admin") || 0}
+                loading={loadingOrderAmount}
+                accent="#7C3AED"
+                accentSoft="#F3E8FF"
+              />
+            </Link>
+            <Link to="/users/rider" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title="Total Rider"
+                title2="Riders"
+                Icon={FaMotorcycle}
+                price={getUserCount("rider")}
+                loading={loadingOrderAmount}
+                accent="#DB2777"
+                accentSoft="#FCE7F3"
+              />
+            </Link>
+          </div>
         </div>
 
-        <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-3">
-          Service pipeline
-        </p>
-        <div className="grid gap-3 mb-7 xl:grid-cols-4 md:grid-cols-2">
-          <Link to="/services/servicerequests" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title2="Total Services"
-              Icon={FaRegChartBar}
-              price={getServiceCount("all_servicerequests")}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              loading={loadingOrderAmount}
-              accent="var(--primary-elite-color)"
-            />
-          </Link>
-          <Link to="/services/servicerequests" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title2="Completed Services"
-              Icon={IoMdDoneAll}
-              loading={loadingOrderAmount}
-              price={getServiceCount("completed")}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              accent="var(--primary-elite-color)"
-            />
-          </Link>
-          <Link to="/services/servicerequests" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title2="Pending Services"
-              Icon={AiOutlineExclamationCircle}
-              price={pendingServices}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              accent="var(--primary-elite-color)"
-              loading={loadingOrderAmount}
-            />
-          </Link>
-          <Link to="/services/servicerequests" className="block h-full">
-            <CardItemTwo
-              mode={mode}
-              title2="Cancelled Services"
-              Icon={MdCancelPresentation}
-              price={getServiceCount("canceled")}
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              accent="var(--primary-elite-color)"
-              loading={loadingOrderAmount}
-            />
-          </Link>
+        <div className="mb-8 dash-enter dash-d4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[15px] font-medium text-[#1B2559]">
+              Service pipeline
+            </h2>
+            <Link
+              to="/services/servicerequests"
+              className="text-[13px] text-[#50589C] hover:text-[#1B2559]"
+            >
+              View requests
+            </Link>
+          </div>
+          <div className="grid gap-4 xl:grid-cols-4 md:grid-cols-2 dash-stagger">
+            <Link to="/services/servicerequests" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title2="All services"
+                Icon={FaRegChartBar}
+                price={getServiceCount("all_servicerequests")}
+                loading={loadingOrderAmount}
+                accent="#50589C"
+                accentSoft="#EEF0FA"
+              />
+            </Link>
+            <Link to="/services/servicerequests" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title2="Completed"
+                Icon={IoMdDoneAll}
+                loading={loadingOrderAmount}
+                price={getServiceCount("completed")}
+                accent="#0F9F6E"
+                accentSoft="#E8F8F1"
+              />
+            </Link>
+            <Link to="/services/servicerequests" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title2="Pending"
+                Icon={AiOutlineExclamationCircle}
+                price={pendingServices}
+                loading={loadingOrderAmount}
+                accent="#D97706"
+                accentSoft="#FFF6E9"
+              />
+            </Link>
+            <Link to="/services/servicerequests" className="block h-full">
+              <CardItemTwo
+                mode={mode}
+                title2="Cancelled"
+                Icon={MdCancelPresentation}
+                price={getServiceCount("canceled")}
+                loading={loadingOrderAmount}
+                accent="#E11D48"
+                accentSoft="#FFE4E8"
+              />
+            </Link>
+          </div>
         </div>
 
-        <div className="grid gap-3 xl:grid-cols-5 items-stretch">
-          <div className="xl:col-span-3 flex flex-col gap-3">
-            <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 xl:grid-cols-5 items-stretch dash-enter dash-d5">
+          <div className="xl:col-span-3 flex flex-col gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <CardItem
                 title={t("Closed Service Request")}
                 Icon={FaCheckCircle}
                 loading={loadingOrderCount}
                 quantity={getServiceCount("closed")}
-                className="text-[var(--primary-color)] bg-[var(--secondary-elite-color)]"
+                className="text-[#0F9F6E] bg-[#E8F8F1]"
               />
               <CardItem
                 title={t("Total Revenue")}
                 Icon={FaWallet}
                 loading={loadingOrderCount}
                 quantity={dashboardOrderCount?.totalDeliveredOrder || 0}
-                className="text-[var(--primary-color)] bg-[var(--primary-elite-color)]"
+                className="text-[#0EA5E9] bg-[#E8F6FE]"
               />
             </div>
 

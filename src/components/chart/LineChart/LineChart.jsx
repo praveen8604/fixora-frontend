@@ -44,8 +44,8 @@ const LineChart = ({ salesReport }) => {
     activeButton.title === "Orders"
       ? {
           label: "Pending",
-          borderColor: "#F97316",
-          backgroundColor: "rgba(249, 115, 22, 0.12)",
+          borderColor: "#F59E0B",
+          backgroundColor: "rgba(245, 158, 11, 0.12)",
         }
       : activeButton.title === "Sales"
       ? {
@@ -55,8 +55,8 @@ const LineChart = ({ salesReport }) => {
         }
       : {
           label: "Cancelled",
-          borderColor: "#EF4444",
-          backgroundColor: "rgba(239, 68, 68, 0.12)",
+          borderColor: "#F43F5E",
+          backgroundColor: "rgba(244, 63, 94, 0.12)",
         };
 
   const barOptions = {
@@ -67,9 +67,9 @@ const LineChart = ({ salesReport }) => {
           ...dataset,
           data: values,
           fill: true,
-          borderWidth: 3,
-          pointRadius: hasData ? 3 : 0,
-          pointHoverRadius: 5,
+          borderWidth: 2,
+          pointRadius: hasData ? 2 : 0,
+          pointHoverRadius: 4,
           pointBackgroundColor: dataset.borderColor,
           pointBorderColor: "#ffffff",
           pointBorderWidth: 1,
@@ -89,15 +89,15 @@ const LineChart = ({ salesReport }) => {
       },
       scales: {
         x: {
-          grid: { color: "#E2E8F0", drawBorder: false },
-          ticks: { color: "#A3AED0", font: { size: 11 } },
-          border: { color: "#E2E8F0" },
+          grid: { color: "#EEF1F6", drawBorder: false },
+          ticks: { color: "#94A3B8", font: { size: 11 } },
+          border: { color: "#EEF1F6" },
         },
         y: {
           beginAtZero: true,
           suggestedMax: hasData ? undefined : 10,
-          grid: { color: "#E2E8F0", drawBorder: false },
-          ticks: { color: "#A3AED0", font: { size: 11 }, precision: 0 },
+          grid: { color: "#EEF1F6", drawBorder: false },
+          ticks: { color: "#94A3B8", font: { size: 11 }, precision: 0 },
           border: { display: false },
         },
       },
@@ -114,16 +114,20 @@ const LineChart = ({ salesReport }) => {
 
   return (
     <>
-      <div className="inline-flex p-1 mb-5 rounded-md bg-[#F4F7FE] border border-[#E2E8F0]">
+      <div className="inline-flex p-1 mb-5 rounded-lg bg-[#F4F5F8]">
         {tabs.map((tab) => (
           <button
             key={tab.title}
             onClick={() => handleClick({ title: tab.title })}
             type="button"
-            className={`px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase rounded transition-colors ${
+            className={`px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors ${
               activeButton.title === tab.title
-                ? "bg-[var(--primary-elite-color)] text-[var(--primary-color)]"
-                : "text-[#50589C] hover:text-[#211e27]"
+                ? tab.title === "Orders"
+                  ? "bg-[#FFF6E9] text-[#D97706] shadow-[0_1px_2px_rgba(217,119,6,0.12)]"
+                  : tab.title === "Sales"
+                  ? "bg-[#E8F8F1] text-[#0F9F6E] shadow-[0_1px_2px_rgba(15,159,110,0.12)]"
+                  : "bg-[#FFE4E8] text-[#E11D48] shadow-[0_1px_2px_rgba(225,29,72,0.12)]"
+                : "text-[#64748B] hover:text-[#1B2559]"
             }`}
           >
             {tab.label}

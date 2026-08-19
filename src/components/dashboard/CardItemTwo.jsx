@@ -1,7 +1,6 @@
 import { Card, CardBody } from "@windmill/react-ui";
 import Skeleton from "react-loading-skeleton";
 import { useTranslation } from "react-i18next";
-import useUtilsFunction from "@/hooks/useUtilsFunction";
 
 const CardItemTwo = ({
   mode,
@@ -14,12 +13,10 @@ const CardItemTwo = ({
   credit = 0,
   loading = false,
   title2 = "",
-  cardBg = "bg-[var(--primary-color)]",
-  cardTextColor = "text-[var(--secondary-color)]",
-  accent = "var(--secondary-elite-color)",
+  accent = "#50589C",
+  accentSoft = "#EEF0FA",
 }) => {
   const { t } = useTranslation();
-  const { getNumberTwo } = useUtilsFunction();
 
   const formatNumber = (value) => {
     if (value === null || value === undefined || isNaN(value)) return "0";
@@ -76,22 +73,28 @@ const CardItemTwo = ({
   return (
     <div className="kpi-shine-card">
       <Card className="kpi-shine-inner flex w-full bg-white border-0 shadow-none">
-        <CardBody className="relative flex items-center justify-between w-full py-4 px-4">
+        <CardBody className="relative flex flex-col justify-between w-full px-5 py-5">
           <span
             className="absolute left-0 top-0 h-full w-[3px]"
             style={{ background: accent }}
           />
-          <div className="pl-2 min-w-0">
-            <p className="text-[11px] font-medium tracking-[0.14em] uppercase text-[#A3AED0] mb-1.5">
+          <div className="flex items-start justify-between gap-3 pl-1">
+            <p className="text-[13px] text-[#64748B] leading-snug">
               {title2 ? t(title2) : <Skeleton count={1} height={20} />}
             </p>
-            <p className="text-[26px] leading-none font-semibold tabular-nums text-[#211e27]">
-              {formatNumber(price)}
-            </p>
+            <div
+              className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 dash-icon"
+              style={{ background: accentSoft, color: accent }}
+            >
+              <Icon className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="flex items-center justify-center h-9 w-9 rounded-md bg-[#F4F7FE] text-[#50589C] shrink-0">
-            <Icon className="h-4 w-4" />
-          </div>
+          <p
+            className="mt-8 text-[28px] leading-none font-semibold tracking-tight tabular-nums"
+            style={{ color: accent }}
+          >
+            {formatNumber(price)}
+          </p>
         </CardBody>
       </Card>
     </div>

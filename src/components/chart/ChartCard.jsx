@@ -4,8 +4,8 @@ import Skeleton from "react-loading-skeleton";
 const Chart = ({ children, title, loading, mode }) => {
   return (
     <div className="kpi-shine-card">
-      <div className="kpi-shine-inner min-w-0 p-5 h-full">
-        <div className="mb-5">
+      <div className="kpi-shine-inner min-w-0 px-6 py-6 h-full">
+        <div className="mb-6">
           {loading ? (
             <Skeleton
               count={1}
@@ -16,10 +16,10 @@ const Chart = ({ children, title, loading, mode }) => {
             />
           ) : (
             <div>
-              <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-1">
-                Analytics
-              </p>
-              <h3 className="text-base font-semibold text-[#211e27]">{title}</h3>
+              <p className="text-[13px] text-[#64748B] mb-1">Analytics</p>
+              <h3 className="text-[17px] font-semibold tracking-tight text-[#1B2559]">
+                {title}
+              </h3>
             </div>
           )}
         </div>

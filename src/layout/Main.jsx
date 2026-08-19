@@ -33,7 +33,7 @@ const Main = ({ children }) => {
       }}
       ref={mainRef}
     >
-      <div className=" grid lg:px-6 sm:px-4 px-2 mx-auto">
+      <div className="grid lg:px-8 sm:px-6 px-4 mx-auto">
         {children}
       </div>
     </main>

@@ -59,10 +59,10 @@ const SrChart = ({ recentSr }) => {
 
   if (!recentSr?.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-[280px] text-center border border-dashed border-[#E2E8F0] rounded-md bg-[#F4F7FE]/50">
-        <p className="text-sm font-medium text-[#211e27]">No recent requests</p>
-        <p className="text-xs text-[#A3AED0] mt-1">
-          Service requests will appear here when available.
+      <div className="flex flex-col items-center justify-center h-[280px] text-center">
+        <p className="text-sm font-medium text-[#1B2559]">No recent requests</p>
+        <p className="text-[13px] text-[#64748B] mt-1">
+          New service requests will show up here.
         </p>
       </div>
     );
@@ -79,7 +79,7 @@ const SrChart = ({ recentSr }) => {
         table: { style: { backgroundColor: "transparent" } },
         headRow: {
           style: {
-            backgroundColor: "#F4F7FE",
+            backgroundColor: "#F8F9FC",
             borderRadius: "6px",
             minHeight: "40px",
             borderBottom: "none",
@@ -91,7 +91,7 @@ const SrChart = ({ recentSr }) => {
             fontSize: "11px",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "#A3AED0",
+            color: "#64748B",
             paddingLeft: "8px",
             paddingRight: "8px",
           },

@@ -4,9 +4,9 @@ import LineImg from "../../assets/img/icons/line-chart.gif";
 
 const Chart = ({ children, title, loading, mode, data }) => {
   return (
-    <div className="kpi-shine-card">
-      <div className="kpi-shine-inner min-w-0 p-5 h-full flex flex-col">
-        <div className="mb-4 flex items-start justify-between gap-3">
+    <div className="kpi-shine-card h-full">
+      <div className="kpi-shine-inner min-w-0 px-6 py-6 h-full flex flex-col">
+        <div className="mb-5 flex items-start justify-between gap-3">
           {loading ? (
             <Skeleton
               count={1}
@@ -18,11 +18,11 @@ const Chart = ({ children, title, loading, mode, data }) => {
           ) : (
             <>
               <div>
-                <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-1">
-                  Activity
-                </p>
-                <h3 className="text-base font-semibold text-[#211e27]">{title}</h3>
-                <p className="mt-1 text-[11px] font-medium tracking-wide uppercase text-[#50589C]">
+                <p className="text-[13px] text-[#64748B] mb-1">Inbox</p>
+                <h3 className="text-[17px] font-semibold tracking-tight text-[#1B2559]">
+                  {title}
+                </h3>
+                <p className="mt-1 text-[13px] text-[#50589C]">
                   {Number(data || 0).toLocaleString()} total
                 </p>
               </div>

@@ -41,9 +41,9 @@ const Header = () => {
   };
 
   return (
-    <header className="z-30 py-4 bg-[var(--primary-color)] backdrop-blur-lg shadow-sm">
-      <div className="flex items-center h-full pl-[88px] pr-6">
-        <h1 className="text-base font-semibold tracking-tight text-[#211e27]">
+    <header className="z-30 py-3.5 bg-white/90 backdrop-blur-md border-b border-[#E6EAF0]">
+      <div className="flex items-center h-full pl-[88px] pr-8">
+        <h1 className="text-[15px] font-medium tracking-tight text-[#1B2559]">
           {t(getHeaderTitle())}
         </h1>
       </div>

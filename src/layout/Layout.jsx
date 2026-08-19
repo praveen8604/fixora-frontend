@@ -22,7 +22,7 @@ const Layout = () => {
         </div>
       )}
       <div
-        className={`flex h-screen bg-[var(--secondary-light-3-color)] ${
+        className={`flex h-screen bg-[#F3F6FB] ${
           isSidebarOpen && "overflow-hidden"
         }`}
       >

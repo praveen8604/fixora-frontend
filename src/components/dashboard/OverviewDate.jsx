@@ -28,21 +28,21 @@ const OverviewDate = ({ value, onChange }) => {
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
-          className="flex items-center gap-3 rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-left transition-colors hover:border-[#50589C]"
+          className="flex items-center gap-2.5 rounded-lg border border-[#E6EAF0] bg-white px-3 py-2 text-left transition-colors hover:border-[#C9D2E3]"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-[#F4F7FE] text-[#50589C]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#F4F7FE] text-[#50589C]">
             <FiCalendar className="h-4 w-4" />
           </span>
           <span className="pr-1">
-            <span className="block text-[11px] font-medium tracking-[0.14em] uppercase text-[#A3AED0]">
+            <span className="block text-[11px] text-[#64748B]">
               {isToday ? "Today" : selected.format("dddd")}
             </span>
-            <span className="block text-sm font-semibold text-[#211e27]">
-              {selected.format("DD MMM YYYY")}
+            <span className="block text-sm font-medium text-[#1B2559]">
+              {selected.format("D MMM YYYY")}
             </span>
           </span>
           <FiChevronDown
-            className={`h-4 w-4 text-[#A3AED0] transition-transform ${
+            className={`h-4 w-4 text-[#94A3B8] transition-transform ${
               open ? "rotate-180" : ""
             }`}
           />
@@ -59,14 +59,14 @@ const OverviewDate = ({ value, onChange }) => {
               maxDate={dayjs()}
               sx={{
                 "& .MuiPickersDay-root.Mui-selected": {
-                  backgroundColor: "#211e27",
-                  "&:hover": { backgroundColor: "#211e27" },
+                  backgroundColor: "#50589C",
+                  "&:hover": { backgroundColor: "#50589C" },
                 },
                 "& .MuiPickersDay-today": {
                   borderColor: "#50589C",
                 },
                 "& .MuiPickersYear-yearButton.Mui-selected": {
-                  backgroundColor: "#211e27",
+                  backgroundColor: "#50589C",
                 },
               }}
             />

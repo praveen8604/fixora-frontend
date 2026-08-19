@@ -179,11 +179,11 @@ body {
 .kpi-shine-card {
   position: relative;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 14px;
   padding: 1px;
   overflow: hidden;
   isolation: isolate;
-  background: #e2e8f0;
+  background: #e8edf5;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
 }
 
@@ -199,15 +199,16 @@ body {
   background: conic-gradient(
     from 0deg,
     transparent 0%,
-    transparent 62%,
-    rgba(255, 255, 255, 0.25) 70%,
-    #ffffff 76%,
-    var(--secondary-elite-color) 84%,
-    var(--primary-elite-color) 91%,
-    transparent 97%,
+    transparent 52%,
+    #7dd3fc 62%,
+    #c4b5fd 70%,
+    #f9a8d4 78%,
+    #fcd34d 86%,
+    #6ee7b7 93%,
+    transparent 98%,
     transparent 100%
   );
-  animation: kpi-shine-spin 2.6s linear infinite;
+  animation: kpi-shine-spin 2.4s linear infinite;
 }
 
 .kpi-shine-inner {
@@ -215,13 +216,17 @@ body {
   z-index: 1;
   height: 100%;
   background: #fff;
-  border-radius: 7px;
+  border-radius: 13px;
   overflow: hidden;
 }
 
 .kpi-shine-card:hover {
   transform: translate(-6px, -6px);
-  box-shadow: 8px 8px 18px rgba(33, 30, 39, 0.1);
+  box-shadow: 8px 8px 22px rgba(80, 88, 156, 0.16);
+}
+
+.kpi-shine-card:hover .dash-icon {
+  transform: scale(1.12);
 }
 
 .kpi-shine-dark {
@@ -233,7 +238,7 @@ body {
 }
 
 .kpi-shine-dark:hover {
-  box-shadow: 8px 8px 18px rgba(33, 30, 39, 0.28);
+  box-shadow: 8px 8px 22px rgba(33, 30, 39, 0.28);
 }
 
 @keyframes kpi-shine-spin {
@@ -243,4 +248,180 @@ body {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
   }
+}
+
+@keyframes dashFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  55%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes dashPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.dash-enter {
+  animation: dashFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.dash-d1 {
+  animation-delay: 0.04s;
+}
+.dash-d2 {
+  animation-delay: 0.1s;
+}
+.dash-d3 {
+  animation-delay: 0.16s;
+}
+.dash-d4 {
+  animation-delay: 0.22s;
+}
+.dash-d5 {
+  animation-delay: 0.28s;
+}
+
+.dash-stagger > * {
+  animation: dashFadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dash-stagger > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.dash-stagger > *:nth-child(2) {
+  animation-delay: 0.11s;
+}
+.dash-stagger > *:nth-child(3) {
+  animation-delay: 0.17s;
+}
+.dash-stagger > *:nth-child(4) {
+  animation-delay: 0.23s;
+}
+
+.dash-overview {
+  position: relative;
+  overflow: hidden;
+}
+
+.dash-overview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(80, 88, 156, 0.08),
+    transparent
+  );
+  animation: dashSweep 3s ease-in-out infinite;
+}
+
+.dash-live {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: dashPulse 1.8s ease-out infinite;
+}
+
+.dash-icon {
+  transition: transform 0.25s ease;
+}
+
+.dash-metric-cell {
+  position: relative;
+  transition: filter 0.2s ease;
+}
+
+.dash-metric-cell:hover {
+  filter: brightness(0.98);
+}
+
+.dash-metric-cell::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 2px;
+  background: #50589c;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s ease;
+}
+
+.dash-metric-cell:hover::after {
+  transform: scaleX(1);
+}
+
+.login-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  opacity: 0.55;
+  animation: loginFloat 8s ease-in-out infinite;
+}
+
+.login-orb-one {
+  width: 280px;
+  height: 280px;
+  background: #7dd3fc;
+  top: 8%;
+  left: 10%;
+}
+
+.login-orb-two {
+  width: 320px;
+  height: 320px;
+  background: #c4b5fd;
+  right: 8%;
+  bottom: 12%;
+  animation-delay: -3s;
+}
+
+.login-orb-three {
+  width: 180px;
+  height: 180px;
+  background: #f9a8d4;
+  right: 28%;
+  top: 18%;
+  animation-delay: -5s;
+}
+
+@keyframes loginFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+.login-field input {
+  height: 44px;
 }

@@ -36,15 +36,15 @@ const CardItem = ({
   return (
     <div className="kpi-shine-card">
       <Card className="kpi-shine-inner flex h-full bg-white border-0 shadow-none">
-        <CardBody className="flex items-center w-full py-4 px-4">
+        <CardBody className="flex items-center w-full px-5 py-5">
           <div
-            className={`flex items-center justify-center rounded-md h-9 w-9 text-sm mr-3 shrink-0 ${className}`}
+            className={`dash-icon flex items-center justify-center rounded-full h-9 w-9 text-sm mr-4 shrink-0 ${className}`}
           >
             <Icon className="h-4 w-4" />
           </div>
 
           <div className="min-w-0">
-            <h6 className="text-[11px] mb-1.5 font-medium tracking-[0.12em] uppercase text-[#A3AED0]">
+            <h6 className="text-[13px] mb-2 text-[#64748B]">
               <span>{title}</span>{" "}
               {amount ? (
                 <span className="text-red-500 text-sm font-semibold">
@@ -69,7 +69,7 @@ const CardItem = ({
               </div>
             )}
 
-            <p className="text-[22px] font-semibold leading-none tabular-nums text-[#211e27]">
+            <p className="text-[28px] font-semibold leading-none tracking-tight tabular-nums text-[#1B2559]">
               {displayValue}
             </p>
           </div>
