@@ -1,132 +1,196 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Input, Label, Button } from "@windmill/react-ui";
-import { ImFacebook, ImGoogle } from "react-icons/im";
-import { useTranslation } from "react-i18next";
-
-//internal import
+import { useForm } from "react-hook-form";
+import { FiEye, FiEyeOff, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FaGoogle } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import Error from "@/components/form/others/Error";
-import InputArea from "@/components/form/input/InputArea";
-import LabelArea from "@/components/form/selectOption/LabelArea";
-import SelectRole from "@/components/form/selectOption/SelectRole";
-import useLoginSubmit from "@/hooks/useLoginSubmit";
-import ImageLight from "@/assets/img/create-account-office.jpg";
-import ImageDark from "@/assets/img/create-account-office.jpg";
+import logo from "@/assets/img/logo/logo.png";
+import { notifySuccess } from "@/utils/toast";
+
+const REVIEWS = [
+  {
+    quote:
+      "Fixora made booking home repairs simple. We track every request in one place and the team actually shows up on time.",
+    name: "Caitlyn King",
+    title: "Homeowner, Bengaluru",
+  },
+  {
+    quote:
+      "As a technician I get jobs, addresses, and payments without chasing calls. It has changed how I work every day.",
+    name: "Arjun Mehta",
+    title: "Service Professional, Pune",
+  },
+  {
+    quote:
+      "We run our service operations on Fixora. Dispatch, status, and customer updates finally live in one dashboard.",
+    name: "Priya Shah",
+    title: "Operations Manager, Mumbai",
+  },
+];
 
 const SignUp = () => {
-  const { t } = useTranslation();
-  const { onSubmit, register, handleSubmit, errors, loading } =
-    useLoginSubmit();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [showPassword, setShowPassword] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const review = REVIEWS[reviewIndex];
+
+  const onSubmit = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      notifySuccess("Account created. You can sign in now.");
+    }, 400);
+  };
 
   return (
-    <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
-      <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <div className="flex flex-col overflow-y-auto md:flex-row">
-          <div className="h-32 md:h-auto md:w-1/2">
-            <img
-              aria-hidden="true"
-              className="object-cover w-full h-full dark:hidden"
-              src={ImageLight}
-              alt="Office"
-            />
-            <img
-              aria-hidden="true"
-              className="hidden object-cover w-full h-full dark:block"
-              src={ImageDark}
-              alt="Office"
-            />
-          </div>
-          <main className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-            <div className="w-full">
-              <h1 className="mb-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                {t("CreateAccount")}
-              </h1>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <LabelArea label="Name" />
-                <InputArea
-                  required={true}
-                  register={register}
-                  label="Name"
-                  name="name"
-                  type="text"
-                  placeholder="Admin"
-                />
-                <Error errorName={errors.name} />
-                <LabelArea label="Email" />
-                <InputArea
-                  required={true}
-                  register={register}
-                  label="Email"
-                  name="email"
-                  type="email"
-                  placeholder="john@doe.com"
-                />
-                <Error errorName={errors.email} />
-
-                <LabelArea label="Password" />
-                <InputArea
-                  required={true}
-                  register={register}
-                  label="Password"
-                  name="password"
-                  type="password"
-                  autocomplete="current-password"
-                  placeholder="***************"
-                />
-                <Error errorName={errors.password} />
-
-                <LabelArea label="Staff Role" />
-                <div className="col-span-8 sm:col-span-4">
-                  <SelectRole register={register} label="Role" name="role" />
-                  <Error errorName={errors.role} />
-                </div>
-
-                <Label className="mt-6" check>
-                  <Input type="checkbox" />
-                  <span className="ml-2">
-                    {t("Iagree")}{" "}
-                    <span className="underline">{t("privacyPolicy")}</span>
-                  </span>
-                </Label>
-
-                <Button
-                  disabled={loading}
-                  type="submit"
-                  className="mt-4 h-12 w-full !bg-blue-500 ! hover:bg-blue-400"
-                  to="/dashboard"
-                  block
-                >
-                  {t("CreateAccountTitle")}
-                </Button>
-              </form>
-
-              {/* <hr className="my-10" />
-
-              <button
-                disabled
-                className="text-sm inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold font-serif text-center justify-center rounded-md focus:outline-none text-gray-700 bg-gray-100 shadow-sm my-2 md:px-2 lg:px-3 py-4 md:py-3.5 lg:py-4 hover:text-white hover:bg-blue-600 h-11 md:h-12 w-full mr-2"
-              >
-                <ImFacebook className="w-4 h-4 mr-2" />{" "}
-                <span className="ml-2"> {t("LoginWithFacebook")} </span>
-              </button> */}
-              <button
-                disabled
-                className="text-sm inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold font-serif text-center justify-center rounded-md focus:outline-none text-gray-700 bg-gray-100 shadow-sm my-2  md:px-2 lg:px-3 py-4 md:py-3.5 lg:py-4 hover:text-white hover:bg-orange-400 h-11 md:h-12 w-full"
-              >
-                <ImGoogle className="w-4 h-4 mr-2" />{" "}
-                <span className="ml-2">{t("LoginWithGoogle")}</span>
-              </button>
-
-              <p className="mt-4">
-                <Link
-                  className="text-sm font-medium text-blue-500 dark:text-blue-500 hover:underline"
-                  to="/login"
-                >
-                  {t("AlreadyAccount")}
-                </Link>
-              </p>
+    <div className="flex min-h-screen bg-white">
+      <div className="relative hidden w-1/2 overflow-hidden lg:block">
+        <img
+          src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1600&q=80"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#211e27]/20" />
+        <div className="absolute bottom-8 left-8 right-8 rounded-2xl border border-white/25 bg-white/20 p-6 backdrop-blur-md">
+          <p className="text-xl font-medium leading-relaxed text-white">
+            “{review.quote}”
+          </p>
+          <div className="mt-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="font-semibold text-white">{review.name}</p>
+              <p className="text-sm text-white/80">{review.title}</p>
             </div>
-          </main>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-0.5 text-white">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <FaStar key={i} className="h-3.5 w-3.5" />
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setReviewIndex(
+                      (prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length
+                    )
+                  }
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 text-white"
+                >
+                  <FiChevronLeft />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setReviewIndex((prev) => (prev + 1) % REVIEWS.length)
+                  }
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 text-white"
+                >
+                  <FiChevronRight />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex w-full items-center justify-center px-6 py-10 lg:w-1/2">
+        <div className="w-full max-w-[400px] text-center">
+          <img src={logo} alt="Fixora" className="mx-auto mb-6 h-10 object-contain" />
+          <h1 className="text-3xl font-semibold text-[#211e27]">Sign up</h1>
+          <p className="mt-1 text-sm text-[#6B7280]">Create your Fixora account</p>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 text-left">
+            <label className="text-sm font-medium text-[#211e27]">Name</label>
+            <input
+              className="mt-1.5 mb-1 h-11 w-full rounded-lg border border-[#E2E8F0] px-3 text-sm outline-none focus:border-[#50589C]"
+              placeholder="Enter your name"
+              {...register("name", { required: "Name is required" })}
+            />
+            <Error errorName={errors.name} />
+
+            <label className="mt-3 block text-sm font-medium text-[#211e27]">
+              Email
+            </label>
+            <input
+              type="email"
+              className="mt-1.5 mb-1 h-11 w-full rounded-lg border border-[#E2E8F0] px-3 text-sm outline-none focus:border-[#50589C]"
+              placeholder="Enter your email"
+              {...register("email", { required: "Email is required" })}
+            />
+            <Error errorName={errors.email} />
+
+            <label className="mt-3 block text-sm font-medium text-[#211e27]">
+              Role
+            </label>
+            <select
+              className="mt-1.5 mb-1 h-11 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm outline-none focus:border-[#50589C]"
+              {...register("role", { required: "Role is required" })}
+            >
+              <option value="">Select your role</option>
+              <option value="Customer">Customer</option>
+              <option value="Service Professional">Service Professional</option>
+              <option value="Admin">Admin / Manager</option>
+            </select>
+            <Error errorName={errors.role} />
+
+            <label className="mt-3 block text-sm font-medium text-[#211e27]">
+              Password
+            </label>
+            <div className="relative mt-1.5">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="mb-1 h-11 w-full rounded-lg border border-[#E2E8F0] px-3 pr-10 text-sm outline-none focus:border-[#50589C]"
+                placeholder="Create a password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Must be at least 8 characters",
+                  },
+                })}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280]"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+            <p className="mb-1 text-xs text-[#A3AED0]">
+              Must be at least 8 characters.
+            </p>
+            <Error errorName={errors.password} />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-5 h-12 w-full rounded-lg bg-[#211e27] text-sm font-medium text-white"
+            >
+              {loading ? "Please wait..." : "Get started"}
+            </button>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => notifySuccess("Google sign up is UI-only for now.")}
+            className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-[#E2E8F0] text-sm font-medium text-[#211e27]"
+          >
+            <FaGoogle /> Sign up with Google
+          </button>
+
+          <p className="mt-6 text-sm text-[#6B7280]">
+            Already have an account?{" "}
+            <Link to="/login" className="font-medium text-[#50589C] hover:underline">
+              Log in
+            </Link>
+          </p>
         </div>
       </div>
     </div>
