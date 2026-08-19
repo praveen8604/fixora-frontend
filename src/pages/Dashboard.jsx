@@ -40,16 +40,16 @@ const Dashboard = () => {
   const [todayCardPayment] = useState(0);
   const [todayCreditPayment] = useState(0);
 
-  const {
-    loading: loadingBestSellerProduct,
-  } = useAsync(OrderServices.getBestSellerProductChart);
+  const { loading: loadingBestSellerProduct } = useAsync(
+    OrderServices.getBestSellerProductChart,
+  );
 
   const { data: dashboardOrderCount, loading: loadingOrderCount } = useAsync(
-    OrderServices.getDashboardCount
+    OrderServices.getDashboardCount,
   );
 
   const { data: dashboardOrderAmount, loading: loadingOrderAmount } = useAsync(
-    OrderServices.getDashboardAmount
+    OrderServices.getDashboardAmount,
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const Dashboard = () => {
       .then((res) => {
         if (res) {
           const decodedata = DecryptData(res);
-          setDashData(decodedata.data);
+          setDashData(decodedata?.data || "");
           console.log("asasas", decodedata);
         }
       })
@@ -78,7 +78,7 @@ const Dashboard = () => {
               Icon={FaUser}
               price={
                 dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "all_users"
+                  (d) => d._id === "all_users",
                 )?.count || 0
               }
               loading={loadingOrderAmount}
@@ -97,7 +97,7 @@ const Dashboard = () => {
               credit={todayCreditPayment || 0}
               price={
                 dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "customer"
+                  (d) => d._id === "customer",
                 )?.count || 0
               }
               loading={loadingOrderAmount}
@@ -113,10 +113,10 @@ const Dashboard = () => {
               Icon={FaTools}
               price={
                 dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "technician"
+                  (d) => d._id === "technician",
                 )?.count +
                   dashData?.dashBoardCount?.userCount.find(
-                    (d) => d._id === "admin"
+                    (d) => d._id === "admin",
                   )?.count || 0
               }
               loading={loadingOrderAmount}
@@ -132,7 +132,7 @@ const Dashboard = () => {
               Icon={FaMotorcycle}
               price={
                 dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "rider"
+                  (d) => d._id === "rider",
                 )?.count || 0
               }
               cardBg="var(--linear-elite-color)"
@@ -147,7 +147,7 @@ const Dashboard = () => {
               Icon={FaRegChartBar}
               price={
                 dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "all_servicerequests"
+                  (d) => d._id === "all_servicerequests",
                 )?.count || 0
               }
               cardBg="var(--linear-elite-color)"
@@ -163,7 +163,7 @@ const Dashboard = () => {
               loading={loadingOrderAmount}
               price={
                 dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "completed"
+                  (d) => d._id === "completed",
                 )?.count || 0
               }
               cardBg="var(--linear-elite-color)"
@@ -177,9 +177,10 @@ const Dashboard = () => {
               Icon={AiOutlineExclamationCircle}
               price={
                 (dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "in-progress"
-                )?.count || 0) + (dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "received"
+                  (d) => d._id === "in-progress",
+                )?.count || 0) +
+                (dashData?.dashBoardCount?.serviceRequestCount?.find(
+                  (d) => d._id === "received",
                 )?.count || 0)
               }
               cardBg="var(--linear-elite-color)"
@@ -194,7 +195,7 @@ const Dashboard = () => {
               Icon={MdCancelPresentation}
               price={
                 dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "canceled"
+                  (d) => d._id === "canceled",
                 )?.count || 0
               }
               cardBg="var(--linear-elite-color)"
@@ -231,9 +232,11 @@ const Dashboard = () => {
                 title={t("Closed Service Request")}
                 Icon={FaCheckCircle}
                 loading={loadingOrderCount}
-                quantity={dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "closed"
-                )?.count || 0}
+                quantity={
+                  dashData?.dashBoardCount?.serviceRequestCount?.find(
+                    (d) => d._id === "closed",
+                  )?.count || 0
+                }
                 className="text-[var(--primary-color)] bg-[var(--secondary-elite-color)] "
               />
               <CardItem
@@ -260,7 +263,7 @@ const Dashboard = () => {
             title={t("Recent Service Requests ")}
             data={
               dashData?.dashBoardCount?.serviceRequestCount?.find(
-                (d) => d._id === "all_servicerequests"
+                (d) => d._id === "all_servicerequests",
               )?.count || 0
             }
           >

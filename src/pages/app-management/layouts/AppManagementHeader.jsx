@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdAddchart, MdAddPhotoAlternate } from "react-icons/md";
-import { FaMapLocationDot } from "react-icons/fa6";
+import { FaRegNewspaper, FaTag } from "react-icons/fa";
 import MuiDrawer from "@/components/drawer/MuiDrawer";
 import Dropdown from "@/components/common/DropDown";
 import AdminServices from "@/services/AdminServices";
@@ -8,6 +8,7 @@ import { DecryptData } from "@/utils/DecryptData";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
 export const links = ["Offers", "Blogs"];
+
 const AppManagementHeader = ({
   getManagementList,
   filterDragger,
@@ -32,29 +33,58 @@ const AppManagementHeader = ({
   const [restrictedServiceMode, setRestrictedServiceModeSelectedOption] =
     useState("");
   const [offerBy, setOfferBySelectedOption] = useState("");
-  const handleRestrictedServiceModeSelect = (e) => {
-    setRestrictedServiceModeSelectedOption(e);
+
+  const handleRestrictedServiceModeSelect = (value) => {
+    setRestrictedServiceModeSelectedOption(value);
   };
-  const handleOfferBySelect = (e) => {
-    setOfferBySelectedOption(e);
+
+  const handleOfferBySelect = (value) => {
+    setOfferBySelectedOption(value);
   };
+
+  const resetForm = () => {
+    setNameValue("");
+    setDescriptionValue("");
+    setOfferStartDate("");
+    setOfferEndDate("");
+    setRestrictedMinimumPrice("");
+    setMaxOfferPrice("");
+    setImageValue({
+      fileName: "",
+      image: "",
+    });
+    setFlatPrice("");
+    setOfferPercentage("");
+    setCouponCode("");
+    setRestrictedServiceModeSelectedOption("");
+    setOfferBySelectedOption("");
+  };
+
+  const handleTabChange = (link) => {
+    resetForm();
+    setCurrentLink(link);
+  };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
 
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+    if (!file) return;
 
-      reader.onload = () => {
-        setImageValue({
-          fileName: "offerimg" + new Date().getTime(),
-          image: reader.result,
-        });
-      };
-    }
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      setImageValue({
+        fileName: `offerimg${new Date().getTime()}`,
+        image: reader.result,
+      });
+    };
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const offerPayload = {
       offerName: nameValue,
       offerDescription: descriptionValue,
@@ -68,39 +98,30 @@ const AppManagementHeader = ({
         ...(offerBy.toLowerCase() === "percentage"
           ? { percentage: offerPercentage }
           : offerBy.toLowerCase() === "coupon"
-          ? { coupon: offerPercentage }
-          : { flatPrice }),
+            ? { coupon: offerPercentage }
+            : { flatPrice }),
       },
       offerImage: imageValue,
     };
+
     const blogPayload = {
       blogTitle: nameValue,
       blogDescription: descriptionValue,
       blogImage: imageValue,
     };
+
     if (currentLink === "Offers") {
       if (editValue?._id) {
-        AdminServices.updateOffer({ ...offerPayload, offerId: editValue._id })
+        AdminServices.updateOffer({
+          ...offerPayload,
+          offerId: editValue._id,
+        })
           .then((res) => {
             if (res) {
               notifySuccess("Offer updated successfully!");
               getManagementList();
               setFilterDragger(false);
-              setNameValue("");
-              setDescriptionValue("");
-              setOfferStartDate("");
-              setOfferEndDate("");
-              setRestrictedMinimumPrice("");
-              setMaxOfferPrice("");
-              setCouponCode("");
-              setImageValue({
-                fileName: "",
-                image: "",
-              });
-              setFlatPrice("");
-              setOfferPercentage("");
-              setRestrictedServiceModeSelectedOption("");
-              setOfferBySelectedOption("");
+              resetForm();
             }
           })
           .catch((err) => {
@@ -114,21 +135,7 @@ const AppManagementHeader = ({
               notifySuccess("Offer created successfully!");
               getManagementList();
               setFilterDragger(false);
-              setNameValue("");
-              setDescriptionValue("");
-              setOfferStartDate("");
-              setCouponCode("");
-              setOfferEndDate("");
-              setRestrictedMinimumPrice("");
-              setMaxOfferPrice("");
-              setImageValue({
-                fileName: "",
-                image: "",
-              });
-              setFlatPrice("");
-              setOfferPercentage("");
-              setRestrictedServiceModeSelectedOption("");
-              setOfferBySelectedOption("");
+              resetForm();
             }
           })
           .catch((err) => {
@@ -138,18 +145,16 @@ const AppManagementHeader = ({
       }
     } else if (currentLink === "Blogs") {
       if (editValue?._id) {
-        AdminServices.updateBlog({ ...blogPayload, blogId: editValue._id })
+        AdminServices.updateBlog({
+          ...blogPayload,
+          blogId: editValue._id,
+        })
           .then((res) => {
             if (res) {
               notifySuccess("Blog updated successfully!");
               getManagementList();
               setFilterDragger(false);
-              setNameValue("");
-              setDescriptionValue("");
-              setImageValue({
-                fileName: "",
-                image: "",
-              });
+              resetForm();
             }
           })
           .catch((err) => {
@@ -163,12 +168,7 @@ const AppManagementHeader = ({
               notifySuccess("Blog created successfully!");
               getManagementList();
               setFilterDragger(false);
-              setNameValue("");
-              setDescriptionValue("");
-              setImageValue({
-                fileName: "",
-                image: "",
-              });
+              resetForm();
             }
           })
           .catch((err) => {
@@ -178,364 +178,476 @@ const AppManagementHeader = ({
       }
     }
   };
+
   useEffect(() => {
-    if (currentLink === "Blogs") {
-      setNameValue(editValue?.blogTitle);
-      setDescriptionValue(editValue?.blogDescription);
+    if (currentLink === "Blogs" && editValue?._id) {
+      setNameValue(editValue?.blogTitle || "");
+      setDescriptionValue(editValue?.blogDescription || "");
+
       setImageValue({
         fileName: "",
-        image: editValue?.blogImage,
+        image: editValue?.blogImage || "",
       });
-    } else if (currentLink === "Offers") {
-      setNameValue(editValue?.offerName);
-      setDescriptionValue(editValue?.offerDescription);
-      setOfferStartDate(new Date(editValue?.offerStartDate));
-      setOfferEndDate(new Date(editValue?.offerEndDate));
-      setRestrictedMinimumPrice(editValue?.restrictedMinimumPrice);
-      setMaxOfferPrice(editValue?.maxOfferPrice);
+    }
+
+    if (currentLink === "Offers" && editValue?._id) {
+      setNameValue(editValue?.offerName || "");
+      setDescriptionValue(editValue?.offerDescription || "");
+
+      setOfferStartDate(
+        editValue?.offerStartDate
+          ? new Date(editValue.offerStartDate).toISOString().split("T")[0]
+          : "",
+      );
+
+      setOfferEndDate(
+        editValue?.offerEndDate
+          ? new Date(editValue.offerEndDate).toISOString().split("T")[0]
+          : "",
+      );
+
+      setRestrictedMinimumPrice(editValue?.restrictedMinimumPrice || "");
+      setMaxOfferPrice(editValue?.maxOfferPrice || "");
+
       setImageValue({
         fileName: "",
-        image: editValue?.offerImage,
+        image: editValue?.offerImage || "",
       });
-      setFlatPrice(editValue?.offerBy?.flatPrice);
-      setOfferPercentage(editValue?.offerBy?.offerPercentage);
-      setRestrictedServiceModeSelectedOption(editValue?.restrictedServiceMode);
+
+      setFlatPrice(editValue?.offerBy?.flatPrice || "");
+      setOfferPercentage(
+        editValue?.offerBy?.percentage ||
+          editValue?.offerBy?.offerPercentage ||
+          editValue?.offerBy?.coupon ||
+          "",
+      );
+
+      setRestrictedServiceModeSelectedOption(
+        editValue?.restrictedServiceMode || "",
+      );
+
       setOfferBySelectedOption(
         editValue?.offerBy?.flatPrice
           ? "Flat Price"
           : editValue?.offerBy?.coupon
-          ? "Coupon"
-          : "Percentage"
+            ? "Coupon"
+            : "Percentage",
       );
-      setCouponCode(editValue?.couponCode ?? "");
+
+      setCouponCode(editValue?.couponCode || "");
     }
-  }, [editValue]);
+  }, [editValue, currentLink]);
+
   useEffect(() => {
     setCurrentLink(links[0]);
   }, []);
+
+  const isEditing = Boolean(editValue?._id);
+  const isBlog = currentLink === "Blogs";
+
   return (
-    <div className="mt-4">
-      <div className="flex items-center justify-between">
-        <div className="flex bg-[#ecf0f4] w-fit gap-3 p-2 rounded-md text-sm border border-[#e6e6e6]">
-          {links?.map((link, i) => {
-            return (
-              <div
-                onClick={() => {
-                  if (i === 0 || i === 1) {
-                    setNameValue("");
-                    setDescriptionValue("");
-                    setOfferStartDate("");
-                    setOfferEndDate("");
-                    setRestrictedMinimumPrice("");
-                    setMaxOfferPrice("");
-                    setImageValue({
-                      fileName: "",
-                      image: "",
-                    });
-                    setFlatPrice("");
-                    setOfferPercentage("");
-                    setRestrictedServiceModeSelectedOption("");
-                    setOfferBySelectedOption("");
-                    setCurrentLink(link);
-                  }
-                }}
-                className={`w-28 h-10 flex items-center font-bold justify-center rounded-md ${
-                  link === currentLink
-                    ? "bg-[var(--primary-color)] cursor-pointer border border-[#e6e6e6] text-[var(--secondary-elite-color)]"
-                    : i === 0 || i === 1
-                    ? "text-[#0b1b4f] cursor-pointer"
-                    : "text-[#707ead] cursor-default"
-                }`}
-              >
-                {link}
-              </div>
-            );
-          })}
+    <div className="mt-4 mb-6">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 md:p-5">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          {/* Title */}
+          <div>
+            <h1 className="text-white font-bold text-xl">App Management</h1>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Manage your offers and blogs from here
+            </p>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1.5 w-fit">
+            {links.map((link) => {
+              const active = link === currentLink;
+
+              return (
+                <button
+                  key={link}
+                  type="button"
+                  onClick={() => handleTabChange(link)}
+                  className={`flex items-center justify-center gap-2 min-w-[115px] px-4 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${
+                    active
+                      ? "bg-[var(--primary-color)] text-[var(--secondary-elite-color)] shadow-sm"
+                      : "text-[var(--primary-elite-color)] hover:bg-white dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {link === "Offers" ? (
+                    <FaTag size={14} />
+                  ) : (
+                    <FaRegNewspaper size={14} />
+                  )}
+
+                  {link}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
-      {currentLink === "Blogs" ? (
-        <MuiDrawer
-          open={filterDragger}
-          onClose={() => setFilterDragger(false)}
-          drawerWidth="400px"
-        >
-          <div className="p-4 pe-1 bg-[var(--secondary-light-2-color)] h-[var(--doc-height)]">
-            <div className="font-bold text-md flex items-center gap-2 text-[var(--primary-elite-color)]">
-              <MdAddchart size={22} /> Create Blog
+
+      {/* Drawer */}
+      <MuiDrawer
+        open={filterDragger}
+        onClose={() => setFilterDragger(false)}
+        drawerWidth="400px"
+      >
+        <div className="h-[var(--doc-height)] bg-[var(--secondary-light-2-color)] dark:bg-gray-800 flex flex-col">
+          {/* Drawer Header */}
+          <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[var(--primary-color)] flex items-center justify-center">
+                {isBlog ? (
+                  <FaRegNewspaper
+                    size={18}
+                    className="text-[var(--primary-elite-color)]"
+                  />
+                ) : (
+                  <MdAddchart
+                    size={20}
+                    className="text-[var(--primary-elite-color)]"
+                  />
+                )}
+              </div>
+
+              <div>
+                <h2 className="font-bold text-base text-[var(--primary-elite-color)]">
+                  {isEditing
+                    ? `Update ${isBlog ? "Blog" : "Offer"}`
+                    : `Create ${isBlog ? "Blog" : "Offer"}`}
+                </h2>
+
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {isEditing
+                    ? `Update your ${isBlog ? "blog" : "offer"} details`
+                    : `Add a new ${isBlog ? "blog" : "offer"}`}
+                </p>
+              </div>
             </div>
-            <form onSubmit={handleSubmit}>
-              <div
-                className="overflow-auto pe-2"
-                style={{
-                  height: "calc(var(--doc-height) - 110px)",
-                }}
-              >
-                <div className="flex flex-col text-sm mt-8">
-                  <label className="font-bold">Blog Title</label>
-                  <input
-                    value={nameValue}
-                    onChange={(e) => setNameValue(e.target.value)}
-                    className="default-input"
-                    placeholder="Enter a Offer Name!"
-                  />
-                </div>
-                <div className="flex flex-col text-sm mt-2">
-                  <label className="font-bold">Blog Description</label>
-                  <textarea
-                    value={descriptionValue}
-                    onChange={(e) => setDescriptionValue(e.target.value)}
-                    className="default-teaxtarea py-2"
-                    placeholder="Enter a Offer Description!"
-                    rows={4}
-                  />
-                </div>
-                <div className="flex flex-col text-sm mt-2">
-                  <label className="font-bold mb-2">Blog Image</label>
-                  <input
-                    className="d-none"
-                    id="offer-img"
-                    type="file"
-                    onChange={handleImageChange}
-                  />
-                  <img />
-                  <label htmlFor="offer-img">
-                    <div className="h-28 w-28 border bg-white border-[#c0c0c0] border-dashed cursor-pointer text-[#585858] flex items-center justify-center">
+          </div>
+
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col flex-1 min-h-0"
+          >
+            <div
+              className="flex-1 overflow-y-auto px-5 py-5"
+              style={{
+                scrollbarWidth: "thin",
+              }}
+            >
+              {/* BLOG FORM */}
+              {isBlog ? (
+                <>
+                  <div className="flex flex-col text-sm mb-4">
+                    <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                      Blog Title
+                    </label>
+
+                    <input
+                      value={nameValue}
+                      onChange={(e) => setNameValue(e.target.value)}
+                      className="default-input"
+                      placeholder="Enter blog title"
+                    />
+                  </div>
+
+                  <div className="flex flex-col text-sm mb-4">
+                    <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                      Blog Description
+                    </label>
+
+                    <textarea
+                      value={descriptionValue}
+                      onChange={(e) => setDescriptionValue(e.target.value)}
+                      className="default-teaxtarea py-2"
+                      placeholder="Enter blog description"
+                      rows={5}
+                    />
+                  </div>
+
+                  {/* Blog Image */}
+                  <div className="flex flex-col text-sm">
+                    <label className="font-semibold mb-2 text-gray-700 dark:text-gray-200">
+                      Blog Image
+                    </label>
+
+                    <input
+                      className="hidden"
+                      id="blog-img"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+
+                    <label
+                      htmlFor="blog-img"
+                      className="w-full h-36 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 cursor-pointer flex items-center justify-center overflow-hidden hover:border-[var(--primary-elite-color)] transition-colors"
+                    >
                       {imageValue.image ? (
                         <img
                           src={imageValue.image}
-                          alt={imageValue.fileName}
+                          alt={imageValue.fileName || "Blog"}
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <MdAddPhotoAlternate size={30} />
+                        <div className="flex flex-col items-center text-gray-400">
+                          <MdAddPhotoAlternate size={32} />
+
+                          <span className="text-xs mt-2">
+                            Click to upload image
+                          </span>
+                        </div>
                       )}
+                    </label>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Offer Name */}
+                  <div className="flex flex-col text-sm mb-4">
+                    <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                      Offer Name
+                    </label>
+
+                    <input
+                      value={nameValue}
+                      onChange={(e) => setNameValue(e.target.value)}
+                      className="default-input"
+                      placeholder="Enter offer name"
+                    />
+                  </div>
+
+                  {/* Offer Description */}
+                  <div className="flex flex-col text-sm mb-4">
+                    <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                      Offer Description
+                    </label>
+
+                    <textarea
+                      value={descriptionValue}
+                      onChange={(e) => setDescriptionValue(e.target.value)}
+                      className="default-teaxtarea py-2"
+                      placeholder="Enter offer description"
+                      rows={4}
+                    />
+                  </div>
+
+                  {/* Dates */}
+                  <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                    <div className="flex flex-col">
+                      <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                        Start Date
+                      </label>
+
+                      <input
+                        value={offerStartDate}
+                        onChange={(e) => setOfferStartDate(e.target.value)}
+                        className="default-input"
+                        type="date"
+                        min={new Date().toISOString().split("T")[0]}
+                      />
                     </div>
-                  </label>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <button
-                  type="button"
-                  className="mt-2 w-full border-2 border-[var(--primary-elite-color)] h-10 text-[var(--primary-elite-color)] rounded-md text-[13.5px] font-bold"
-                  onClick={() => setFilterDragger(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="mt-2 w-full bg-[var(--primary-elite-color)] h-10 text-[var(--primary-color)] rounded-md text-sm"
-                >
-                  {editValue?._id ? "Edit" : "Create"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </MuiDrawer>
-      ) : (
-        <MuiDrawer
-          open={filterDragger}
-          onClose={() => setFilterDragger(false)}
-          drawerWidth="400px"
-        >
-          <div className="p-4 pe-1 bg-[var(--secondary-light-2-color)] h-[var(--doc-height)]">
-            <div className="font-bold text-md flex items-center gap-2 text-[var(--primary-elite-color)]">
-              <MdAddchart size={22} /> Create offer
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div
-                className="overflow-auto pe-2"
-                style={{
-                  height: "calc(var(--doc-height) - 110px)",
-                }}
-              >
-                <div className="flex flex-col text-sm mt-8">
-                  <label className="font-bold">Offer Name</label>
-                  <input
-                    value={nameValue}
-                    onChange={(e) => setNameValue(e.target.value)}
-                    className="default-input"
-                    placeholder="Enter a Offer Name!"
-                  />
-                </div>
-                <div className="flex flex-col text-sm mt-2">
-                  <label className="font-bold">Offer Description</label>
-                  <textarea
-                    value={descriptionValue}
-                    onChange={(e) => setDescriptionValue(e.target.value)}
-                    className="default-teaxtarea py-2"
-                    placeholder="Enter a Offer Description!"
-                    rows={4}
-                  />
-                </div>
-                <div className="flex items-center gap-3 w-full text-sm mt-2">
-                  <div className="flex flex-col w-1/2">
-                    <label className="font-bold">Offer Start Date</label>
-                    <input
-                      value={offerStartDate}
-                      onChange={(e) => setOfferStartDate(e.target.value)}
-                      className="default-teaxtarea py-2"
-                      placeholder="Enter a Offer Start Date!"
-                      type="date"
-                      min={new Date().toISOString().split("T")[0]}
-                    />
+
+                    <div className="flex flex-col">
+                      <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                        End Date
+                      </label>
+
+                      <input
+                        value={offerEndDate}
+                        onChange={(e) => setOfferEndDate(e.target.value)}
+                        className="default-input"
+                        type="date"
+                        min={new Date().toISOString().split("T")[0]}
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col w-1/2">
-                    <label className="font-bold">Offer End Date</label>
-                    <input
-                      value={offerEndDate}
-                      onChange={(e) => setOfferEndDate(e.target.value)}
-                      className="default-teaxtarea py-2"
-                      placeholder="Enter a Offer End Date!"
-                      type="date"
-                      min={new Date().toISOString().split("T")[0]}
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col text-sm mt-2">
-                  <label className="font-bold">Restricted Service Mode</label>
-                  <Dropdown
-                    value={restrictedServiceMode}
-                    placeholder="Restricted Service Mode!"
-                    onSelect={handleRestrictedServiceModeSelect}
-                    options={["pickup", "home", "none"]}
-                    disabled={false}
-                  />
-                </div>
-                <div className="flex items-center gap-3 w-full text-sm mt-2">
-                  <div className="flex flex-col w-1/2">
-                    <label className="font-bold">Restricted Min Price</label>
-                    <input
-                      value={restrictedMinimumPrice}
-                      onChange={(e) =>
-                        setRestrictedMinimumPrice(e.target.value)
-                      }
-                      className="default-input"
-                      placeholder="Enter Restricted Min Price!"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex flex-col w-1/2">
-                    <label className="font-bold">Max Offer Price</label>
-                    <input
-                      value={maxOfferPrice}
-                      onChange={(e) => setMaxOfferPrice(e.target.value)}
-                      className="default-input"
-                      placeholder="Enter Max Offer Price!"
-                      type="number"
-                    />
-                  </div>
-                </div>
-                <div
-                  className={`flex items-center ${
-                    offerBy.toLowerCase() ? "gap-3" : ""
-                  } w-full text-sm mt-2`}
-                >
-                  <div
-                    className={`flex flex-col ${
-                      offerBy.toLowerCase() ? "w-1/2" : "w-full"
-                    }`}
-                  >
-                    <label className="font-bold">Offer By</label>
+
+                  {/* Service Mode */}
+                  <div className="flex flex-col text-sm mb-4">
+                    <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                      Restricted Service Mode
+                    </label>
+
                     <Dropdown
-                      value={offerBy}
-                      placeholder="Restricted Service Mode!"
-                      onSelect={handleOfferBySelect}
-                      options={["Flat Price", "Percentage", "Coupon"]}
+                      value={restrictedServiceMode}
+                      placeholder="Select service mode"
+                      onSelect={handleRestrictedServiceModeSelect}
+                      options={["pickup", "home", "none"]}
                       disabled={false}
                     />
                   </div>
-                  <div
-                    className={`flex flex-col overflow-hidden ${
-                      offerBy.toLowerCase() ? "w-1/2" : "w-0"
-                    }`}
-                  >
-                    <label className="font-bold text-nowrap">
-                      {offerBy.toLowerCase() === "percentage" ||
-                      offerBy.toLowerCase() === "coupon"
-                        ? "Offer Percentage"
-                        : "Flat Price"}
+
+                  {/* Prices */}
+                  <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                    <div className="flex flex-col">
+                      <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                        Min Price
+                      </label>
+
+                      <input
+                        value={restrictedMinimumPrice}
+                        onChange={(e) =>
+                          setRestrictedMinimumPrice(e.target.value)
+                        }
+                        className="default-input"
+                        placeholder="Min price"
+                        type="number"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                        Max Offer Price
+                      </label>
+
+                      <input
+                        value={maxOfferPrice}
+                        onChange={(e) => setMaxOfferPrice(e.target.value)}
+                        className="default-input"
+                        placeholder="Max price"
+                        type="number"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Offer By */}
+                  <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                    <div className="flex flex-col">
+                      <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                        Offer By
+                      </label>
+
+                      <Dropdown
+                        value={offerBy}
+                        placeholder="Select offer type"
+                        onSelect={handleOfferBySelect}
+                        options={["Flat Price", "Percentage", "Coupon"]}
+                        disabled={false}
+                      />
+                    </div>
+
+                    {offerBy && (
+                      <div className="flex flex-col">
+                        <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                          {offerBy.toLowerCase() === "flat price"
+                            ? "Flat Price"
+                            : offerBy.toLowerCase() === "coupon"
+                              ? "Discount"
+                              : "Percentage"}
+                        </label>
+
+                        <input
+                          value={
+                            offerBy.toLowerCase() === "flat price"
+                              ? flatPrice
+                              : offerPercentage
+                          }
+                          onChange={(e) =>
+                            offerBy.toLowerCase() === "flat price"
+                              ? setFlatPrice(e.target.value)
+                              : setOfferPercentage(e.target.value)
+                          }
+                          className="default-input"
+                          placeholder={
+                            offerBy.toLowerCase() === "flat price"
+                              ? "Enter flat price"
+                              : "Enter percentage"
+                          }
+                          type="number"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Coupon */}
+                  {offerBy.toLowerCase() === "coupon" && (
+                    <div className="flex flex-col text-sm mb-4">
+                      <label className="font-semibold mb-1.5 text-gray-700 dark:text-gray-200">
+                        Coupon Code
+                      </label>
+
+                      <input
+                        value={couponCode}
+                        onChange={(e) =>
+                          setCouponCode(e.target.value.toUpperCase())
+                        }
+                        className="default-input uppercase"
+                        placeholder="Enter coupon code"
+                        type="text"
+                      />
+                    </div>
+                  )}
+
+                  {/* Offer Image */}
+                  <div className="flex flex-col text-sm">
+                    <label className="font-semibold mb-2 text-gray-700 dark:text-gray-200">
+                      Offer Image
                     </label>
+
                     <input
-                      value={
-                        offerBy.toLowerCase() === "percentage" ||
-                        offerBy.toLowerCase() === "coupon"
-                          ? offerPercentage
-                          : flatPrice
-                      }
-                      onChange={(e) =>
-                        offerBy.toLowerCase() === "percentage" ||
-                        offerBy.toLowerCase() === "coupon"
-                          ? setOfferPercentage(e.target.value)
-                          : setFlatPrice(e.target.value)
-                      }
-                      className="default-input"
-                      placeholder={`Enter ${
-                        offerBy.toLowerCase() === "percentage" ||
-                        offerBy.toLowerCase() === "coupon"
-                          ? "Offer Percentage"
-                          : "Flat Price"
-                      }!`}
-                      type="number"
+                      className="hidden"
+                      id="offer-img"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
                     />
-                  </div>
-                </div>
-                {offerBy.toLowerCase() === "coupon" && (
-                  <div className="flex flex-col text-sm mt-2">
-                    <label className="font-bold">Coupon Code</label>
-                    <input
-                      value={couponCode}
-                      onChange={(e) =>
-                        setCouponCode(e.target.value.toUpperCase())
-                      }
-                      className="default-input"
-                      placeholder={`Enter a Coupon Code!`}
-                      type="text"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col text-sm mt-2">
-                  <label className="font-bold mb-2">Offer Image</label>
-                  <input
-                    className="d-none"
-                    id="offer-img"
-                    type="file"
-                    onChange={handleImageChange}
-                  />
-                  <img />
-                  <label htmlFor="offer-img">
-                    <div className="h-28 w-28 border border-[#c0c0c0] border-dashed cursor-pointer text-[#585858] flex items-center justify-center">
+
+                    <label
+                      htmlFor="offer-img"
+                      className="w-full h-36 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 cursor-pointer flex items-center justify-center overflow-hidden hover:border-[var(--primary-elite-color)] transition-colors"
+                    >
                       {imageValue.image ? (
                         <img
                           src={imageValue.image}
-                          alt={imageValue.fileName}
+                          alt={imageValue.fileName || "Offer"}
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <MdAddPhotoAlternate size={30} />
+                        <div className="flex flex-col items-center text-gray-400">
+                          <MdAddPhotoAlternate size={32} />
+
+                          <span className="text-xs mt-2">
+                            Click to upload image
+                          </span>
+                        </div>
                       )}
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <button
-                  type="button"
-                  className="mt-2 w-full border-2 border-[var(--primary-elite-color)] h-10 text-[var(--primary-elite-color)] rounded-md text-[13.5px] font-bold"
-                  onClick={() => setFilterDragger(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="mt-2 w-full bg-[var(--primary-elite-color)] h-10 text-[var(--primary-color)] rounded-md text-sm"
-                >
-                  {editValue?._id ? "Update" : "Create"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </MuiDrawer>
-      )}
+                    </label>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="flex items-center gap-3 px-5 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+              <button
+                type="button"
+                onClick={() => {
+                  setFilterDragger(false);
+                  resetForm();
+                }}
+                className="w-full h-11 rounded-lg border-2 border-[var(--primary-elite-color)] text-[var(--primary-elite-color)] font-semibold text-sm hover:bg-[var(--primary-elite-color)] hover:text-white transition-all"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="w-full h-11 rounded-lg bg-[var(--primary-elite-color)] text-white font-semibold text-sm hover:opacity-90 transition-all"
+              >
+                {isEditing
+                  ? `Update ${isBlog ? "Blog" : "Offer"}`
+                  : `Create ${isBlog ? "Blog" : "Offer"}`}
+              </button>
+            </div>
+          </form>
+        </div>
+      </MuiDrawer>
     </div>
   );
 };
