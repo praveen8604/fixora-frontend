@@ -53,10 +53,10 @@ const App = () => {
           <Route path="/signup" component={SignUp} />
           <Route path="/forgot-password" component={ForgetPassword} />
           <Route path="/reset-password/:token" component={ResetPassword} />
-          <PrivateRoute>
+          <Redirect exact from="/" to="/login" />
+          <PrivateRoute path="/">
             <Route path="/" component={Layout} />
           </PrivateRoute>
-          <Redirect exact from="/" to="/login" />
         </Switch>
       </Router>
     </>

@@ -3,15 +3,6 @@ import React, { createContext, useReducer, useState } from "react";
 
 export const AdminContext = createContext();
 
-const DEV_ADMIN = {
-  _id: "local-dev-admin",
-  userName: "Dev Admin",
-  email: "dev@local.com",
-  phoneNumber: "0000000000",
-  countryCode: "+91",
-  role: "Admin",
-};
-
 const readAdminFromCookie = () => {
   const raw = Cookies.get("adminInfo");
   if (raw && raw !== "undefined") {
@@ -24,11 +15,8 @@ const readAdminFromCookie = () => {
   return null;
 };
 
-const getAdminInfo = () =>
-  readAdminFromCookie() || (import.meta.env.DEV ? DEV_ADMIN : null);
-
 const initialState = {
-  adminInfo: getAdminInfo(),
+  adminInfo: readAdminFromCookie(),
   dimentions: {
     height: 0,
     width: 0,
@@ -43,7 +31,7 @@ function reducer(state, action) {
     case "USER_LOGOUT":
       return {
         ...state,
-        adminInfo: import.meta.env.DEV ? DEV_ADMIN : null,
+        adminInfo: null,
       };
 
     default:

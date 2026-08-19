@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { IoMdMail } from "react-icons/io";
+import { FaPhoneAlt } from "react-icons/fa";
 import { Button } from "@windmill/react-ui";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -15,6 +16,7 @@ import { AdminContext } from "@/context/AdminContext";
 import { removeSetting } from "@/reduxStore/slice/settingSlice";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const reduxDispatch = useDispatch();
@@ -50,16 +52,13 @@ const Login = () => {
   }, []);
 
   const handlePhoneChange = (value, country) => {
-    const extractedCountryCode = `+${country.dialCode}`;
-    const extractedMobileNumber = value
-      .replace(extractedCountryCode, "")
-      .trim();
+    const dialCode = country?.dialCode || "";
+    const nationalNumber = value.startsWith(dialCode)
+      ? value.slice(dialCode.length)
+      : value;
 
-    setValue("countryCode", extractedCountryCode);
-    setValue(
-      "phoneNumber",
-      extractedMobileNumber.slice(extractedCountryCode.split("").length - 1)
-    );
+    setValue("countryCode", `+${dialCode}`);
+    setValue("phoneNumber", nationalNumber);
   };
 
   const onSubmit = (data) => {
@@ -90,7 +89,12 @@ const Login = () => {
         .catch((err) => {
           setIsLoading(false);
           const decoded = DecryptData(err?.response?.data);
-          notifyError(decoded?.error?.message || "Unable to send OTP.");
+          notifyError(
+            decoded?.error?.message ||
+              err?.response?.data?.message ||
+              err?.message ||
+              "Unable to send OTP."
+          );
         });
     } catch (error) {
       setIsLoading(false);
@@ -169,6 +173,37 @@ const Login = () => {
 
           {!isOtpSent ? (
             <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-black/25 p-1">
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("otp")}
+                  className={`flex flex-col items-center gap-1 rounded-md px-2 py-2 text-center transition-colors ${
+                    loginMethod === "otp"
+                      ? "bg-[#211e27] text-white"
+                      : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  <FaPhoneAlt className="h-4 w-4" />
+                  <span className="text-[10px] font-medium tracking-wide uppercase">
+                    Mobile
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("email")}
+                  className={`flex flex-col items-center gap-1 rounded-md px-2 py-2 text-center transition-colors ${
+                    loginMethod === "email"
+                      ? "bg-[#211e27] text-white"
+                      : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  <IoMdMail className="h-4 w-4" />
+                  <span className="text-[10px] font-medium tracking-wide uppercase">
+                    Email
+                  </span>
+                </button>
+              </div>
+
               {loginMethod === "otp" ? (
                 <div>
                   <LabelArea
@@ -181,15 +216,17 @@ const Login = () => {
                       name: "phone",
                       required: true,
                     }}
-                    containerClass="mt-4 text-left"
+                    containerClass="mt-2 text-left"
                     inputClass="!w-full !rounded-md !border-gray-300 !text-black !placeholder-gray-500"
                     buttonClass="!bg-gray-100 !border-gray-300"
                     dropdownClass="!bg-white !text-black"
                   />
-                  <input type="hidden" />
                   <input
                     {...register("phoneNumber", {
-                      required: "Please enter your Phone number",
+                      required:
+                        loginMethod === "otp"
+                          ? "Please enter your Phone number"
+                          : false,
                     })}
                     type="hidden"
                   />
@@ -199,7 +236,7 @@ const Login = () => {
                   <LabelArea
                     label={<span className="text-white">Email Id</span>}
                   />
-                  <div className="mt-4 flex items-center">
+                  <div className="mt-2 flex items-center">
                     <div className="flex h-[35px] w-[45px] items-center justify-center rounded-s-md bg-white border-r border-[#d4d4d4]">
                       <IoMdMail className="text-lg" />
                     </div>
@@ -207,7 +244,10 @@ const Login = () => {
                       placeholder="Enter your email id"
                       className="h-[35px] w-full rounded-e-md border-gray-300 ps-2 text-sm text-black placeholder-gray-500 outline-none"
                       {...register("email", {
-                        required: "Please enter your Email",
+                        required:
+                          loginMethod === "email"
+                            ? "Please enter your Email"
+                            : false,
                       })}
                     />
                   </div>
@@ -224,24 +264,15 @@ const Login = () => {
               >
                 {isLoading ? "Loading..." : "Login"}
               </Button>
-              <div className="mt-4 flex flex-col items-center gap-2 text-sm text-white">
-                <div>Or</div>
-                {loginMethod === "otp" ? (
-                  <div
-                    className="cursor-pointer underline hover:text-gray-300"
-                    onClick={() => setLoginMethod("email")}
-                  >
-                    Login with email
-                  </div>
-                ) : (
-                  <div
-                    className="cursor-pointer underline hover:text-gray-300"
-                    onClick={() => setLoginMethod("otp")}
-                  >
-                    Login with OTP
-                  </div>
-                )}
-              </div>
+              <p className="mt-5 text-sm text-white">
+                Don’t have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="font-medium underline hover:text-gray-300"
+                >
+                  Sign up
+                </Link>
+              </p>
             </form>
           ) : (
             <div>
