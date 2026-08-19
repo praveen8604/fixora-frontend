@@ -30,7 +30,7 @@ const TicketOverview = () => {
   const serviceRequestId = getQueryParam("sr_id");
   const dispatch = useDispatch();
   const { serviceRequest, loading } = useSelector(
-    (state) => state.serviceRequestState
+    (state) => state.serviceRequestState,
   );
   const { riders, technicians } = useSelector((state) => state.userState);
   const [assignRiderModal, setAssignRiderModal] = useState(false);
@@ -147,98 +147,124 @@ const TicketOverview = () => {
 
   return (
     <div className="text-[var(--secondary-color)] my-5">
-      <div className="font-bold">Service Request Details</div>
+      <div className="mb-5">
+        <h1 className="text-xl font-bold text-[var(--secondary-color)]">
+          Service Request Details
+        </h1>
+        <p className="text-xs opacity-50 mt-1">
+          View and manage complete service request information
+        </p>
+      </div>
       <LayoutCard
         heading={"Service Request"}
         gridColCount={1}
         gridColCountxl={6}
         gridColCountmd={2}
       >
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">
-            Service Request Id
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Service Request ID
           </div>
-          <div>{serviceRequest?._id}</div>
+
+          <div className="text-[var(--primary-elite-color)] break-all">
+            {serviceRequest?._id || "--"}
+          </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Appliance Name</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Appliance Name
+          </div>
+
           <div className="flex items-center gap-2">
             <div>{serviceRequest?.model?.modelName ?? "--"}</div>
+
             <Link
-              to={`/appliance/overview?appData=${encodeURIComponent(
-                encodedAppData
-              )}`}
+              to={`/appliance/overview?appData=${encodeURIComponent(encodedAppData)}`}
             >
-              <FaExternalLinkAlt
-                className={
-                  "cursor-pointer hover:text-[var(--primary-elite-color)]"
-                }
-              />
+              <FaExternalLinkAlt className="text-[10px] cursor-pointer hover:text-[var(--primary-elite-color)]" />
             </Link>
           </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Service Mode</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Service Mode
+          </div>
+
           <div
-            className={`px-3 py-1 rounded-full capitalize font-bold w-fit`}
+            className="px-3 py-1.5 rounded-full capitalize font-bold text-[10px] w-fit"
             style={statusTheme(serviceRequest?.serviceMode)}
           >
-            {serviceRequest?.serviceMode}
+            {serviceRequest?.serviceMode || "--"}
           </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Status</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Status
+          </div>
+
           <div
-            className={`px-3 py-1 text-[10px] text-[var(--primary-color)] rounded-full capitalize font-bold w-fit ${statusTheme(
+            className={`px-3 py-1.5 text-[10px] text-[var(--primary-color)] rounded-full capitalize font-bold w-fit ${statusTheme(
               serviceRequest?.ticketStatus,
-              true
+              true,
             )}`}
           >
-            {serviceRequest?.ticketStatus}
+            {serviceRequest?.ticketStatus || "--"}
           </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Raised On</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Raised On
+          </div>
+
           <div>
-            {moment(serviceRequest?.createdAt).format("DD-MMM-YYYY hh:mm A")}
+            {serviceRequest?.createdAt
+              ? moment(serviceRequest.createdAt).format("DD-MMM-YYYY hh:mm A")
+              : "--"}
           </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Last Updated On</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Last Updated On
+          </div>
+
           <div>
-            {moment(serviceRequest?.updatedAt).format("DD-MMM-YYYY hh:mm A")}
+            {serviceRequest?.updatedAt
+              ? moment(serviceRequest.updatedAt).format("DD-MMM-YYYY hh:mm A")
+              : "--"}
           </div>
         </div>
       </LayoutCard>
       <LayoutCard heading={"Problem Details"} gridColCount={1}>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-4">
+          <div className="mb-2 opacity-50 text-[10px] uppercase tracking-wide">
             Problem Description
           </div>
-          <div className="text-wrap break-words">
-            {serviceRequest?.problemDescription}
+
+          <div className="text-sm font-medium leading-6 break-words">
+            {serviceRequest?.problemDescription || "--"}
           </div>
         </div>
         {serviceRequest?.attachments?.length > 0 && (
-          <div className="font-bold text-xs">
-            <div className="mb-1 opacity-50 text-[11.5px] grid grid-cols-6 gap-3">
+          <div className="mt-2">
+            <div className="mb-3 opacity-50 text-[10px] uppercase tracking-wide">
               Attachments
             </div>
-            <div className="flex items-center gap-3">
-              {serviceRequest?.attachments?.map((attachment) => {
-                return (
-                  <div
-                    className="h-40 w-40 flex items-center justify-center object-contain cursor-pointer bg-[var(--secondary-light-2-color)]"
-                    onClick={() => openImagePreview(attachment)}
-                  >
-                    <img
-                      src={attachment}
-                      alt={attachment}
-                      className="h-full object-contain"
-                    />
-                  </div>
-                );
-              })}
+
+            <div className="flex flex-wrap items-center gap-4">
+              {serviceRequest?.attachments?.map((attachment, index) => (
+                <div
+                  key={attachment || index}
+                  className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-xl overflow-hidden border border-gray-200 bg-[var(--secondary-light-2-color)] cursor-pointer group"
+                  onClick={() => openImagePreview(attachment)}
+                >
+                  <img
+                    src={attachment}
+                    alt={`Attachment ${index + 1}`}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -310,42 +336,58 @@ const TicketOverview = () => {
         gridColCount={1}
         gridColCountxl={6}
         gridColCountmd={2}
-        useFlex={true}
+        useFlex={false}
       >
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Customer Name</div>
-          <div className="flex items-center gap-2">
-            <div>{serviceRequest?.customer?.userName}</div>
-            <Link
-              to={`/users/customer/details?userId=${serviceRequest?.customer?._id}`}
-            >
-              <FaExternalLinkAlt
-                className={
-                  "cursor-pointer hover:text-[var(--primary-elite-color)]"
-                }
-              />
-            </Link>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3 min-w-0">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Customer Name
+          </div>
+
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="truncate">
+              {serviceRequest?.customer?.userName || "--"}
+            </div>
+
+            {serviceRequest?.customer?._id && (
+              <Link
+                to={`/users/customer/details?userId=${serviceRequest?.customer?._id}`}
+                className="shrink-0"
+              >
+                <FaExternalLinkAlt className="text-[10px] hover:text-[var(--primary-elite-color)]" />
+              </Link>
+            )}
           </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3 min-w-0">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
             Customer Phone Number
           </div>
-          <div>
-            {serviceRequest?.customer?.countryCode}{" "}
-            {serviceRequest?.customer?.phoneNumber}
+
+          <div className="break-words">
+            {serviceRequest?.customer?.countryCode || "--"}{" "}
+            {serviceRequest?.customer?.phoneNumber || "--"}
           </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Customer Email</div>
-          <div>{serviceRequest?.customer?.email}</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3 min-w-0">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Customer Email
+          </div>
+
+          <div className="break-all">
+            {serviceRequest?.customer?.email || "--"}
+          </div>
         </div>
-        <div className="font-bold text-xs">
-          <div className="mb-1 opacity-50 text-[11.5px]">Joined On</div>
+        <div className="font-bold text-xs bg-[var(--secondary-light-2-color)] rounded-lg p-3 min-w-0">
+          <div className="mb-1 opacity-50 text-[10px] uppercase tracking-wide">
+            Joined On
+          </div>
+
           <div>
-            {moment(serviceRequest?.customer?.createdAt).format(
-              "DD-MMM-YYYY hh:mm A"
-            )}
+            {serviceRequest?.customer?.createdAt
+              ? moment(serviceRequest.customer.createdAt).format(
+                  "DD-MMM-YYYY hh:mm A",
+                )
+              : "--"}
           </div>
         </div>
       </LayoutCard>
@@ -355,7 +397,7 @@ const TicketOverview = () => {
           gridColCount={1}
           gridColCountxl={6}
           gridColCountmd={2}
-          useFlex={true}
+          useFlex={false}
         >
           <div className="font-bold text-xs">
             <div className="mb-1 opacity-50 text-[11.5px]">Rider Name</div>
@@ -389,19 +431,18 @@ const TicketOverview = () => {
             <div className="mb-1 opacity-50 text-[11.5px]">Joined On</div>
             <div>
               {moment(serviceRequest?.rider?.createdAt).format(
-                "DD-MMM-YYYY hh:mm A"
+                "DD-MMM-YYYY hh:mm A",
               )}
             </div>
           </div>
         </LayoutCard>
       )}
-      
 
       {serviceRequest?.technician?.userName && (
         <LayoutCard
           heading={"Technician Details"}
           gridColCount={6}
-          useFlex={true}
+          useFlex={false}
         >
           <div className="font-bold text-xs">
             <div className="mb-1 opacity-50 text-[11.5px]">Technician Name</div>
@@ -437,7 +478,7 @@ const TicketOverview = () => {
             <div className="mb-1 opacity-50 text-[11.5px]">Joined On</div>
             <div>
               {moment(serviceRequest?.technician?.createdAt).format(
-                "DD-MMM-YYYY hh:mm A"
+                "DD-MMM-YYYY hh:mm A",
               )}
             </div>
           </div>
@@ -445,8 +486,8 @@ const TicketOverview = () => {
       )}
 
       <LayoutCard heading={"Customer Location"} gridColCount={1}>
-        <div className="flex gap-5">
-          <div className="w-1/2">
+        <div className="flex flex-col md:flex-row gap-5">
+          <div className="w-full md:w-1/2">
             {serviceRequest?.address && (
               <GoogleMapComponent
                 width="100%"
@@ -457,12 +498,12 @@ const TicketOverview = () => {
               />
             )}
           </div>
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <div className="font-bold text-xs">
               <div className="mb-1 opacity-50 text-[11.5px]">Address</div>
               <div>{serviceRequest?.address?.addressLine}</div>
             </div>
-            <div className="grid md:grid-cols-2 grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <div className="font-bold text-xs">
                 <div className="mb-1 opacity-50 text-[11.5px]">Latitude</div>
                 <div>{serviceRequest?.address?.latitude}</div>
@@ -475,7 +516,7 @@ const TicketOverview = () => {
                 <div className="mb-1 opacity-50 text-[11.5px]">Created On</div>
                 <div>
                   {moment(serviceRequest?.address?.createdAt).format(
-                    "DD-MMM-YYYY hh:mm A"
+                    "DD-MMM-YYYY hh:mm A",
                   )}
                 </div>
               </div>
@@ -493,7 +534,7 @@ const TicketOverview = () => {
                   center={{
                     lat: Number(serviceRequest?.serviceCenterAddress?.latitude),
                     lng: Number(
-                      serviceRequest?.serviceCenterAddress?.longitude
+                      serviceRequest?.serviceCenterAddress?.longitude,
                     ),
                   }}
                 />
@@ -519,7 +560,7 @@ const TicketOverview = () => {
                   </div>
                   <div>
                     {moment(serviceRequest?.address?.createdAt).format(
-                      "DD-MMM-YYYY hh:mm A"
+                      "DD-MMM-YYYY hh:mm A",
                     )}
                   </div>
                 </div>
@@ -618,7 +659,7 @@ const TicketOverview = () => {
               {[{ userName: "Select Technician", _id: 1 }, ...technicians]?.map(
                 (data) => {
                   return <option value={data?._id}>{data?.userName}</option>;
-                }
+                },
               )}
             </select>
           </div>

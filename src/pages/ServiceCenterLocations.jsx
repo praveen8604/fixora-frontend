@@ -1,15 +1,11 @@
 import moment from "moment";
 import DataTable from "react-data-table-component";
 import React, { useContext, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { statusTheme } from "@/utils/getStatusTheme";
 import { SidebarContext } from "@/context/SidebarContext";
 import { FaMapLocationDot } from "react-icons/fa6";
 import AdminServices from "@/services/AdminServices";
-import { notifySuccess } from "@/utils/toast";
+import { notifySuccess, notifyError } from "@/utils/toast";
 import { DecryptData } from "@/utils/DecryptData";
 import MuiDrawer from "@/components/drawer/MuiDrawer";
 
@@ -19,11 +15,7 @@ const ServiceCenterLocation = () => {
   const [zoneName, setZoneName] = useState("");
   const [zoneAddress, setZoneAddress] = useState("");
   const [zones, setZones] = useState([]);
-  const { serviceRequests, totalPages } = useSelector(
-    (state) => state.serviceRequestState
-  );
   const { isSidebarOpen } = useContext(SidebarContext);
-  console.log("totalPages: ", totalPages);
 
   const getZoneAddress = () => {
     AdminServices.getZones()
@@ -159,59 +151,125 @@ const ServiceCenterLocation = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div className="font-bold my-5">Service Centers</div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+        <div>
+          <h1 className="text-xl font-bold text-[var(--secondary-color)]">
+            Service Centers
+          </h1>
+
+          <p className="text-xs opacity-50 mt-1">
+            Manage and monitor all service center locations
+          </p>
+        </div>
+
         <button
           onClick={() => setZoneDragger(true)}
-          className="flex items-center gap-2 bg-[var(--secondary-elite-color)] p-3 h-[40px] rounded-md text-white"
+          className="
+      flex items-center justify-center gap-2
+      w-full sm:w-auto
+      min-h-[40px]
+      px-4 py-2
+      rounded-lg
+      bg-[var(--primary-elite-color)]
+      text-[var(--primary-color)]
+      text-sm font-semibold
+      transition-all duration-200
+      hover:opacity-90
+    "
         >
-          <FaMapLocationDot size={22} />
-          <div className="text-sm">Create Zone</div>
+          <FaMapLocationDot size={18} />
+          <span>Create Zone</span>
         </button>
       </div>
-      <DataTable
-        columns={columns}
-        data={zones}
-        onRowClicked={(e) =>
-          history.push(`/services/servicerequests/request?sr_id=${e._id}`)
-        }
-        noDataComponent={
-          <div className="font-bold text-sm h-20 flex items-center">
-            There are no records to display
-          </div>
-        }
-        fixedHeader={true}
-        fixedHeaderScrollHeight="70vh"
-        className={`data_table_comp ${
-          isSidebarOpen
-            ? "data_table_comp_sidebar_opened"
-            : "data_table_comp_sidebar_closed"
-        } text-[var(--secondary-color)]`}
-        customStyles={{
-          headCells: {
-            style: {
-              fontWeight: "bold",
-              color: "var(--primary-color)",
-              overflow: "hidden",
+      <div className="bg-[var(--primary-color)] rounded-xl border border-[var(--secondary-light-2-color)] overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={zones}
+          onRowClicked={(e) =>
+            history.push(`/services/servicerequests/request?sr_id=${e._id}`)
+          }
+          noDataComponent={
+            <div className="w-full min-h-[220px] flex flex-col items-center justify-center text-center px-4">
+              <div className="w-12 h-12 rounded-full bg-[var(--secondary-light-2-color)] flex items-center justify-center mb-3">
+                <FaMapLocationDot
+                  size={20}
+                  className="text-[var(--primary-elite-color)]"
+                />
+              </div>
+
+              <div className="font-semibold text-sm text-[var(--secondary-color)]">
+                No Service Centers Found
+              </div>
+
+              <div className="text-xs opacity-50 mt-1">
+                Service center locations will appear here
+              </div>
+            </div>
+          }
+          fixedHeader
+          fixedHeaderScrollHeight="70vh"
+          className={`data_table_comp ${
+            isSidebarOpen
+              ? "data_table_comp_sidebar_opened"
+              : "data_table_comp_sidebar_closed"
+          } text-[var(--secondary-color)]`}
+          customStyles={{
+            headCells: {
+              style: {
+                fontWeight: "700",
+                fontSize: "12px",
+                color: "var(--secondary-color)",
+                backgroundColor: "var(--secondary-light-2-color)",
+                overflow: "hidden",
+              },
             },
-          },
-          cells: {
-            style: {
-              fontWeight: "bold",
-              fontSize: "11.5px",
-              height: "70px",
+            cells: {
+              style: {
+                fontWeight: "600",
+                fontSize: "11.5px",
+                minHeight: "65px",
+                paddingTop: "10px",
+                paddingBottom: "10px",
+              },
             },
-          },
-        }}
-      />
+            rows: {
+              style: {
+                backgroundColor: "var(--primary-color)",
+                borderBottom: "1px solid var(--secondary-light-2-color)",
+                cursor: "pointer",
+                transition: "background-color 0.2s ease",
+              },
+              highlightOnHoverStyle: {
+                backgroundColor: "var(--secondary-light-2-color)",
+                borderBottomColor: "var(--secondary-light-2-color)",
+              },
+            },
+          }}
+        />
+      </div>
       <MuiDrawer
         open={zoneDragger}
         onClose={() => setZoneDragger(false)}
         drawerWidth="400px"
       >
-        <div className="p-4 pe-1 bg-[var(--secondary-light-2-color)] h-[var(--doc-height)]">
-          <div className="font-bold text-md flex items-center gap-2 text-[var(--primary-elite-color)]">
-            <FaMapLocationDot size={22} /> Create Zone
+        <div className="p-5 bg-[var(--secondary-light-2-color)] h-[var(--doc-height)]">
+          <div className="flex items-center gap-3 pb-4 border-b border-[var(--secondary-color)]/10">
+            <div className="w-9 h-9 rounded-lg bg-[var(--primary-elite-color)] flex items-center justify-center">
+              <FaMapLocationDot
+                size={18}
+                className="text-[var(--primary-color)]"
+              />
+            </div>
+
+            <div>
+              <div className="font-bold text-base text-[var(--secondary-color)]">
+                Create Zone
+              </div>
+
+              <div className="text-xs opacity-50 mt-0.5">
+                Add a new service center location
+              </div>
+            </div>
           </div>
           <form onSubmit={handleZoneSubmit}>
             <div

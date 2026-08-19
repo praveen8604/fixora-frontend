@@ -30,7 +30,7 @@ const App = () => {
     document.documentElement.style.setProperty("--doc-width", `${docWidth}px`);
     document.documentElement.style.setProperty(
       "--doc-height",
-      `${docHeight}px`
+      `${docHeight}px`,
     );
   };
 
@@ -48,15 +48,15 @@ const App = () => {
       <ToastContainer />
       <Router>
         <AccessibleNavigationAnnouncer />
+
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
           <Route path="/forgot-password" component={ForgetPassword} />
           <Route path="/reset-password/:token" component={ResetPassword} />
-          <PrivateRoute>
-            <Route path="/" component={Layout} />
-          </PrivateRoute>
-          <Redirect exact from="/" to="/login" />
+
+          {/* TEMPORARY DEV MODE */}
+          <Route path="/" component={Layout} />
         </Switch>
       </Router>
     </>

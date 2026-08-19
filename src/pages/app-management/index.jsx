@@ -6,18 +6,22 @@ const AppManagement = () => {
   const [isDispatch, setIsDispatch] = useState(false);
   const [filterDragger, setFilterDragger] = useState(false);
   const [currentLink, setCurrentLink] = useState("");
-  const [editValue, setEditValue] = useState({})
-  const handleEditValue = (e) => {
-    setEditValue(e)
-  }
+  const [editValue, setEditValue] = useState({});
+
+  const handleEditValue = (value) => {
+    setEditValue(value);
+  };
+
   const getManagementList = () => {
     setIsDispatch(true);
+
     setTimeout(() => {
       setIsDispatch(false);
     }, 100);
   };
+
   return (
-    <div>
+    <div className="w-full">
       <AppManagementHeader
         setFilterDragger={setFilterDragger}
         getManagementList={getManagementList}
@@ -26,6 +30,7 @@ const AppManagement = () => {
         currentLink={currentLink}
         editValue={editValue}
       />
+
       <ManagementList
         isDispatch={isDispatch}
         setFilterDragger={setFilterDragger}

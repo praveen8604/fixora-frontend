@@ -125,14 +125,16 @@ const Header = () => {
                 className="rounded-full dark:bg-gray-500 bg-[#211e27] text-white h-8 w-8 font-medium mx-auto focus:outline-none"
                 onClick={handleProfileOpen}
               >
-                {adminInfo.image ? (
+                {adminInfo?.image ? (
                   <Avatar
                     className="align-middle"
-                    src={`${adminInfo.image}`}
+                    src={adminInfo.image}
                     aria-hidden="true"
                   />
                 ) : (
-                  <span>{adminInfo.email[0].toUpperCase()}</span>
+                  <span>
+                    {adminInfo?.email ? adminInfo.email[0].toUpperCase() : "A"}
+                  </span>
                 )}
               </button>
 
