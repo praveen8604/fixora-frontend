@@ -1,96 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Skeleton from "react-loading-skeleton";
-import { FaCaretUp, FaCaretDown } from "react-icons/fa";
 
 const Chart = ({ children, title, loading, mode }) => {
-  const [percentage, setPercentage] = useState(24);
-  const [isPositive, setIsPositive] = useState(true);
-  const [direction, setDirection] = useState("up");
-  const upperLimit = 50;
-  const lowerLimit = 10;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const randomChange = Math.random();
-
-      if (randomChange > 0.5 && percentage < upperLimit) {
-        setPercentage((prev) =>
-          Math.min(prev + Math.floor(Math.random() * 5) + 1, upperLimit)
-        );
-        setIsPositive(true);
-        setDirection("up");
-      } else if (randomChange <= 0.5 && percentage > lowerLimit) {
-        setPercentage((prev) =>
-          Math.max(prev - Math.floor(Math.random() * 5) - 1, lowerLimit)
-        );
-        setIsPositive(false);
-        setDirection("down");
-      }
-    }, 100000); // change every min (adjust timing if needed)
-
-    return () => clearInterval(interval);
-  }, [percentage]);
   return (
-    <div className="min-w-0 p-4 bg-white rounded-[20px] shadow-xs ">
-      <p className="mb-4 font-semibold text-[#1B2559] text-xl">
-        {loading ? (
-          <Skeleton
-            count={1}
-            height={20}
-            className="bg-gray-200"
-            baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
-            highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
-          />
-        ) : (
-          <div className="flex justify-between items-center">
-            <span>{title}</span>
-            <span
-              className={`flex items-center text-sm ${
-                isPositive ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {/* {direction === "up" ? <FaCaretUp /> : <FaCaretDown />} */}
-              {/* <span className="mr-1">
-                {isPositive ? `+${percentage}%` : `-${Math.abs(percentage)}%`}
-              </span> */}
-            </span>
-          </div>
-        )}
-      </p>
-
-      {title === "Best Selling Products" ? (
-        <>
-          {loading ? (
-            <div className="flex justify-center">
-              <Skeleton
-                className=" bg-gray-200"
-                baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
-                highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
-                count={1}
-                width={250}
-                height={250}
-                circle
-              />
-            </div>
-          ) : (
-            children
-          )}
-        </>
-      ) : (
-        <>
+    <div className="kpi-shine-card">
+      <div className="kpi-shine-inner min-w-0 p-5 h-full">
+        <div className="mb-5">
           {loading ? (
             <Skeleton
-              className=" bg-gray-200"
+              count={1}
+              height={20}
+              className="bg-gray-200"
               baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
               highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
-              count={13}
-              height={20}
             />
           ) : (
-            children
+            <div>
+              <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-1">
+                Analytics
+              </p>
+              <h3 className="text-base font-semibold text-[#211e27]">{title}</h3>
+            </div>
           )}
-        </>
-      )}
+        </div>
+
+        {loading ? (
+          <Skeleton
+            className=" bg-gray-200"
+            baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
+            highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
+            count={10}
+            height={18}
+          />
+        ) : (
+          children
+        )}
+      </div>
     </div>
   );
 };

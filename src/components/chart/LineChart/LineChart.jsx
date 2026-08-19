@@ -4,15 +4,16 @@ import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 
 const LineChart = ({ salesReport }) => {
-  // console.log("saleReport", salesReport);
   const uniqueDates = new Set();
+  const hasData = Boolean(salesReport?.length);
 
-  // Filter out unique dates from salesReport
-  const updatedSalesReport = salesReport?.filter((item) => {
-    const isUnique = !uniqueDates.has(item.date);
-    uniqueDates.add(item.date);
-    return isUnique;
-  });
+  const updatedSalesReport = hasData
+    ? salesReport.filter((item) => {
+        const isUnique = !uniqueDates.has(item.date);
+        uniqueDates.add(item.date);
+        return isUnique;
+      })
+    : [];
 
   const [activeButton, setActiveButton] = useState({
     title: "Orders",
@@ -23,103 +24,116 @@ const LineChart = ({ salesReport }) => {
     setActiveButton({ title, color });
   };
 
+  const sortedReport = [...updatedSalesReport].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+
+  const emptySlots = Array(7).fill(null);
+  const labels = hasData ? sortedReport.map((or) => or.date) : emptySlots.map(() => "");
+  const values = hasData
+    ? sortedReport.map((or) =>
+        activeButton.title === "Orders"
+          ? or.inprogress
+          : activeButton.title === "Sales"
+          ? or.completed
+          : or.cancelled
+      )
+    : emptySlots;
+
+  const dataset =
+    activeButton.title === "Orders"
+      ? {
+          label: "Pending",
+          borderColor: "#F97316",
+          backgroundColor: "rgba(249, 115, 22, 0.12)",
+        }
+      : activeButton.title === "Sales"
+      ? {
+          label: "Completed",
+          borderColor: "#10B981",
+          backgroundColor: "rgba(16, 185, 129, 0.12)",
+        }
+      : {
+          label: "Cancelled",
+          borderColor: "#EF4444",
+          backgroundColor: "rgba(239, 68, 68, 0.12)",
+        };
+
   const barOptions = {
     data: {
-      labels: updatedSalesReport
-        ?.sort((a, b) => new Date(a.date) - new Date(b.date))
-        ?.map((or) => or.date),
+      labels,
       datasets: [
-        activeButton.title === "Orders"
-          ? {
-              label: "Pending",
-              data: updatedSalesReport
-                ?.sort((a, b) => new Date(a.date) - new Date(b.date))
-                ?.map((or) => or.inprogress),
-              borderColor: "#F97316",
-              backgroundColor: "#F97316",
-              borderWidth: 3,
-              yAxisID: "y",
-            }
-          : activeButton.title === "Sales"
-          ? {
-              label: "Completed",
-              data: updatedSalesReport
-                ?.sort((a, b) => new Date(a.date) - new Date(b.date))
-                ?.map((or) => or.completed),
-              borderColor: "#10B981",
-              backgroundColor: "#10B981",
-              borderWidth: 3,
-              yAxisID: "y",
-            }
-          : {
-              label: "Cancelled",
-              data: updatedSalesReport
-                ?.sort((a, b) => new Date(a.date) - new Date(b.date))
-                ?.map((or) => or.cancelled), // assuming 'cancelled' is in the data
-              borderColor: "#EF4444",
-              backgroundColor: "#EF4444",
-              borderWidth: 3,
-              yAxisID: "y",
-            },
+        {
+          ...dataset,
+          data: values,
+          fill: true,
+          borderWidth: 3,
+          pointRadius: hasData ? 3 : 0,
+          pointHoverRadius: 5,
+          pointBackgroundColor: dataset.borderColor,
+          pointBorderColor: "#ffffff",
+          pointBorderWidth: 1,
+          tension: 0.35,
+          yAxisID: "y",
+          spanGaps: false,
+        },
       ],
     },
     options: {
       responsive: true,
-    },
-    legend: {
-      display: false,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: "index" },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: hasData },
+      },
+      scales: {
+        x: {
+          grid: { color: "#E2E8F0", drawBorder: false },
+          ticks: { color: "#A3AED0", font: { size: 11 } },
+          border: { color: "#E2E8F0" },
+        },
+        y: {
+          beginAtZero: true,
+          suggestedMax: hasData ? undefined : 10,
+          grid: { color: "#E2E8F0", drawBorder: false },
+          ticks: { color: "#A3AED0", font: { size: 11 }, precision: 0 },
+          border: { display: false },
+        },
+      },
     },
   };
 
   const { t } = useTranslation();
 
+  const tabs = [
+    { title: "Orders", label: t("Pending") },
+    { title: "Sales", label: t("Completed") },
+    { title: "Cancelled", label: t("Cancelled") },
+  ];
+
   return (
     <>
-      <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 mb-4">
-        <ul className="flex flex-wrap -mb-px">
-          <li className="mr-2">
-            <button
-              onClick={() => handleClick({ title: "Orders", color: "red" })}
-              type="button"
-              className={`inline-block p-2 rounded-t-lg border-b-2 border-transparent ${
-                activeButton.title === "Orders"
-                  ? "text-orange-500 border-orange-500 dark:text-orange-500 dark:border-orange-500"
-                  : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-              }  focus:outline-none`}
-            >
-              {t("Pending")}
-            </button>
-          </li>
-          <li className="mr-2">
-            <button
-              onClick={() => handleClick({ title: "Sales", color: "emerald" })}
-              type="button"
-              className={`inline-block p-2 rounded-t-lg border-b-2 border-transparent ${
-                activeButton.title === "Sales"
-                  ? "text-emerald-600 border-emerald-600 dark:text-emerald-500 dark:border-emerald-500"
-                  : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-              }  focus:outline-none`}
-            >
-              {t("Completed")}
-            </button>
-          </li>
-          <li className="mr-2">
-            <button
-              onClick={() => handleClick({ title: "Cancelled", color: "red" })}
-              type="button"
-              className={`inline-block p-2 rounded-t-lg border-b-2 border-transparent ${
-                activeButton.title === "Cancelled"
-                  ? "text-red-500 border-red-500 dark:text-red-500 dark:border-red-500"
-                  : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-              }  focus:outline-none`}
-            >
-              {t("Cancelled")}
-            </button>
-          </li>
-        </ul>
+      <div className="inline-flex p-1 mb-5 rounded-md bg-[#F4F7FE] border border-[#E2E8F0]">
+        {tabs.map((tab) => (
+          <button
+            key={tab.title}
+            onClick={() => handleClick({ title: tab.title })}
+            type="button"
+            className={`px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase rounded transition-colors ${
+              activeButton.title === tab.title
+                ? "bg-[var(--primary-elite-color)] text-[var(--primary-color)]"
+                : "text-[#50589C] hover:text-[#211e27]"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <Line {...barOptions} />
+      <div className="h-[260px]">
+        <Line {...barOptions} />
+      </div>
     </>
   );
 };

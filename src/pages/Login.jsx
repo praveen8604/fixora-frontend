@@ -20,7 +20,8 @@ import { useHistory, useLocation } from "react-router-dom";
 
 const Login = () => {
   const reduxDispatch = useDispatch();
-  const { dispatch } = useContext(AdminContext);
+  const { dispatch, state } = useContext(AdminContext);
+  const { adminInfo } = state;
   const history = useHistory();
   const location = useLocation();
 
@@ -64,6 +65,12 @@ const Login = () => {
   useEffect(() => {
     fetchUserCountry();
   }, []);
+
+  useEffect(() => {
+    if (adminInfo?.email) {
+      history.replace("/dashboard");
+    }
+  }, [adminInfo, history]);
 
   // Handle phone input changes
   const handlePhoneChange = (value, country) => {

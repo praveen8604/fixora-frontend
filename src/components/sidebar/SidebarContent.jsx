@@ -1,151 +1,95 @@
 import React, { useContext, useState } from "react";
-import { NavLink, Route, useLocation } from "react-router-dom";
-import Cookies from "js-cookie";
+import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button } from "@windmill/react-ui";
-import { IoLogOutOutline } from "react-icons/io5";
-import { FaArrowCircleLeft } from "react-icons/fa";
 import sidebar from "@/routes/sidebar";
-import logo from "@/assets/img/logo/logo.png";
 import logo_short from "@/assets/img/logo/logohead.png";
-import { AdminContext } from "@/context/AdminContext";
-import SidebarSubMenu from "@/components/sidebar/SidebarSubMenu";
 import { SidebarContext } from "@/context/SidebarContext";
-import AlertDialog from "../common/AlterDialogBox";
-import { IoIosArrowDown } from "react-icons/io";
+import SidebarProfile from "@/components/sidebar/SidebarProfile";
 
 const SidebarContent = () => {
-  const { isSidebarOpen, toggleSidebar, openSidebar, closeSidebar } =
-    useContext(SidebarContext);
   const { t } = useTranslation();
-  const { dispatch, dimentions } = useContext(AdminContext);
+  const { closeSidebar } = useContext(SidebarContext);
   const { pathname } = useLocation();
-  const handleLogOut = () => {
-    dispatch({ type: "USER_LOGOUT" });
-    Cookies.remove("adminInfo");
-  };
+  const [hoveredItem, setHoveredItem] = useState(null);
+
+  const isRouteActive = (route) =>
+    route?.path === pathname ||
+    route?.path?.split("/")[1] === pathname?.split("/")[1];
+
   return (
-    <div className="py-4 text-gray-500 dark:text-gray-400">
-      <div className="flex items-center">
-        <a href="/dashboard" className="p-4 py-0 overflow-hidden">
-          <div className="w-64">
-            <img
-              src={isSidebarOpen ? logo : logo_short}
-              alt="fixmate"
-              style={{
-                height: "40px",
-              }}
-              onMouseOver={openSidebar}
-            />
-          </div>
-        </a>
-        <div className="absolute right-[-10px] text-[var(--primary-elite-color)] mt-[10px]">
-          <button
-            className={`relative bg-white rounded-full ease-in-out transition-all w-fit ${isSidebarOpen ? "rotate-0" : "rotate-180"
-              }`}
-            style={{
-              transitionDuration: "0.5s",
-              ...(dimentions?.width <= 1024 && !isSidebarOpen
-                ? { left: "20px" }
-                : { left: "0px" }),
-            }}
-            onClick={toggleSidebar}
-            aria-label="Menu"
-          >
-            <FaArrowCircleLeft size="20" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
-      <ul className="mt-8">
-        {sidebar.map(
-          (route) => (
-            <li className="relative" key={route?.name}>
+    <div className="relative h-full py-4 text-gray-500">
+      <a href="/dashboard" className="flex items-center justify-center px-2">
+        <img
+          src={logo_short}
+          alt="fixmate"
+          className="h-10 w-10 object-contain"
+        />
+      </a>
+
+      <ul className="mt-8 flex flex-col items-center gap-1 px-2">
+        {sidebar.map((route) => {
+          const isActive = isRouteActive(route);
+          const options =
+            route?.subMenu?.length > 0
+              ? route.subMenu
+              : [{ path: route.path, name: route.name }];
+          const isHovered = hoveredItem === route.name;
+
+          return (
+            <li
+              key={route.name}
+              className="relative"
+              onMouseEnter={() => setHoveredItem(route.name)}
+              onMouseLeave={() => setHoveredItem(null)}
+            >
               <NavLink
                 exact
-                to={route?.path}
-                className={`px-6 py-4 h-[55px] flex items-center justify-between w-full text-sm font-semibold transition-colors duration-150 ${(route?.path === pathname ||
-                  route?.path?.split("/")[1] === pathname?.split("/")[1]) &&
-                  "text-[var(--primary-elite-color)] bg-[#2b318c0f]"
-                  } hover:text-[var(--primary-elite-color)]`}
+                to={route.path}
+                className={`flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 ${
+                  isActive
+                    ? "text-[var(--primary-elite-color)] bg-[#2b318c14]"
+                    : "text-[#6B7280] hover:text-[var(--primary-elite-color)] hover:bg-[#F4F7FE]"
+                }`}
                 rel="noreferrer"
               >
-                <div className="inline-flex items-center">
-                  {(route?.path === pathname ||
-                    route?.path?.split("/")[1] === pathname?.split("/")[1]) && (
-                      <span
-                        className="absolute inset-y-0 left-0 h-[55px] w-1 bg-[var(--secondary-elite-color)] rounded-tr-lg rounded-br-lg"
-                        aria-hidden="true"
-                      ></span>
-                    )}
-                  <route.icon
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                    onMouseOver={openSidebar}
-                  />
-                  {isSidebarOpen && (
-                    <div className={`ml-4 text-nowrap overflow-hidden`}>
-                      {t(`${route?.name}`)}
-                    </div>
-                  )}
-                </div>
-                {route?.subMenu?.length > 0 && (
-                  <div
-                    className={`${route?.path?.split("/")[1] === pathname?.split("/")[1]
-                      ? "-rotate-180"
-                      : ""
-                      }`}
-                    style={{
-                      transition: "all 0.3s ease-in-out",
-                    }}
-                  >
-                    <IoIosArrowDown size={16} />
-                  </div>
-                )}
+                <route.icon className="w-5 h-5" aria-hidden="true" />
               </NavLink>
-              {route?.subMenu?.length > 0 && (
-                <SidebarSubMenu
-                  route={route?.subMenu}
-                  parentLink={route?.path?.split("/")[1]}
-                  currentParentPath={pathname?.split("/")[1]}
-                  pathname={pathname}
-                />
+
+              {isHovered && (
+                <div className="absolute left-full top-0 z-[80] pl-3">
+                  <div className="min-w-[220px] rounded-xl border border-[#E2E8F0] bg-white py-2 shadow-[0_12px_32px_rgba(33,30,39,0.12)]">
+                    <p className="px-3 pb-2 text-[11px] font-medium tracking-[0.14em] uppercase text-[#A3AED0]">
+                      {t(route.name)}
+                    </p>
+                    {options.map((child) => {
+                      const childActive = pathname === child.path;
+                      return (
+                        <NavLink
+                          key={child.path}
+                          to={child.path}
+                          onClick={() => {
+                            setHoveredItem(null);
+                            closeSidebar();
+                          }}
+                          className={`block px-3 py-2 mx-1 rounded-lg text-sm font-medium transition-colors ${
+                            childActive
+                              ? "bg-[#F4F7FE] text-[var(--primary-elite-color)]"
+                              : "text-[#211e27] hover:bg-[#F4F7FE] hover:text-[var(--primary-elite-color)]"
+                          }`}
+                        >
+                          {t(child.name)}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </li>
-          )
-          // )
-        )}
+          );
+        })}
       </ul>
-      <div
-        className={`absolute p-6 bottom-0 ${isSidebarOpen ? "px-6 py-6 w-64" : "flex items-center justify-center"
-          }`}
-        style={{
-          width: "-webkit-fill-available",
-        }}
-      >
-        <AlertDialog
-          onAgree={() => handleLogOut()}
-          dialogTitle={"Logout?"}
-          dialogDetails={"Are you sure you want to logout?"}
-          AgreeButtonValue="Yes, Logout!"
-          CancelButton="Cancel"
-          triggerButton={(onClickFunc) => {
-            return (
-              <Button
-                onClick={onClickFunc}
-                size="large"
-                className={`logout-btn w-full overflow-hidden`}
-              >
-                <span className="flex items-center gap-3">
-                  <IoLogOutOutline className="text-lg" />
-                  {isSidebarOpen && (
-                    <span className="text-sm text-nowrap">{t("LogOut")}</span>
-                  )}
-                </span>
-              </Button>
-            );
-          }}
-        />
-      </div>
+
+      <SidebarProfile />
     </div>
   );
 };

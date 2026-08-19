@@ -16,7 +16,7 @@ export const SidebarProvider = ({ children }) => {
   // const dispatch = useDispatch();
 
   const [limitData, setLimitData] = useState(20);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isBulkDrawerOpen, setIsBulkDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);

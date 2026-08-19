@@ -25,6 +25,7 @@ import DashboardServices from "@/services/DashboardServices";
 import { DecryptData } from "@/utils/DecryptData";
 import { Link } from "react-router-dom";
 import SrChart from "@/components/chart/SrChart";
+import OverviewDate from "@/components/dashboard/OverviewDate";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -34,15 +35,15 @@ const Dashboard = () => {
   dayjs.extend(isToday);
   dayjs.extend(isYesterday);
 
-  // react hook
   const [dashData, setDashData] = useState("");
+  const [selectedDate, setSelectedDate] = useState(dayjs());
   const [todayCashPayment] = useState(0);
   const [todayCardPayment] = useState(0);
   const [todayCreditPayment] = useState(0);
 
-  const {
-    loading: loadingBestSellerProduct,
-  } = useAsync(OrderServices.getBestSellerProductChart);
+  const { loading: loadingBestSellerProduct } = useAsync(
+    OrderServices.getBestSellerProductChart
+  );
 
   const { data: dashboardOrderCount, loading: loadingOrderCount } = useAsync(
     OrderServices.getDashboardCount
@@ -66,27 +67,77 @@ const Dashboard = () => {
       });
   }, [dashboardOrderAmount]);
 
+  const getUserCount = (id) =>
+    dashData?.dashBoardCount?.userCount?.find((d) => d._id === id)?.count || 0;
+
+  const getServiceCount = (id) =>
+    dashData?.dashBoardCount?.serviceRequestCount?.find((d) => d._id === id)
+      ?.count || 0;
+
+  const pendingServices =
+    getServiceCount("in-progress") + getServiceCount("received");
+
   return (
-    <>
-      <AnimatedContent>
-        <div className="grid gap-2 mb-4 xl:grid-cols-4 md:grid-cols-2 mt-4">
-          <Link to="/users">
+    <AnimatedContent>
+      <div className="pb-10">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between mt-4 mb-6 pb-5 border-b border-[#E2E8F0]">
+          <div>
+            <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#50589C] mb-1.5">
+              Operations
+            </p>
+            <h1 className="text-[22px] font-semibold text-[#211e27] leading-tight">
+              Overview
+            </h1>
+            <p className="text-sm text-[#A3AED0] mt-1">
+              Users, service volume, and request status
+            </p>
+          </div>
+          <OverviewDate value={selectedDate} onChange={setSelectedDate} />
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-8 mb-8">
+          {[
+            { label: "Users", value: getUserCount("all_users") },
+            { label: "Open services", value: pendingServices },
+            { label: "Completed", value: getServiceCount("completed") },
+            {
+              label: "Revenue",
+              value: dashboardOrderCount?.totalDeliveredOrder || 0,
+            },
+          ].map((item, index) => (
+            <div
+              key={item.label}
+              className={`lg:pl-6 ${
+                index === 0 ? "lg:pl-0" : "lg:border-l lg:border-[#E2E8F0]"
+              }`}
+            >
+              <p className="text-[11px] tracking-[0.14em] uppercase text-[#A3AED0] mb-1.5">
+                {item.label}
+              </p>
+              <p className="text-2xl font-semibold tabular-nums text-[#211e27]">
+                {Number(item.value || 0).toLocaleString()}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-3">
+          Directory
+        </p>
+        <div className="grid gap-3 mb-7 xl:grid-cols-4 md:grid-cols-2">
+          <Link to="/users" className="block h-full">
             <CardItemTwo
               mode={mode}
               title="Total Users"
               title2="Total Users"
               Icon={FaUser}
-              price={
-                dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "all_users"
-                )?.count || 0
-              }
+              price={getUserCount("all_users")}
               loading={loadingOrderAmount}
               cardBg="var(--linear-elite-color)"
               cardTextColor="text-[var(--primary-color)]"
             />
           </Link>
-          <Link to="/users/customer">
+          <Link to="/users/customer" className="block h-full">
             <CardItemTwo
               mode={mode}
               title="Total Customers"
@@ -95,153 +146,108 @@ const Dashboard = () => {
               cash={todayCashPayment || 0}
               card={todayCardPayment || 0}
               credit={todayCreditPayment || 0}
-              price={
-                dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "customer"
-                )?.count || 0
-              }
+              price={getUserCount("customer")}
               loading={loadingOrderAmount}
               cardBg="var(--linear-elite-color)"
               cardTextColor="text-[var(--primary-color)]"
             />
           </Link>
-          <Link to="/users/technician">
+          <Link to="/users/technician" className="block h-full">
             <CardItemTwo
               mode={mode}
               title="Total Technician"
               title2="Total Technician"
               Icon={FaTools}
-              price={
-                dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "technician"
-                )?.count +
-                  dashData?.dashBoardCount?.userCount.find(
-                    (d) => d._id === "admin"
-                  )?.count || 0
-              }
+              price={getUserCount("technician") + getUserCount("admin") || 0}
               loading={loadingOrderAmount}
               cardBg="var(--linear-elite-color)"
               cardTextColor="text-[var(--primary-color)]"
             />
           </Link>
-          <Link to="/users/rider">
+          <Link to="/users/rider" className="block h-full">
             <CardItemTwo
               mode={mode}
               title="Total Rider"
               title2="Total Rider"
               Icon={FaMotorcycle}
-              price={
-                dashData?.dashBoardCount?.userCount?.find(
-                  (d) => d._id === "rider"
-                )?.count || 0
-              }
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              loading={loadingOrderAmount}
-            />
-          </Link>
-          <Link to="/services/servicerequests">
-            <CardItemTwo
-              mode={mode}
-              title2="Total Services"
-              Icon={FaRegChartBar}
-              price={
-                dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "all_servicerequests"
-                )?.count || 0
-              }
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              loading={loadingOrderAmount}
-            />
-          </Link>
-          <Link to="/services/servicerequests">
-            <CardItemTwo
-              mode={mode}
-              title2="Completed Services"
-              Icon={IoMdDoneAll}
-              loading={loadingOrderAmount}
-              price={
-                dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "completed"
-                )?.count || 0
-              }
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-            />
-          </Link>
-          <Link to="/services/servicerequests">
-            <CardItemTwo
-              mode={mode}
-              title2="Pending Services"
-              Icon={AiOutlineExclamationCircle}
-              price={
-                (dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "in-progress"
-                )?.count || 0) + (dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "received"
-                )?.count || 0)
-              }
-              cardBg="var(--linear-elite-color)"
-              cardTextColor="text-[var(--primary-color)]"
-              loading={loadingOrderAmount}
-            />
-          </Link>
-          <Link to="/services/servicerequests">
-            <CardItemTwo
-              mode={mode}
-              title2="Cancelled Services"
-              Icon={MdCancelPresentation}
-              price={
-                dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "canceled"
-                )?.count || 0
-              }
+              price={getUserCount("rider")}
               cardBg="var(--linear-elite-color)"
               cardTextColor="text-[var(--primary-color)]"
               loading={loadingOrderAmount}
             />
           </Link>
         </div>
-        {/* 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <CardItem
-            title="Total Order"
-            Icon={FiShoppingCart}
-            loading={loadingOrderCount}
-            quantity={dashboardOrderCount?.totalOrder || 0}
-            className="text-orange-600 dark:text-orange-100 bg-orange-100 dark:bg-orange-500"
-          />
-          <CardItem
-            title={t("OrderPending")}
-            Icon={FiRefreshCw}
-            loading={loadingOrderCount}
-            quantity={dashboardOrderCount?.totalPendingOrder??.count || 0}
-            amount={dashboardOrderCount?.totalPendingOrder?.total || 0}
-            className="text-blue-600 dark:text-blue-100 bg-blue-100 dark:bg-blue-500"
-          />
 
-          <SrChart userData={userData} getUserData={getUserData} />
-        </div> */}
+        <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#A3AED0] mb-3">
+          Service pipeline
+        </p>
+        <div className="grid gap-3 mb-7 xl:grid-cols-4 md:grid-cols-2">
+          <Link to="/services/servicerequests" className="block h-full">
+            <CardItemTwo
+              mode={mode}
+              title2="Total Services"
+              Icon={FaRegChartBar}
+              price={getServiceCount("all_servicerequests")}
+              cardBg="var(--linear-elite-color)"
+              cardTextColor="text-[var(--primary-color)]"
+              loading={loadingOrderAmount}
+              accent="var(--primary-elite-color)"
+            />
+          </Link>
+          <Link to="/services/servicerequests" className="block h-full">
+            <CardItemTwo
+              mode={mode}
+              title2="Completed Services"
+              Icon={IoMdDoneAll}
+              loading={loadingOrderAmount}
+              price={getServiceCount("completed")}
+              cardBg="var(--linear-elite-color)"
+              cardTextColor="text-[var(--primary-color)]"
+              accent="var(--primary-elite-color)"
+            />
+          </Link>
+          <Link to="/services/servicerequests" className="block h-full">
+            <CardItemTwo
+              mode={mode}
+              title2="Pending Services"
+              Icon={AiOutlineExclamationCircle}
+              price={pendingServices}
+              cardBg="var(--linear-elite-color)"
+              cardTextColor="text-[var(--primary-color)]"
+              accent="var(--primary-elite-color)"
+              loading={loadingOrderAmount}
+            />
+          </Link>
+          <Link to="/services/servicerequests" className="block h-full">
+            <CardItemTwo
+              mode={mode}
+              title2="Cancelled Services"
+              Icon={MdCancelPresentation}
+              price={getServiceCount("canceled")}
+              cardBg="var(--linear-elite-color)"
+              cardTextColor="text-[var(--primary-color)]"
+              accent="var(--primary-elite-color)"
+              loading={loadingOrderAmount}
+            />
+          </Link>
+        </div>
 
-        <div className="grid gap-4 md:grid-cols-2 my-8">
-          <div>
-            <div className="grid gap-4 md:grid-cols-1 xl:grid-cols-2 mb-4">
+        <div className="grid gap-3 xl:grid-cols-5 items-stretch">
+          <div className="xl:col-span-3 flex flex-col gap-3">
+            <div className="grid gap-3 md:grid-cols-2">
               <CardItem
                 title={t("Closed Service Request")}
                 Icon={FaCheckCircle}
                 loading={loadingOrderCount}
-                quantity={dashData?.dashBoardCount?.serviceRequestCount?.find(
-                  (d) => d._id === "closed"
-                )?.count || 0}
-                className="text-[var(--primary-color)] bg-[var(--secondary-elite-color)] "
+                quantity={getServiceCount("closed")}
+                className="text-[var(--primary-color)] bg-[var(--secondary-elite-color)]"
               />
               <CardItem
                 title={t("Total Revenue")}
                 Icon={FaWallet}
                 loading={loadingOrderCount}
                 quantity={dashboardOrderCount?.totalDeliveredOrder || 0}
-                className="text-[var(--primary-color)] bg-[var(--primary-elite-color)] "
+                className="text-[var(--primary-color)] bg-[var(--primary-elite-color)]"
               />
             </div>
 
@@ -254,62 +260,19 @@ const Dashboard = () => {
             </ChartCard>
           </div>
 
-          <ChartCard2
-            mode={mode}
-            loading={loadingBestSellerProduct}
-            title={t("Recent Service Requests ")}
-            data={
-              dashData?.dashBoardCount?.serviceRequestCount?.find(
-                (d) => d._id === "all_servicerequests"
-              )?.count || 0
-            }
-          >
-            {/* <PieChart data={data} /> */}
-            <SrChart recentSr={dashData?.recentServiceRequests} />
-          </ChartCard2>
+          <div className="xl:col-span-2">
+            <ChartCard2
+              mode={mode}
+              loading={loadingBestSellerProduct}
+              title={t("Recent Service Requests ")}
+              data={getServiceCount("all_servicerequests")}
+            >
+              <SrChart recentSr={dashData?.recentServiceRequests} />
+            </ChartCard2>
+          </div>
         </div>
-      </AnimatedContent>
-
-      {/* <PageTitle>{t("RecentOrder")}</PageTitle> */}
-
-      {/* <Loading loading={loading} /> */}
-
-      {/* {loadingRecentOrder ? (
-        <TableLoading row={5} col={4} />
-      ) : error ? (
-        <span className="text-center mx-auto text-red-500">{error}</span>
-      ) : serviceData?.length !== 0 ? (
-        <TableContainer className="mb-8">
-          <Table>
-            <TableHeader>
-              <tr>
-                <TableCell>{t("InvoiceNo")}</TableCell>
-                <TableCell>{t("TimeTbl")}</TableCell>
-                <TableCell>{t("CustomerName")} </TableCell>
-                <TableCell> {t("MethodTbl")} </TableCell>
-                <TableCell> {t("AmountTbl")} </TableCell>
-                <TableCell>{t("OderStatusTbl")}</TableCell>
-                <TableCell>{t("ActionTbl")}</TableCell>
-                <TableCell className="text-right">{t("InvoiceTbl")}</TableCell>
-              </tr>
-            </TableHeader>
-
-            <OrderTable orders={dataTable} />
-          </Table>
-          <TableFooter>
-            <Pagination
-              totalResults={dashboardRecentOrder?.totalOrder}
-              resultsPerPage={8}
-              onChange={handleChangePage}
-              label="Table navigation"
-            />
-          </TableFooter>
-        </TableContainer>
-      ) : (
-        <NotFound title="Sorry, There are no orders right now." />
-      )
-      } */}
-    </>
+      </div>
+    </AnimatedContent>
   );
 };
 

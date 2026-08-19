@@ -1,23 +1,15 @@
 import React, { useContext } from "react";
 import SidebarContent from "@/components/sidebar/SidebarContent";
-import { SidebarContext } from "@/context/SidebarContext";
 import { AdminContext } from "@/context/AdminContext";
 
 const DesktopSidebar = () => {
-  const { isSidebarOpen } = useContext(SidebarContext);
   const { dimentions } = useContext(AdminContext);
   return (
     <aside
-      className={`z-50 flex-shrink-0 shadow-sm ${
-        isSidebarOpen ? "w-64" : "w-[70px]"
-      } bg-[var(--primary-color)] lg:block absolute`}
+      className="z-50 flex-shrink-0 w-[72px] bg-[var(--primary-color)] lg:block absolute overflow-visible"
       style={{
-        transition: "width 0.5s ease-in-out, left 0.5s ease-in-out",
         height: dimentions?.height,
         borderRight: "1.5px solid #d8d8d8",
-        ...(dimentions?.width <= 1024 && !isSidebarOpen
-          ? { left: "-70px" }
-          : {}),
       }}
     >
       <SidebarContent />

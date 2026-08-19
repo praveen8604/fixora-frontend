@@ -175,3 +175,72 @@ body {
   outline: none !important;
   cursor: pointer;
 }
+
+.kpi-shine-card {
+  position: relative;
+  height: 100%;
+  border-radius: 8px;
+  padding: 1px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #e2e8f0;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.kpi-shine-card::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  width: 240%;
+  height: 240%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 62%,
+    rgba(255, 255, 255, 0.25) 70%,
+    #ffffff 76%,
+    var(--secondary-elite-color) 84%,
+    var(--primary-elite-color) 91%,
+    transparent 97%,
+    transparent 100%
+  );
+  animation: kpi-shine-spin 2.6s linear infinite;
+}
+
+.kpi-shine-inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  background: #fff;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.kpi-shine-card:hover {
+  transform: translate(-6px, -6px);
+  box-shadow: 8px 8px 18px rgba(33, 30, 39, 0.1);
+}
+
+.kpi-shine-dark {
+  background: #3a3640;
+}
+
+.kpi-shine-dark .kpi-shine-inner {
+  background: var(--primary-elite-color);
+}
+
+.kpi-shine-dark:hover {
+  box-shadow: 8px 8px 18px rgba(33, 30, 39, 0.28);
+}
+
+@keyframes kpi-shine-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
