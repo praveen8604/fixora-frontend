@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { NavLink, Route, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
 import { Button } from "@windmill/react-ui";
@@ -15,19 +15,26 @@ import AlertDialog from "../common/AlterDialogBox";
 import { IoIosArrowDown } from "react-icons/io";
 
 const SidebarContent = () => {
-  const { isSidebarOpen, toggleSidebar, openSidebar, closeSidebar } =
+  const { isSidebarOpen, toggleSidebar, openSidebar } =
     useContext(SidebarContext);
+
   const { t } = useTranslation();
   const { dispatch, dimentions } = useContext(AdminContext);
   const { pathname } = useLocation();
+
   const handleLogOut = () => {
     dispatch({ type: "USER_LOGOUT" });
     Cookies.remove("adminInfo");
   };
+
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
+      {/* =====================================================
+          LOGO
+      ====================================================== */}
+
       <div className="flex items-center">
-        <a href="/dashboard" className="p-4 py-0 overflow-hidden">
+        <a href="/dashboard" className="overflow-hidden p-4 py-0">
           <div className="w-64">
             <img
               src={isSidebarOpen ? logo : logo_short}
@@ -39,10 +46,22 @@ const SidebarContent = () => {
             />
           </div>
         </a>
-        <div className="absolute right-[-10px] text-[var(--primary-elite-color)] mt-[10px]">
+
+        {/* COLLAPSE BUTTON */}
+
+        <div className="absolute right-[-10px] mt-[10px] text-[var(--primary-elite-color)]">
           <button
-            className={`relative bg-white rounded-full ease-in-out transition-all w-fit ${isSidebarOpen ? "rotate-0" : "rotate-180"
-              }`}
+            type="button"
+            className={`
+              relative
+              rounded-full
+              bg-white
+              transition-all
+              duration-500
+              ease-in-out
+              focus:outline-none
+              ${isSidebarOpen ? "rotate-0" : "rotate-180"}
+            `}
             style={{
               transitionDuration: "0.5s",
               ...(dimentions?.width <= 1024 && !isSidebarOpen
@@ -56,52 +75,124 @@ const SidebarContent = () => {
           </button>
         </div>
       </div>
-      <ul className="mt-8">
-        {sidebar.map(
-          (route) => (
-            <li className="relative" key={route?.name}>
+
+      {/* =====================================================
+          SIDEBAR MENU
+      ====================================================== */}
+
+      <ul className="mt-8 px-2">
+        {sidebar.map((route) => {
+          const isActive =
+            route?.path === pathname ||
+            route?.path?.split("/")[1] === pathname?.split("/")[1];
+
+          return (
+            <li className="relative mb-1" key={route?.name}>
               <NavLink
                 exact
                 to={route?.path}
-                className={`px-6 py-4 h-[55px] flex items-center justify-between w-full text-sm font-semibold transition-colors duration-150 ${(route?.path === pathname ||
-                  route?.path?.split("/")[1] === pathname?.split("/")[1]) &&
-                  "text-[var(--primary-elite-color)] bg-[#2b318c0f]"
-                  } hover:text-[var(--primary-elite-color)]`}
                 rel="noreferrer"
+                onMouseOver={openSidebar}
+                className={`
+                  group
+                  relative
+                  flex
+                  h-[55px]
+                  w-full
+                  items-center
+                  justify-between
+                  rounded-[12px]
+                  px-4
+                  text-sm
+                  font-semibold
+                  no-underline
+                  transition-all
+                  duration-200
+                  ease-in-out
+
+                  ${
+                    isActive
+                      ? "bg-[#20242B] text-white shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                      : "bg-transparent text-[#68717F] hover:bg-[#F1F2F4] hover:text-[#282D35]"
+                  }
+                `}
               >
-                <div className="inline-flex items-center">
-                  {(route?.path === pathname ||
-                    route?.path?.split("/")[1] === pathname?.split("/")[1]) && (
-                      <span
-                        className="absolute inset-y-0 left-0 h-[55px] w-1 bg-[var(--secondary-elite-color)] rounded-tr-lg rounded-br-lg"
-                        aria-hidden="true"
-                      ></span>
-                    )}
+                {/* =================================================
+                    ICON + TEXT
+                ================================================== */}
+
+                <div className="inline-flex min-w-0 items-center">
                   <route.icon
-                    className="w-5 h-5"
+                    className={`
+                      h-5
+                      w-5
+                      shrink-0
+                      transition-colors
+                      duration-200
+
+                      ${
+                        isActive
+                          ? "text-white"
+                          : "text-[#68717F] group-hover:text-[#282D35]"
+                      }
+                    `}
                     aria-hidden="true"
-                    onMouseOver={openSidebar}
                   />
+
                   {isSidebarOpen && (
-                    <div className={`ml-4 text-nowrap overflow-hidden`}>
+                    <div
+                      className={`
+                        ml-4
+                        overflow-hidden
+                        text-nowrap
+                        transition-colors
+                        duration-200
+
+                        ${
+                          isActive
+                            ? "text-white"
+                            : "text-[#68717F] group-hover:text-[#282D35]"
+                        }
+                      `}
+                    >
                       {t(`${route?.name}`)}
                     </div>
                   )}
                 </div>
+
+                {/* =================================================
+                    SUBMENU ARROW
+                ================================================== */}
+
                 {route?.subMenu?.length > 0 && (
                   <div
-                    className={`${route?.path?.split("/")[1] === pathname?.split("/")[1]
-                      ? "-rotate-180"
-                      : ""
-                      }`}
-                    style={{
-                      transition: "all 0.3s ease-in-out",
-                    }}
+                    className={`
+                      shrink-0
+                      transition-all
+                      duration-300
+
+                      ${
+                        route?.path?.split("/")[1] === pathname?.split("/")[1]
+                          ? "-rotate-180"
+                          : ""
+                      }
+
+                      ${
+                        isActive
+                          ? "text-white"
+                          : "text-[#8C94A0] group-hover:text-[#282D35]"
+                      }
+                    `}
                   >
                     <IoIosArrowDown size={16} />
                   </div>
                 )}
               </NavLink>
+
+              {/* =================================================
+                  SUBMENU
+              ================================================== */}
+
               {route?.subMenu?.length > 0 && (
                 <SidebarSubMenu
                   route={route?.subMenu}
@@ -111,13 +202,25 @@ const SidebarContent = () => {
                 />
               )}
             </li>
-          )
-          // )
-        )}
+          );
+        })}
       </ul>
+
+      {/* =====================================================
+          LOGOUT
+      ====================================================== */}
+
       <div
-        className={`absolute p-6 bottom-0 ${isSidebarOpen ? "px-6 py-6 w-64" : "flex items-center justify-center"
-          }`}
+        className={`
+          absolute
+          bottom-0
+          p-6
+          ${
+            isSidebarOpen
+              ? "w-64 px-6 py-6"
+              : "flex items-center justify-center"
+          }
+        `}
         style={{
           width: "-webkit-fill-available",
         }}
@@ -133,10 +236,11 @@ const SidebarContent = () => {
               <Button
                 onClick={onClickFunc}
                 size="large"
-                className={`logout-btn w-full overflow-hidden`}
+                className="logout-btn w-full overflow-hidden"
               >
                 <span className="flex items-center gap-3">
                   <IoLogOutOutline className="text-lg" />
+
                   {isSidebarOpen && (
                     <span className="text-sm text-nowrap">{t("LogOut")}</span>
                   )}
