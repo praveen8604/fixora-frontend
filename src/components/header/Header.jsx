@@ -1,119 +1,45 @@
-import { Avatar, Badge, WindmillContext } from "@windmill/react-ui";
-import Cookies from "js-cookie";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import { FiTrash2, FiGrid, FiLogOut } from "react-icons/fi";
-import { Link } from "react-router-dom";
-import cookies from "js-cookie";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import ellipse from "@/assets/img/icons/ellipse.svg";
-import { AdminContext } from "@/context/AdminContext";
-import useNotification from "@/hooks/useNotification";
-import useUtilsFunction from "@/hooks/useUtilsFunction";
-import NotFoundTwo from "@/components/table/NotFoundTwo";
-import NotificationServices from "@/services/NotificationServices";
-import AlertDialog from "../common/AlterDialogBox";
+import sidebar from "@/routes/sidebar";
 
 const Header = () => {
-  const { state, dispatch } = useContext(AdminContext);
-  const { adminInfo } = state;
-  const pRef = useRef();
-  const nRef = useRef();
   const { t } = useTranslation();
-  const { updated, setUpdated } = useNotification();
-  const { showDateTimeFormat } = useUtilsFunction();
+  const { pathname } = useLocation();
 
-  const [data, setData] = useState([]);
-  const [totalDoc, setTotalDoc] = useState(0);
-  const [totalUnreadDoc, setTotalUnreadDoc] = useState(0);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [notificationOpen, setNotificationOpen] = useState(false);
+  const getHeaderTitle = () => {
+    const extraTitles = [
+      { path: "/services/servicerequests/request", name: "Service Request" },
+      { path: "/users/technician/details", name: "Technician Details" },
+      { path: "/users/rider/details", name: "Rider Details" },
+      { path: "/users/customer/details", name: "Customer Details" },
+      { path: "/appliance/overview", name: "Appliance Overview" },
+      { path: "/user", name: "User Details" },
+    ];
 
-  // console.log("currentLanguageCode", currentLanguageCode);
+    const extraMatch = extraTitles.find(
+      (item) => pathname === item.path || pathname.startsWith(`${item.path}?`)
+    );
+    if (extraMatch) return extraMatch.name;
 
-  const handleLogOut = () => {
-    dispatch({ type: "USER_LOGOUT" });
-    Cookies.remove("adminInfo");
-    window.location.replace(`${import.meta.env.VITE_APP_ADMIN_DOMAIN}/login`);
-  };
-
-  const handleNotificationOpen = async () => {
-    setNotificationOpen(!notificationOpen);
-    setProfileOpen(false);
-    await handleGetAllNotifications();
-  };
-  const handleProfileOpen = () => {
-    setProfileOpen(!profileOpen);
-    setNotificationOpen(false);
-  };
-
-  // handle notification status change
-  const handleNotificationStatusChange = async (id) => {
-    try {
-      await NotificationServices.updateStatusNotification(id, {
-        status: "read",
-      });
-
-      const getAllRes = await NotificationServices.getAllNotification();
-      setData(getAllRes?.notifications);
-      setTotalUnreadDoc(getAllRes?.totalUnreadDoc);
-      window.location.reload(false);
-    } catch (err) {
-      notifyError(err?.response?.data?.message || err?.message);
-    }
-  };
-
-  // handle notification delete
-  const handleNotificationDelete = async (id) => {
-    try {
-      await NotificationServices.deleteNotification(id);
-      const getAllRes = await NotificationServices.getAllNotification();
-      setData(getAllRes?.notifications);
-      setTotalUnreadDoc(getAllRes?.totalUnreadDoc);
-      setTotalDoc(getAllRes?.totalDoc);
-    } catch (err) {
-      notifyError(err?.response?.data?.message || err?.message);
-    }
-  };
-
-  //handle get notifications
-  const handleGetAllNotifications = async () => {
-    try {
-      const res = await NotificationServices.getAllNotification();
-      // console.log("notifcation api called", res);
-      setData(res?.notifications);
-      setTotalUnreadDoc(res?.totalUnreadDoc);
-      setTotalDoc(res?.totalDoc);
-      setUpdated(false);
-    } catch (err) {
-      setUpdated(false);
-      notifyError(err?.response?.data?.message || err?.message);
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!pRef?.current?.contains(e.target)) {
-        setProfileOpen(false);
+    for (const route of sidebar) {
+      if (route.subMenu?.length) {
+        const child = [...route.subMenu]
+          .sort((a, b) => b.path.length - a.path.length)
+          .find(
+            (item) =>
+              pathname === item.path || pathname.startsWith(`${item.path}/`)
+          );
+        if (child) return child.name;
       }
-      if (!nRef?.current?.contains(e.target)) {
-        setNotificationOpen(false);
+      if (pathname === route.path || pathname.startsWith(`${route.path}/`)) {
+        return route.name;
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-  }, [pRef, nRef]);
+    }
 
-  // notification api calling
-  useEffect(() => {
-    // handleGetAllNotifications();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updated]);
-  // const onChange = (event) => {
-  //     i18next.changeLanguage(event.target.value);
+    return "Dashboard";
+  };
 
-  // }
-
-  // console.log("notificaiotn", data);
   return (
     <>
       <header className="z-30 py-4 bg-[var(--primary-color)] backdrop-blur-lg shadow-sm">

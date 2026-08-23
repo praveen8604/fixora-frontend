@@ -3,13 +3,20 @@ import React, { createContext, useReducer, useState } from "react";
 
 export const AdminContext = createContext();
 
+const readAdminFromCookie = () => {
+  const raw = Cookies.get("adminInfo");
+  if (raw && raw !== "undefined") {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
 const initialState = {
-  adminInfo:
-    Cookies.get("adminInfo") &&
-    Cookies.get("adminInfo") !== undefined &&
-    Cookies.get("adminInfo") !== "undefined"
-      ? JSON.parse(Cookies.get("adminInfo"))
-      : null,
+  adminInfo: readAdminFromCookie(),
   dimentions: {
     height: 0,
     width: 0,

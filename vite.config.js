@@ -101,6 +101,11 @@ export default defineConfig({
         target: "http://localhost:5065",
         changeOrigin: true,
       },
+      "/eserve": {
+        target: "https://fixora-backend-xi.vercel.app",
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
   define: {

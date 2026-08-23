@@ -3,8 +3,12 @@ import Cookies from "js-cookie";
 
 // console.log("base url", import.meta.env.VITE_APP_API_BASE_URL);
 
+const API_BASE =
+  import.meta.env.VITE_APP_API_BASE_URL ||
+  "https://fixora-backend-xi.vercel.app";
+
 const instance = axios.create({
-  baseURL: `${import.meta.env.VITE_APP_API_BASE_URL}`,
+  baseURL: import.meta.env.DEV ? "" : API_BASE,
   timeout: 50000,
   headers: {
     Accept: "application/json",

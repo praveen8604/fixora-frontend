@@ -16,6 +16,10 @@ const CardItem = ({
   olderPending,
 }) => {
   const { getNumberTwo } = useUtilsFunction();
+  const displayValue =
+    quantity === null || quantity === undefined || isNaN(quantity)
+      ? "0"
+      : Number(quantity).toLocaleString();
 
   if (loading) {
     return (

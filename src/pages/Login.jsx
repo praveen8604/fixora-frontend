@@ -1,328 +1,286 @@
 import React, { useContext, useEffect, useState } from "react";
 import { IoMdMail } from "react-icons/io";
+import { FaPhoneAlt } from "react-icons/fa";
 import { Button } from "@windmill/react-ui";
-import { useTranslation } from "react-i18next";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useForm } from "react-hook-form";
-import AdminServices from "@/services/AdminServices";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import Error from "@/components/form/others/Error";
-import LabelArea from "@/components/form/selectOption/LabelArea";
 import loginvideo from "@/assets/img/loginvideo.mp4";
-// import bglogin from "@/assets/img/bglogin.gif";
-import { DecryptData } from "@/utils/DecryptData";
+import logo from "@/assets/img/logo/logo.png";
 import { AdminContext } from "@/context/AdminContext";
 import { removeSetting } from "@/reduxStore/slice/settingSlice";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const reduxDispatch = useDispatch();
   const { dispatch } = useContext(AdminContext);
-  const history = useHistory();
-  const location = useLocation();
 
-  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm();
   const cookieTimeOut = 0.5;
   const [loginMethod, setLoginMethod] = useState("otp");
-  const [isOtpSent, setIsOtpSent] = useState(false); // Track OTP screen state
-  const [enteredEmail, setEnteredEmail] = useState(""); // Store the entered mobile number
-  const [enteredMobileNumber, setEnteredMobileNumber] = useState(""); // Store the entered mobile number
-  const [enteredCountryCode, setEnteredCountryCode] = useState(""); // Store the entered country code
-  const [otp, setOtp] = useState(""); // Store OTP input value
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const [enteredMobileNumber, setEnteredMobileNumber] = useState("");
+  const [enteredCountryCode, setEnteredCountryCode] = useState("");
+  const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const maskedNumber = enteredMobileNumber?.replace(/\d(?=\d{4})/g, "*");
   const maskedEmail = enteredEmail?.replace(
     /^(.)(.*)(.@.*)$/,
-    (match, firstChar, middleChars, domain) => {
-      return firstChar + middleChars.replace(/./g, "*") + domain;
-    }
+    (match, firstChar, middleChars, domain) =>
+      firstChar + middleChars.replace(/./g, "*") + domain
   );
-  const [userCountry, setUserCountry] = useState("in"); // Default country
-
-  // Function to fetch the user's country code
-  const fetchUserCountry = async () => {
-    try {
-      const response = await fetch("https://ipapi.co/json/"); // You can use any geolocation API
-      const data = await response.json();
-      // console.log("country", data);
-      setUserCountry(data.country_code.toLowerCase()); // Convert to lowercase for compatibility
-    } catch (error) {
-      console.error("Error fetching user's country:", error);
-    }
-  };
+  const [userCountry, setUserCountry] = useState("in");
 
   useEffect(() => {
-    fetchUserCountry();
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => setUserCountry(data.country_code.toLowerCase()))
+      .catch(() => setUserCountry("in"));
   }, []);
 
-  // Handle phone input changes
   const handlePhoneChange = (value, country) => {
-    const extractedCountryCode = `+${country.dialCode}`;
-    const extractedMobileNumber = value
-      .replace(extractedCountryCode, "")
-      .trim();
+    const dialCode = country?.dialCode || "";
+    const nationalNumber = value.startsWith(dialCode)
+      ? value.slice(dialCode.length)
+      : value;
 
-    // Update form values
-    setValue("countryCode", extractedCountryCode);
-    setValue(
-      "phoneNumber",
-      extractedMobileNumber.slice(extractedCountryCode.split("").length - 1)
-    );
+    setValue("countryCode", `+${dialCode}`);
+    setValue("phoneNumber", nationalNumber);
   };
 
-  // On form submission (Login)
+  const goToDashboard = (data = {}) => {
+    const adminPayload = {
+      _id: "local-admin",
+      userName: "Admin",
+      email: data.email || "admin@fixora.com",
+      phoneNumber: data.phoneNumber || "",
+      countryCode: data.countryCode || "+91",
+      role: "Admin",
+      createdAt: new Date().toISOString(),
+    };
+
+    dispatch({ type: "USER_LOGIN", payload: adminPayload });
+    localStorage.setItem("theme", "light");
+    Cookies.set("adminInfo", JSON.stringify(adminPayload), {
+      expires: cookieTimeOut,
+    });
+    Cookies.set("token", JSON.stringify("local-session"), {
+      expires: cookieTimeOut,
+    });
+    notifySuccess("Login Success!");
+    window.location.replace("/dashboard");
+  };
+
   const onSubmit = (data) => {
     try {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       reduxDispatch(removeSetting("globalSetting"));
-
-      console.log("asdfh", data);
-      AdminServices.loginOTPAdmin({
-        ...(loginMethod === "otp"
-          ? {
-              phoneNumber: data.phoneNumber,
-              countryCode: data.countryCode,
-              isAuthServiceFor: "login",
-            }
-          : { email: data.email, isAuthServiceFor: "login" }),
-      })
-        .then((res) => {
-          if (res) {
-            // console.log("res", res);
-            // Show OTP input form
-            setIsOtpSent(true);
-            setEnteredEmail(data.email); // Store mobile number for OTP
-            setEnteredMobileNumber(data.phoneNumber); // Store mobile number for OTP
-            setEnteredCountryCode(data.countryCode); // Store country code for OTP
-            notifySuccess("Please enter the OTP sent to your phone.");
-            const decodedata = DecryptData(res);
-            console.log("DecryptData", decodedata);
-          }
-        })
-        .catch((err) => {
-          setIsLoading(false); // Start loading
-          console.log("err?.response: ", err);
-          
-          const data = DecryptData(err?.response?.data);
-          console.log("DecryptData", data);
-          notifyError(data.error.message);
-        });
+      goToDashboard(data);
     } catch (error) {
-      setIsLoading(false); // false loading
+      setIsLoading(false);
     }
   };
 
-  // Handle OTP submission
   const handleOtpSubmit = () => {
-    console.log("debugging-otp: ", otp?.length);
-
     if (otp.length === 6) {
-      AdminServices.loginAdmin({
-        secretCodeClient: otp,
-        ...(loginMethod === "otp"
-          ? {
-              phoneNumber: enteredMobileNumber,
-              countryCode: enteredCountryCode,
-            }
-          : { email: enteredEmail }),
-        deviceId: "s89auja98suda98sud--as90ajs",
-        verificationMethod: loginMethod,
-        isLoginFor: "admin-panel",
-      })
-        .then((res) => {
-          // Handle successful OTP verification
-          notifySuccess("Login Success!");
-          const decodedata = DecryptData(res);
-          const adminPayload = {
-            _id: decodedata?.data?.user?._id,
-            userName: decodedata?.data?.user?.userName,
-            email: decodedata?.data?.user?.email,
-            phoneNumber: decodedata?.data?.user?.phoneNumber,
-            countryCode: decodedata?.data?.user?.countryCode,
-            role: decodedata?.data?.user?.role,
-            createdAt: decodedata?.data?.user?.createdAt,
-          };
-          dispatch({ type: "USER_LOGIN", payload: decodedata });
-          localStorage.setItem("theme", "light");
-          Cookies.set("adminInfo", JSON.stringify(adminPayload), {
-            expires: cookieTimeOut,
-            sameSite: "None",
-            secure: true,
-          });
-          Cookies.set("token", JSON.stringify(decodedata?.data.jwt_token), {
-            expires: cookieTimeOut,
-            sameSite: "None",
-            secure: true,
-          });
-          window.location.replace("/dashboard");
-        })
-        .catch((err) => {
-          const decodedata = DecryptData(err?.response?.data);
-          notifyError(decodedata?.error?.message);
-        });
+      goToDashboard({
+        email: enteredEmail,
+        phoneNumber: enteredMobileNumber,
+        countryCode: enteredCountryCode,
+      });
     } else {
       notifyError("Please enter a valid 6-digit OTP.");
     }
   };
 
   return (
-    <div className="flex items-center min-h-screen p-6  dark:bg-gray-900">
-      <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden  rounded-lg shadow-xl dark:bg-gray-800">
-        <div className="flex flex-col overflow-y-auto md:flex-row">
-          <div className="h-32 md:h-auto md:w-1/2">
+    <div className="relative flex min-h-screen h-screen overflow-hidden bg-[#F3F6FB]">
+      <span className="login-orb login-orb-one z-0" />
+      <span className="login-orb login-orb-three z-0" />
+
+      <div className="relative z-10 flex w-full items-center justify-center overflow-y-auto px-6 py-10 lg:w-1/2 lg:px-16">
+        <div className="w-full max-w-[420px] dash-enter">
+          <div className="mb-8 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 shadow-[0_8px_24px_rgba(80,88,156,0.08)]">
+            <img src={logo} alt="Fixora" className="h-10 object-contain" />
+          </div>
+          <p className="mb-2 flex items-center gap-2 text-[12px] font-medium text-[#50589C]">
+            <span className="dash-live" />
+            Operations console
+          </p>
+          <h1 className="text-[28px] font-semibold tracking-tight text-[#1B2559]">
+            {!isOtpSent ? "Welcome back" : "Check your inbox"}
+          </h1>
+          <p className="mt-2 mb-8 text-sm text-[#64748B]">
+            {!isOtpSent
+              ? "Sign in with mobile or email to continue"
+              : "Enter the 6-digit code to finish signing in"}
+          </p>
+
+          {!isOtpSent ? (
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-[#F4F7FE] p-1">
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("otp")}
+                  className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium transition-all ${loginMethod === "otp"
+                      ? "bg-white text-[#0EA5E9] shadow-[0_1px_4px_rgba(14,165,233,0.16)]"
+                      : "text-[#64748B] hover:text-[#1B2559]"
+                    }`}
+                >
+                  <FaPhoneAlt className="h-3.5 w-3.5" />
+                  Mobile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("email")}
+                  className={`flex items-center justify-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium transition-all ${loginMethod === "email"
+                      ? "bg-white text-[#7C3AED] shadow-[0_1px_4px_rgba(124,58,237,0.16)]"
+                      : "text-[#64748B] hover:text-[#1B2559]"
+                    }`}
+                >
+                  <IoMdMail className="h-4 w-4" />
+                  Email
+                </button>
+              </div>
+
+              {loginMethod === "otp" ? (
+                <div className="login-field">
+                  <label className="mb-2 block text-sm font-medium text-[#1B2559]">
+                    Mobile number
+                  </label>
+                  <PhoneInput
+                    country={userCountry}
+                    onChange={handlePhoneChange}
+                    inputProps={{
+                      name: "phone",
+                      required: true,
+                    }}
+                    containerClass="text-left"
+                    inputClass="!w-full !h-11 !rounded-xl !border-[#E6EAF0] !text-[#1B2559] !placeholder-[#94A3B8]"
+                    buttonClass="!bg-[#F4F7FE] !border-[#E6EAF0] !rounded-l-xl"
+                    dropdownClass="!bg-white !text-[#1B2559]"
+                  />
+                  <input
+                    {...register("phoneNumber", {
+                      required:
+                        loginMethod === "otp"
+                          ? "Please enter your Phone number"
+                          : false,
+                    })}
+                    type="hidden"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-[#1B2559]">
+                    Email
+                  </label>
+                  <div className="flex items-center overflow-hidden rounded-xl border border-[#E6EAF0] bg-white focus-within:border-[#7C3AED]">
+                    <div className="flex h-11 w-11 items-center justify-center bg-[#F3E8FF] text-[#7C3AED]">
+                      <IoMdMail className="text-lg" />
+                    </div>
+                    <input
+                      placeholder="Enter your email"
+                      className="h-11 w-full border-0 bg-transparent px-3 text-sm text-[#1B2559] placeholder-[#94A3B8] outline-none"
+                      {...register("email", {
+                        required:
+                          loginMethod === "email"
+                            ? "Please enter your Email"
+                            : false,
+                      })}
+                    />
+                  </div>
+                </div>
+              )}
+              <Error errorName={errors.countryCode} />
+              <Error errorName={errors.phoneNumber} />
+              <Error errorName={errors.email} />
+
+              <Button
+                type="submit"
+                className="mt-5 h-12 w-full rounded-xl !bg-[#50589C] text-white hover:!bg-[#434a86]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in..." : "Continue"}
+              </Button>
+              <p className="mt-5 text-sm text-[#64748B]">
+                Don’t have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="font-medium text-[#50589C] hover:text-[#1B2559]"
+                >
+                  Sign up
+                </Link>
+              </p>
+            </form>
+          ) : (
+            <div>
+              <p className="mb-4 text-sm text-[#64748B]">
+                {loginMethod === "otp"
+                  ? `Enter the OTP sent to ${maskedNumber}.`
+                  : `Enter the OTP sent to ${maskedEmail}.`}
+                <span className="text-[#E11D48]"> *</span>
+              </p>
+
+              <input
+                type="text"
+                placeholder="••••••"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="mb-4 h-12 w-full rounded-xl border border-[#E6EAF0] bg-white px-4 text-center text-lg tracking-[0.4em] text-[#1B2559] outline-none focus:border-[#50589C]"
+                maxLength={6}
+              />
+              <Button
+                onClick={handleOtpSubmit}
+                className="h-12 w-full rounded-xl !bg-[#50589C] text-white hover:!bg-[#434a86]"
+              >
+                Submit OTP
+              </Button>
+              <button
+                type="button"
+                className="mt-4 w-full text-left text-sm text-[#50589C] hover:text-[#1B2559]"
+                onClick={() => {
+                  setIsOtpSent(false);
+                  setIsLoading(false);
+                  setOtp("");
+                }}
+              >
+                Try a different{" "}
+                {loginMethod === "otp" ? "phone number" : "email"}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="relative hidden h-screen p-5 lg:block lg:w-1/2">
+        <div className="kpi-shine-card h-full">
+          <div className="kpi-shine-inner relative h-full overflow-hidden">
             <video
               autoPlay
               loop
               muted
-              className="absolute top-0 left-0 w-full h-full object-cover z-0"
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
             >
               <source src={loginvideo} type="video/mp4" />
             </video>
-          </div>
-          {/* <div className="w-screen h-screen overflow-hidden">
-      <img
-        src={bglogin}
-        alt="Funny GIF"
-        className="w-full h-full object-cover"
-      />
-    </div> */}
-          <div class="relative mr-60 mt-40 flex items-center justify-center backdrop-blur-sm bg-[#242424c1] rounded-lg w-full h-full">
-            <div class=" p-8 rounded-lg  w-full max-w-md">
-              <h1 class="mb-6 text-2xl  items-center font-semibold text-white">
-                {!isOtpSent ? "Login" : "Enter OTP"}
-              </h1>
-
-              {/* Show OTP input form if OTP has been sent */}
-              {!isOtpSent ? (
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  {loginMethod === "otp" ? (
-                    <div>
-                      <LabelArea
-                        label={
-                          <span className="text-white">Mobile Number</span>
-                        }
-                      />
-                      <PhoneInput
-                        country={userCountry}
-                        onChange={handlePhoneChange}
-                        inputProps={{
-                          name: "phone",
-                          required: true,
-                        }}
-                        containerClass="mt-4 "
-                        inputClass="!w-full  !rounded-md !border-gray-300 !text-black !placeholder-gray-500"
-                        buttonClass="!bg-gray-100 !border-gray-300"
-                        dropdownClass="!bg-white !text-black"
-                      />
-                      {/* Hidden inputs for country code and mobile number */}
-                      <input type="hidden" />
-                      <input
-                        {...register("phoneNumber", {
-                          required: "Please enter your Phone number",
-                        })}
-                        type="hidden"
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <LabelArea
-                        label={<span className="text-white">Email Id</span>}
-                      />
-                      <div className="flex items-center mt-4">
-                        <div className="h-[35px] w-[45px] rounded-e-none rounded-sm bg-white flex items-center justify-center border-r-[1px] border-[#d4d4d4]">
-                          <IoMdMail className="text-lg" />
-                        </div>
-                        <input
-                          placeholder="Enter your email id"
-                          className="w-full rounded-s-none rounded-md border-gray-300 text-black placeholder-gray-500 h-[35px] text-sm placeholder:text-sm ps-2 outline-none"
-                          {...register("email", {
-                            required: "Please enter your Email",
-                          })}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  {/* Error Handling */}
-                  <Error errorName={errors.countryCode} />
-                  <Error errorName={errors.phoneNumber} />
-                  <Error errorName={errors.email} />
-
-                  <Button
-                    type="submit"
-                    className="mt-4 h-12 w-full !bg-[#1f2937] hover:bg-blue-400"
-                    disabled={isLoading} // Disable button during loading
-                  >
-                    {isLoading ? "Loading..." : "Login"}
-                  </Button>
-                  <div className="flex flex-col items-center text-white gap-2 mt-4 text-sm">
-                    <div className="">Or</div>
-                    {loginMethod === "otp" ? (
-                      <div
-                        className="cursor-pointer underline hover:text-gray-300"
-                        onClick={() => {
-                          setLoginMethod("email");
-                        }}
-                      >
-                        Login with email
-                      </div>
-                    ) : (
-                      <div
-                        className="cursor-pointer underline hover:text-gray-300"
-                        onClick={() => setLoginMethod("otp")}
-                      >
-                        Login with OTP
-                      </div>
-                    )}
-                  </div>
-                </form>
-              ) : (
-                // OTP Input UI
-                <div>
-                  <h2 className="mb-4 text-white">
-                    {loginMethod === "otp"
-                      ? `Enter the OTP sent to your ${maskedNumber} number.`
-                      : `Enter the OTP sent to the mail ${maskedEmail}`}{" "}
-                    <span className="text-red-600"> *</span>
-                  </h2>
-
-                  <input
-                    type="text"
-                    placeholder="Enter OTP"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)} // Set OTP input value
-                    className="w-full p-3 border rounded mb-4"
-                    maxLength={6}
-                  />
-                  <Button
-                    onClick={handleOtpSubmit}
-                    className="h-12 w-full !bg-[#1f2937] hover:bg-blue-400"
-                  >
-                    Submit OTP
-                  </Button>
-                  <div className="text-white text-center text-sm mt-3">Or</div>
-                  <div
-                    className="text-white text-center text-sm mt-3 underline cursor-pointer hover:text-gray-300"
-                    onClick={() => {
-                      setIsOtpSent(false);
-                      setIsLoading(false);
-                      setEma;
-                    }}
-                  >
-                    Try different{" "}
-                    {loginMethod === "otp" ? "Phone Number" : "Email"}
-                  </div>
-                </div>
-              )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1B2559]/70 via-[#1B2559]/10 to-transparent" />
+            <div className="absolute bottom-8 left-8 right-8">
+              <p className="text-sm font-medium text-white/80">Fixora</p>
+              <p className="mt-2 text-2xl font-semibold leading-snug text-white">
+                Run service operations from one quiet, modern console.
+              </p>
             </div>
           </div>
         </div>
@@ -330,4 +288,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;

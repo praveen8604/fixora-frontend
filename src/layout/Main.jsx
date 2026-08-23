@@ -1,10 +1,8 @@
 import { AdminContext } from "@/context/AdminContext";
-import { SidebarContext } from "@/context/SidebarContext";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 
 const Main = ({ children }) => {
   const mainRef = useRef();
-  const { isSidebarOpen } = useContext(SidebarContext);
   const { dimentions } = useContext(AdminContext);
   useEffect(() => {
     const calculateWidth = () => {
@@ -23,25 +21,19 @@ const Main = ({ children }) => {
     return () => {
       window.removeEventListener("resize", calculateWidth);
     };
-  }, []);
+  }, [dimentions]);
 
   return (
     <main
       className="h-full overflow-y-auto ease-in-out transition-all"
       style={{
-        width:
-          dimentions?.width <= 1024
-            ? "100%"
-            : isSidebarOpen
-            ? "calc(100% - 260px)"
-            : "calc(100% - 80px)",
-        marginLeft:
-          dimentions?.width <= 1024 ? "0px" : isSidebarOpen ? "260px" : "80px",
+        width: "calc(100% - 72px)",
+        marginLeft: "72px",
         transitionDuration: "0.5s",
       }}
       ref={mainRef}
     >
-      <div className=" grid lg:px-6 sm:px-4 px-2 mx-auto">
+      <div className="grid lg:px-8 sm:px-6 px-4 mx-auto">
         {children}
       </div>
     </main>
