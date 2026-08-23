@@ -4,15 +4,37 @@ import { AdminContext } from "@/context/AdminContext";
 
 const DesktopSidebar = () => {
   const { dimentions } = useContext(AdminContext);
+
+  const sidebarWidth = isSidebarOpen ? "256px" : "70px";
+
   return (
     <aside
-      className="z-50 flex-shrink-0 w-[72px] bg-[var(--primary-color)] lg:block absolute overflow-visible"
+      className="
+        fixed
+        left-0
+        top-0
+        z-[50]
+        flex-shrink-0
+        overflow-hidden
+        bg-white
+        shadow-[4px_0_24px_rgba(30,40,55,0.06)]
+      "
       style={{
+        width: sidebarWidth,
         height: dimentions?.height,
-        borderRight: "1.5px solid #d8d8d8",
+        transition: "width 0.35s ease-in-out, left 0.35s ease-in-out",
+        borderRight: "1px solid #E8EBEF",
+
+        ...(dimentions?.width <= 1024 && !isSidebarOpen
+          ? {
+              left: "-70px",
+            }
+          : {}),
       }}
     >
-      <SidebarContent />
+      <div className="h-full w-full overflow-hidden">
+        <SidebarContent />
+      </div>
     </aside>
   );
 };

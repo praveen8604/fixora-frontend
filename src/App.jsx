@@ -30,7 +30,7 @@ const App = () => {
     document.documentElement.style.setProperty("--doc-width", `${docWidth}px`);
     document.documentElement.style.setProperty(
       "--doc-height",
-      `${docHeight}px`
+      `${docHeight}px`,
     );
   };
 
@@ -48,6 +48,7 @@ const App = () => {
       <ToastContainer />
       <Router>
         <AccessibleNavigationAnnouncer />
+
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />

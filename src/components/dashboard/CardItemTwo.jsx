@@ -13,91 +13,292 @@ const CardItemTwo = ({
   credit = 0,
   loading = false,
   title2 = "",
-  accent = "#50589C",
-  accentSoft = "#EEF0FA",
+  cardBg = "",
+  cardTextColor = "",
 }) => {
   const { t } = useTranslation();
 
   const formatNumber = (value) => {
-    if (value === null || value === undefined || isNaN(value)) return "0";
-    return Math.round(value).toLocaleString();
+    if (!value || isNaN(value)) return 0;
+    return Math.round(value);
   };
+
+  /* =========================
+     LOADING
+  ========================= */
 
   if (loading) {
     return (
-      <Skeleton
-        count={2}
-        height={36}
-        className="bg-gray-200"
-        baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
-        highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
-      />
+      <div className="h-[108px] w-full overflow-hidden rounded-2xl">
+        <Skeleton
+          height="100%"
+          baseColor={mode === "dark" ? "#1f2937" : "#EEF1F5"}
+          highlightColor={mode === "dark" ? "#374151" : "#FFFFFF"}
+        />
+      </div>
     );
   }
+
+  /* =========================
+     ORDER CARD
+  ========================= */
 
   if (title === "Today Order" || title === "Yesterday Order") {
     return (
-      <Card className={`flex justify-center h-full`}>
+      <Card
+        className={`
+          group
+          relative
+          flex
+          h-full
+          w-full
+          overflow-hidden
+          rounded-2xl
+          border
+          border-[#E7EAF0]
+          bg-white
+          shadow-[0_4px_15px_rgba(30,40,55,0.04)]
+          transition-all
+          duration-300
+          hover:-translate-y-1
+          hover:shadow-[0_14px_30px_rgba(30,40,55,0.08)]
+          ${cardBg}
+        `}
+      >
+        <div
+          className="
+            pointer-events-none
+            absolute
+            right-[-30px]
+            top-[-30px]
+            z-0
+            h-28
+            w-28
+            rounded-full
+            bg-[#F4F5FA]
+            opacity-0
+            transition-all
+            duration-500
+            group-hover:scale-[1.8]
+            group-hover:opacity-100
+          "
+        />
+
         <CardBody
-          className={`border border-gray-200 justify-between dark:border-gray-800 w-full p-6 rounded-lg flex items-center ${className}`}
+          className={`
+            relative
+            z-10
+            flex
+            w-full
+            items-center
+            justify-between
+            p-5
+            ${className}
+          `}
         >
-          <div className="flex flex-col justify-center text-left w-1/2">
-            <p className="mb-2 text-base font-medium text-gray-50 dark:text-gray-100">
-              {title2 ? t(title2) : <Skeleton count={1} height={20} />}
+          <div className="min-w-0">
+            <p className="mb-2 text-sm font-medium text-[#737C8C]">
+              {title2 ? t(title2) : "Order"}
             </p>
-            <p className="text-2xl font-bold leading-none text-gray-50 dark:text-gray-50">
+
+            <p className="text-2xl font-bold leading-none text-[#252A34]">
               {formatNumber(price)}
             </p>
-            <div className="flex text-xs font-normal text-gray-50 dark:text-gray-100">
-              <div className="px-1 mt-3">
-                {t("Cash")}: {formatNumber(cash)}
-              </div>
-              <div className="px-1 mt-3">
-                {t("Card")}: {formatNumber(card)}
-              </div>
-              <div className="px-1 mt-3">
-                {t("Credit")}: {formatNumber(credit)}
-              </div>
+
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs font-medium text-[#8992A1]">
+              <span>Cash: {formatNumber(cash)}</span>
+
+              <span>Card: {formatNumber(card)}</span>
+
+              <span>Credit: {formatNumber(credit)}</span>
             </div>
           </div>
-          <div className="w-1/2 flex justify-center">
-            <div className="text-5xl text-gray-500 dark:text-gray-200">
-              <Icon />
-            </div>
+
+          {/* ICON */}
+
+          <div
+            className="
+              relative
+              z-30
+              flex
+              h-14
+              w-14
+              shrink-0
+              items-center
+              justify-center
+              rounded-[16px]
+              border
+              border-[#DDE2FF]
+              bg-[#F1F3FF]
+              transition-all
+              duration-300
+              group-hover:scale-110
+              group-hover:bg-[#5961D8]
+            "
+          >
+            {Icon && (
+              <Icon
+                style={{
+                  color: "#5961D8",
+                  width: "22px",
+                  height: "22px",
+                  display: "block",
+                  flexShrink: 0,
+                }}
+                className="group-hover:!text-white"
+              />
+            )}
           </div>
         </CardBody>
       </Card>
     );
   }
 
+  /* =========================
+     NORMAL CARD
+  ========================= */
+
   return (
-    <div className="kpi-shine-card">
-      <Card className="kpi-shine-inner flex w-full bg-white border-0 shadow-none">
-        <CardBody className="relative flex flex-col justify-between w-full px-5 py-5">
-          <span
-            className="absolute left-0 top-0 h-full w-[3px]"
-            style={{ background: accent }}
-          />
-          <div className="flex items-start justify-between gap-3 pl-1">
-            <p className="text-[13px] text-[#64748B] leading-snug">
-              {title2 ? t(title2) : <Skeleton count={1} height={20} />}
-            </p>
-            <div
-              className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 dash-icon"
-              style={{ background: accentSoft, color: accent }}
-            >
-              <Icon className="h-3.5 w-3.5" />
-            </div>
-          </div>
+    <Card
+      className="
+        group
+        relative
+        flex
+        h-[108px]
+        w-full
+        overflow-hidden
+        rounded-2xl
+        border
+        border-[#E7EAF0]
+        bg-white
+        shadow-[0_4px_15px_rgba(30,40,55,0.04)]
+        transition-all
+        duration-300
+        ease-out
+        hover:-translate-y-1
+        hover:border-[#DDE2EA]
+        hover:shadow-[0_14px_30px_rgba(30,40,55,0.08)]
+      "
+    >
+      {/* Decorative background */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          right-[-35px]
+          top-[-35px]
+          z-0
+          h-32
+          w-32
+          rounded-full
+          bg-[#F4F5FA]
+          opacity-0
+          transition-all
+          duration-500
+          group-hover:scale-[1.8]
+          group-hover:opacity-100
+        "
+      />
+
+      <CardBody className="relative z-10 flex w-full items-center p-5">
+        {/* =========================
+            ICON
+        ========================= */}
+
+        <div
+          className="
+            relative
+            z-30
+            flex
+            h-14
+            w-14
+            shrink-0
+            items-center
+            justify-center
+            rounded-[16px]
+            border
+            border-[#DDE2FF]
+            bg-[#F1F3FF]
+            shadow-[0_5px_15px_rgba(89,97,216,0.08)]
+            transition-all
+            duration-300
+            ease-out
+            group-hover:scale-110
+            group-hover:border-[#5961D8]
+            group-hover:bg-[#5961D8]
+            group-hover:shadow-[0_8px_20px_rgba(89,97,216,0.22)]
+          "
+        >
+          {Icon && (
+            <Icon
+              style={{
+                color: "#5961D8",
+                width: "22px",
+                height: "22px",
+                display: "block",
+                flexShrink: 0,
+              }}
+              className="
+                transition-all
+                duration-300
+                group-hover:!text-white
+              "
+            />
+          )}
+        </div>
+
+        {/* =========================
+            CONTENT
+        ========================= */}
+
+        <div className="relative z-20 ml-4 min-w-0">
+          <h6
+            className="
+              mb-1
+              truncate
+              text-sm
+              font-medium
+              text-[#7A8392]
+              transition-colors
+              duration-300
+              group-hover:text-[#5961D8]
+            "
+          >
+            {title2 ? t(title2) : "Total"}
+          </h6>
+
           <p
-            className="mt-8 text-[28px] leading-none font-semibold tracking-tight tabular-nums"
-            style={{ color: accent }}
+            className="
+              text-2xl
+              font-bold
+              leading-none
+              text-[#252A34]
+            "
           >
             {formatNumber(price)}
           </p>
-        </CardBody>
-      </Card>
-    </div>
+        </div>
+
+        {/* Bottom accent */}
+
+        <div
+          className="
+            absolute
+            bottom-0
+            left-5
+            z-20
+            h-[3px]
+            w-0
+            rounded-full
+            bg-[#5961D8]
+            transition-all
+            duration-300
+            group-hover:w-10
+          "
+        />
+      </CardBody>
+    </Card>
   );
 };
 
