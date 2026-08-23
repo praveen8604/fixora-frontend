@@ -17,59 +17,94 @@ const CardItem = ({
 }) => {
   const { getNumberTwo } = useUtilsFunction();
 
-  return (
-    <>
-      {loading ? (
+  if (loading) {
+    return (
+      <div className="rounded-2xl bg-white p-5">
         <Skeleton
-          count={2}
-          height={40}
-          className="dark:bg-gray-800 bg-gray-200"
-          baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
-          highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
+          height={90}
+          baseColor={mode === "dark" ? "#1f2937" : "#EEF1F5"}
+          highlightColor={mode === "dark" ? "#374151" : "#FFFFFF"}
         />
-      ) : (
-        <Card className="flex h-full rounded-[20px]">
-          <CardBody className="flex items-center  border-[#E2E8F0] w-full rounded-[20px]">
-            <div
-              className={`flex items-center justify-center p-3 rounded-full h-12 w-12 text-center mr-4 text-lg ${className}`}
-            >
-              <Icon />
-            </div>
+      </div>
+    );
+  }
 
-            <div>
-              <h6 className="text-sm mb-1 font-medium text-gray-600">
-                <span>{title}</span>{" "}
-                {amount && (
-                  <span className="text-red-500 text-sm font-semibold">
-                    ({getNumberTwo(amount)})
-                  </span>
-                )}
-              </h6>
-              {pending && (
-                <div className="grid grid-cols-2 gap-4 w-full mb-1 text-sm font-medium text-gray-600">
-                  <div>
-                    <span className="font-semibold">Today</span>{" "}
-                    <span className="text-blue-600 text-sm font-semibold">
-                      ({getNumberTwo(todayPending)})
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-semibold">Older</span>{" "}
-                    <span className="text-orange-400 text-sm font-semibold">
-                      ({getNumberTwo(olderPending)})
-                    </span>
-                  </div>
-                </div>
-              )}
+  return (
+    <Card
+      className="
+        group
+        relative
+        flex
+        h-full
+        overflow-hidden
+        rounded-2xl
+        border
+        border-[#E7EAF0]
+        bg-white
+        shadow-sm
+        transition-all
+        duration-300
+        hover:-translate-y-1
+        hover:shadow-lg
+      "
+    >
+      <CardBody className="flex w-full items-center p-6">
+        <div
+          className="
+            flex
+            h-12
+            w-12
+            shrink-0
+            items-center
+            justify-center
+            rounded-xl
+            bg-[#F3F5F8]
+            text-[var(--primary-color)]
+            transition-all
+            duration-300
+            group-hover:scale-105
+          "
+        >
+          <Icon className="text-xl" />
+        </div>
 
-              <p className="text-2xl font-bold leading-none text-gray-600 dark:text-gray-200">
-                {quantity}
-              </p>
+        <div className="ml-4 min-w-0">
+          <h6 className="mb-1 text-sm font-medium text-[#737C8C]">
+            {title}
+
+            {amount && (
+              <span className="ml-1 text-red-500">
+                ({getNumberTwo(amount)})
+              </span>
+            )}
+          </h6>
+
+          {pending && (
+            <div className="mb-1 flex gap-4 text-xs font-medium text-[#737C8C]">
+              <span>
+                Today{" "}
+                <span className="text-blue-600">
+                  ({getNumberTwo(todayPending)})
+                </span>
+              </span>
+
+              <span>
+                Older{" "}
+                <span className="text-orange-500">
+                  ({getNumberTwo(olderPending)})
+                </span>
+              </span>
             </div>
-          </CardBody>
-        </Card>
-      )}
-    </>
+          )}
+
+          <p className="text-2xl font-bold leading-none text-[#252A34]">
+            {quantity}
+          </p>
+        </div>
+
+        <div className="absolute bottom-0 left-6 h-[3px] w-0 rounded-full bg-[var(--primary-color)] transition-all duration-300 group-hover:w-10" />
+      </CardBody>
+    </Card>
   );
 };
 
