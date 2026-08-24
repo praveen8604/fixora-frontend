@@ -108,12 +108,12 @@ const Login = () => {
       <span className="login-orb login-orb-one z-0" />
       <span className="login-orb login-orb-three z-0" />
 
-      <div className="relative z-10 flex w-full items-center justify-center overflow-y-auto px-6 py-10 lg:w-1/2 lg:px-16">
-        <div className="w-full max-w-[420px] dash-enter">
-          <div className="mb-8 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 shadow-[0_8px_24px_rgba(80,88,156,0.08)]">
+      <div className="relative z-10 flex w-full items-center justify-center overflow-y-auto px-6 py-10 lg:w-1/2">
+        <div className="mx-auto w-full max-w-[400px] text-center">
+          <div className="mx-auto mb-8 inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 shadow-[0_8px_24px_rgba(80,88,156,0.08)]">
             <img src={logo} alt="Fixora" className="h-10 object-contain" />
           </div>
-          <p className="mb-2 flex items-center gap-2 text-[12px] font-medium text-[#50589C]">
+          <p className="mb-2 flex items-center justify-center gap-2 text-[12px] font-medium text-[#50589C]">
             <span className="dash-live" />
             Operations console
           </p>
@@ -127,7 +127,7 @@ const Login = () => {
           </p>
 
           {!isOtpSent ? (
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className="text-left">
               <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-[#F4F7FE] p-1">
                 <button
                   type="button"
@@ -213,7 +213,7 @@ const Login = () => {
               >
                 {isLoading ? "Signing in..." : "Continue"}
               </Button>
-              <p className="mt-5 text-sm text-[#64748B]">
+              <p className="mt-5 text-center text-sm text-[#64748B]">
                 Don’t have an account?{" "}
                 <Link
                   to="/signup"
@@ -224,8 +224,8 @@ const Login = () => {
               </p>
             </form>
           ) : (
-            <div>
-              <p className="mb-4 text-sm text-[#64748B]">
+            <div className="text-left">
+              <p className="mb-4 text-center text-sm text-[#64748B]">
                 {loginMethod === "otp"
                   ? `Enter the OTP sent to ${maskedNumber}.`
                   : `Enter the OTP sent to ${maskedEmail}.`}
@@ -248,7 +248,7 @@ const Login = () => {
               </Button>
               <button
                 type="button"
-                className="mt-4 w-full text-left text-sm text-[#50589C] hover:text-[#1B2559]"
+                className="mt-4 w-full text-center text-sm text-[#50589C] hover:text-[#1B2559]"
                 onClick={() => {
                   setIsOtpSent(false);
                   setIsLoading(false);

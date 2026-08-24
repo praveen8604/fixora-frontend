@@ -2,22 +2,32 @@ import React, { useContext } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
+import { FaArrowCircleLeft } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoLogOutOutline } from "react-icons/io5";
+import { Button } from "@windmill/react-ui";
 import sidebar from "@/routes/sidebar";
+import logo from "@/assets/img/logo/logo.png";
 import logo_short from "@/assets/img/logo/logohead.png";
 import { SidebarContext } from "@/context/SidebarContext";
+import { AdminContext } from "@/context/AdminContext";
 import SidebarProfile from "@/components/sidebar/SidebarProfile";
+import SidebarSubMenu from "@/components/sidebar/SidebarSubMenu";
+import AlertDialog from "@/components/common/AlterDialogBox";
 
 const SidebarContent = () => {
-  const { isSidebarOpen, toggleSidebar, openSidebar } =
+  const { isSidebarOpen, toggleSidebar, openSidebar, closeSidebar } =
     useContext(SidebarContext);
+  const { dimentions, dispatch } = useContext(AdminContext);
 
   const { t } = useTranslation();
-  const { closeSidebar } = useContext(SidebarContext);
   const { pathname } = useLocation();
 
   const handleLogOut = () => {
     dispatch({ type: "USER_LOGOUT" });
     Cookies.remove("adminInfo");
+    Cookies.remove("token");
+    window.location.replace("/login");
   };
 
   return (

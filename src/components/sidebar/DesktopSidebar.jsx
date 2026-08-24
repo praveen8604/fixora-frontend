@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import SidebarContent from "@/components/sidebar/SidebarContent";
 import { AdminContext } from "@/context/AdminContext";
+import { SidebarContext } from "@/context/SidebarContext";
 
 const DesktopSidebar = () => {
   const { dimentions } = useContext(AdminContext);
+  const { isSidebarOpen } = useContext(SidebarContext);
 
   const sidebarWidth = isSidebarOpen ? "256px" : "70px";
 
