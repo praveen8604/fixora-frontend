@@ -1,12 +1,6 @@
 import React from 'react'
 import PaymentLogs from './layouts/PaymentLogs'
 
-const Payments = () => {
-  return (
-    <div>
-        <PaymentLogs />
-    </div>
-  )
-}
+const Payments = () => <PaymentLogs />
 
 export default Payments

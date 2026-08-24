@@ -5,706 +5,199 @@ import AnimatedContent from "@/components/common/AnimatedContent";
 import { useHistory } from "react-router-dom";
 import Pagination from "@/components/common/Pagination";
 import { FaUsers, FaUserCheck, FaUserSlash } from "react-icons/fa6";
-import { MdAdminPanelSettings, MdSearch } from "react-icons/md";
+import { FaUserCog } from "react-icons/fa";
+import { MdSearch } from "react-icons/md";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const AllUsers = () => {
   const history = useHistory();
-
   const [userData, setUserData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [activePage, setActivePage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
 
-  const handlePagination = (currentPage) => {
-    setActivePage(currentPage);
-    getAllUsers(currentPage, limit);
-  };
-
-  const handlePageLimit = (currentLimit) => {
-    setLimit(currentLimit);
-    setActivePage(1);
-    getAllUsers(1, currentLimit);
-  };
-
-  const getAllUsers = (selectedPage, dataLimit) => {
-    DashboardServices.getAllUsers(selectedPage, dataLimit)
+  const getAllUsers = (page, lim) => {
+    DashboardServices.getAllUsers(page, lim)
       .then((res) => {
         if (res) {
-          const decodedata = DecryptData(res);
-
-          setTotalPages(decodedata.data?.totalPages);
-          setUserData(decodedata.data?.users || []);
+          const d = DecryptData(res);
+          setTotalPages(d.data?.totalPages);
+          setUserData(d.data?.users || []);
         }
       })
-      .catch((err) => {
-        console.log("err", err);
-      });
+      .catch(console.error);
   };
 
-  useEffect(() => {
-    getAllUsers(activePage, limit);
-  }, []);
-
-  /* =========================================================
-     SEARCH
-  ========================================================= */
+  useEffect(() => { getAllUsers(activePage, limit); }, []);
 
   const filteredUsers = useMemo(() => {
-    const value = search.trim().toLowerCase();
-
-    if (!value) return userData;
-
-    return userData.filter((user) => {
-      return (
-        user?.userName?.toLowerCase()?.includes(value) ||
-        user?.email?.toLowerCase()?.includes(value) ||
-        user?.phoneNumber?.toLowerCase()?.includes(value) ||
-        user?.role?.toLowerCase()?.includes(value) ||
-        user?.userStatus?.toLowerCase()?.includes(value)
-      );
-    });
+    const v = search.trim().toLowerCase();
+    if (!v) return userData;
+    return userData.filter((u) =>
+      [u?.userName, u?.email, u?.phoneNumber, u?.role, u?.userStatus]
+        .some((f) => f?.toLowerCase()?.includes(v))
+    );
   }, [userData, search]);
 
-  /* =========================================================
-     COUNTS
-  ========================================================= */
+  const activeCount  = userData.filter((u) => u?.userStatus === "active").length;
+  const blockedCount = userData.filter((u) => u?.userStatus === "inactive").length;
 
-  const activeUsers = userData.filter(
-    (user) => user?.userStatus === "active",
-  ).length;
+  const metrics = [
+    { title: "Total Users",   value: userData.length, desc: "All registered",    tone: "blue",    Icon: FaUsers },
+    { title: "Active",        value: activeCount,     desc: "Active accounts",   tone: "emerald", Icon: FaUserCheck },
+    { title: "Blocked",       value: blockedCount,    desc: "Inactive accounts", tone: "rose",    Icon: FaUserSlash },
+    { title: "Admins",        value: userData.filter((u) => u?.role === "admin").length, desc: "Admin users", tone: "amber", Icon: FaUserCog },
+  ];
 
-  const blockedUsers = userData.filter(
-    (user) => user?.userStatus === "inactive",
-  ).length;
+  const toneClasses = {
+    blue:    { icon: "bg-blue-500",    soft: "bg-blue-50",    line: "bg-blue-500" },
+    emerald: { icon: "bg-emerald-500", soft: "bg-emerald-50", line: "bg-emerald-500" },
+    rose:    { icon: "bg-rose-500",    soft: "bg-rose-50",    line: "bg-rose-500" },
+    amber:   { icon: "bg-amber-500",   soft: "bg-amber-50",   line: "bg-amber-500" },
+  };
 
   const getRoleClass = (role) => {
-    switch (role) {
-      case "admin":
-        return "bg-[#FFF1F1] text-[#E04444] border-[#FFD9D9]";
-
-      case "technician":
-        return "bg-[#FFF7E8] text-[#D88A00] border-[#FFE5B2]";
-
-      case "rider":
-        return "bg-[#F3EEFF] text-[#7651D6] border-[#DED2FF]";
-
-      case "customer":
-        return "bg-[#EAFBF3] text-[#159765] border-[#C8F0DD]";
-
-      default:
-        return "bg-[#F4F5F7] text-[#68707C] border-[#E2E5E9]";
-    }
+    const map = {
+      admin:      "bg-[#FFF1F1] text-[#E04444] border-[#FFD9D9]",
+      technician: "bg-[#FFF7E8] text-[#D88A00] border-[#FFE5B2]",
+      rider:      "bg-[#F3EEFF] text-[#7651D6] border-[#DED2FF]",
+      customer:   "bg-[#EAFBF3] text-[#159765] border-[#C8F0DD]",
+    };
+    return map[role] || "bg-[#F4F5F7] text-[#68707C] border-[#E2E5E9]";
   };
 
-  const getStatusClass = (status) => {
-    if (status === "active") {
-      return "bg-[#EAFBF3] text-[#159765] border-[#C8F0DD]";
-    }
-
-    return "bg-[#FFF1F1] text-[#E04444] border-[#FFD9D9]";
-  };
+  const getStatusClass = (status) =>
+    status === "active"
+      ? "bg-[#EAFBF3] text-[#159765] border-[#C8F0DD]"
+      : "bg-[#FFF1F1] text-[#E04444] border-[#FFD9D9]";
 
   return (
     <AnimatedContent>
-      <div className="w-full px-2 pb-6 sm:px-3 lg:px-4">
-        {/* =====================================================
-            PAGE HEADER
-        ====================================================== */}
+      <div className="min-h-screen bg-[#F4F6F8] pb-10">
 
-        <div
-          className="
-            relative
-            mt-4
-            overflow-hidden
-            rounded-[24px]
-            border
-            border-[#E5E8ED]
-            bg-white
-            p-5
-            shadow-[0_5px_24px_rgba(30,40,55,0.05)]
-          "
-        >
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -right-16
-              -top-20
-              h-44
-              w-44
-              rounded-full
-              bg-[var(--primary-color)]
-              opacity-[0.06]
-            "
-          />
-
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -bottom-20
-              left-1/3
-              h-32
-              w-32
-              rounded-full
-              bg-[var(--primary-elite-color)]
-              opacity-[0.035]
-            "
-          />
-
-          <div
-            className="
-              relative
-              z-10
-              flex
-              flex-col
-              gap-4
-              lg:flex-row
-              lg:items-center
-              lg:justify-between
-            "
-          >
-            {/* TITLE */}
-
-            <div className="flex items-center gap-3">
-              <div
-                className="
-                  flex
-                  h-12
-                  w-12
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-[15px]
-                  bg-[var(--primary-color)]
-                  text-[var(--primary-elite-color)]
-                "
-              >
-                <FaUsers size={21} />
-              </div>
-
-              <div>
-                <h1
-                  className="
-                    text-[21px]
-                    font-extrabold
-                    tracking-[-0.02em]
-                    text-[#252A32]
-                  "
-                >
-                  Users
-                </h1>
-
-                <p
-                  className="
-                    mt-0.5
-                    text-[11px]
-                    font-semibold
-                    text-[#929AA5]
-                  "
-                >
-                  Manage and view all registered users
-                </p>
-              </div>
+        {/* PAGE HEADER */}
+        <div className="mb-7 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[var(--primary-color)] shadow-[0_0_0_5px_rgba(0,0,0,0.04)]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#89919D]">User Management</span>
             </div>
-
-            {/* SEARCH */}
-
-            <div
-              className="
-    flex
-    h-[42px]
-    w-full
-    items-center
-    gap-2
-    rounded-xl
-    border
-    border-[#E4E7EC]
-    bg-[#F9FAFB]
-    px-3
-    transition-all
-    duration-200
-    sm:w-[300px]
-    lg:w-[330px]
-    focus-within:border-[var(--primary-elite-color)]
-    focus-within:bg-white
-    focus-within:ring-2
-    focus-within:ring-[var(--primary-color)]
-  "
-            >
-              <MdSearch size={19} className="shrink-0 text-[#9AA2AC]" />
-
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search users..."
-                className="
-      min-w-0
-      flex-1
-      border-0
-      bg-transparent
-      p-0
-      text-[11px]
-      font-semibold
-      text-[#343B45]
-      outline-none
-      focus:border-0
-      focus:outline-none
-      focus:ring-0
-      placeholder:text-[#A6ADB6]
-    "
-              />
-            </div>
+            <h1 className="text-[30px] font-extrabold leading-tight tracking-[-0.03em] text-[#20242B]">All Users</h1>
+            <p className="mt-2 text-sm leading-6 text-[#7C8592]">Manage and view all registered users</p>
           </div>
-        </div>
-
-        {/* =====================================================
-            SUMMARY CARDS
-        ====================================================== */}
-
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {/* TOTAL */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              rounded-[18px]
-              border
-              border-[#E5E8ED]
-              bg-white
-              p-4
-              shadow-[0_4px_16px_rgba(30,40,55,0.035)]
-              transition-all
-              duration-200
-              hover:-translate-y-[1px]
-              hover:shadow-[0_7px_20px_rgba(30,40,55,0.07)]
-            "
-          >
-            <div>
-              <p className="text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#A0A7B0]">
-                Total Users
-              </p>
-
-              <p className="mt-1 text-[22px] font-extrabold text-[#252A32]">
-                {userData.length}
-              </p>
-            </div>
-
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                bg-[var(--primary-color)]
-                text-[var(--primary-elite-color)]
-              "
-            >
-              <FaUsers size={17} />
-            </div>
-          </div>
-
-          {/* ACTIVE */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              rounded-[18px]
-              border
-              border-[#E5E8ED]
-              bg-white
-              p-4
-              shadow-[0_4px_16px_rgba(30,40,55,0.035)]
-              transition-all
-              duration-200
-              hover:-translate-y-[1px]
-              hover:shadow-[0_7px_20px_rgba(30,40,55,0.07)]
-            "
-          >
-            <div>
-              <p className="text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#A0A7B0]">
-                Active Users
-              </p>
-
-              <p className="mt-1 text-[22px] font-extrabold text-[#159765]">
-                {activeUsers}
-              </p>
-            </div>
-
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                bg-[#EAFBF3]
-                text-[#159765]
-              "
-            >
-              <FaUserCheck size={17} />
-            </div>
-          </div>
-
-          {/* BLOCKED */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              rounded-[18px]
-              border
-              border-[#E5E8ED]
-              bg-white
-              p-4
-              shadow-[0_4px_16px_rgba(30,40,55,0.035)]
-              transition-all
-              duration-200
-              hover:-translate-y-[1px]
-              hover:shadow-[0_7px_20px_rgba(30,40,55,0.07)]
-            "
-          >
-            <div>
-              <p className="text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#A0A7B0]">
-                Blocked Users
-              </p>
-
-              <p className="mt-1 text-[22px] font-extrabold text-[#E04444]">
-                {blockedUsers}
-              </p>
-            </div>
-
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                bg-[#FFF1F1]
-                text-[#E04444]
-              "
-            >
-              <FaUserSlash size={17} />
-            </div>
-          </div>
-        </div>
-
-        {/* =====================================================
-            USERS TABLE
-        ====================================================== */}
-
-        <div
-          className="
-            mt-4
-            overflow-hidden
-            rounded-[22px]
-            border
-            border-[#E5E8ED]
-            bg-white
-            shadow-[0_5px_24px_rgba(30,40,55,0.045)]
-          "
-        >
-          {/* TABLE HEADER */}
-
-          <div
-            className="
-              flex
-              flex-col
-              gap-2
-              border-b
-              border-[#EEF0F3]
-              px-5
-              py-4
-              sm:flex-row
-              sm:items-center
-              sm:justify-between
-            "
-          >
-            <div>
-              <h2 className="text-[14px] font-extrabold text-[#282D35]">
-                All Users
-              </h2>
-
-              <p className="mt-0.5 text-[10px] font-semibold text-[#9AA2AC]">
-                {search
-                  ? `${filteredUsers.length} matching users`
-                  : "Registered users and their account information"}
-              </p>
-            </div>
-
-            <div
-              className="
-                flex
-                items-center
-                gap-2
-                rounded-lg
-                bg-[#F7F8FA]
-                px-3
-                py-1.5
-              "
-            >
-              <MdAdminPanelSettings
-                size={15}
-                className="text-[var(--primary-elite-color)]"
-              />
-
-              <span className="text-[10px] font-bold text-[#69727E]">
-                User Management
-              </span>
-            </div>
-          </div>
-
-          {/* TABLE */}
-
-          <div className="overflow-x-auto">
-            <table className="min-w-[850px] w-full">
-              <thead>
-                <tr
-                  className="
-                    border-b
-                    border-[#E8EBF0]
-                    bg-[#F8F9FB]
-                  "
-                >
-                  <th className="px-5 py-3.5 text-left text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#929AA5]">
-                    User
-                  </th>
-
-                  <th className="px-5 py-3.5 text-left text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#929AA5]">
-                    Mobile No.
-                  </th>
-
-                  <th className="px-5 py-3.5 text-left text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#929AA5]">
-                    Email
-                  </th>
-
-                  <th className="px-5 py-3.5 text-left text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#929AA5]">
-                    Role
-                  </th>
-
-                  <th className="px-5 py-3.5 text-left text-[9px] font-extrabold uppercase tracking-[0.08em] text-[#929AA5]">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredUsers.length > 0 ? (
-                  filteredUsers.map((data, i) => (
-                    <tr
-                      key={data?._id || i}
-                      onClick={() => history.push(`/user?userId=${data?._id}`)}
-                      className="
-                        group
-                        cursor-pointer
-                        border-b
-                        border-[#F0F1F3]
-                        transition-all
-                        duration-200
-                        hover:bg-[#FAFBFC]
-                      "
-                    >
-                      {/* USER */}
-
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="
-                              flex
-                              h-10
-                              w-10
-                              shrink-0
-                              items-center
-                              justify-center
-                              overflow-hidden
-                              rounded-xl
-                              border
-                              border-[#E6E9EE]
-                              bg-[#F4F6F8]
-                              transition-all
-                              duration-200
-                              group-hover:border-[var(--primary-elite-color)]
-                              group-hover:bg-[var(--primary-color)]
-                            "
-                          >
-                            <img
-                              src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                              alt="User"
-                              className="
-                                h-7
-                                w-7
-                                object-contain
-                                opacity-80
-                              "
-                            />
-                          </div>
-
-                          <div className="min-w-0">
-                            <p
-                              className="
-                                max-w-[180px]
-                                truncate
-                                text-[11.5px]
-                                font-extrabold
-                                text-[#343B45]
-                                transition-colors
-                                group-hover:text-[var(--primary-elite-color)]
-                              "
-                            >
-                              {data?.userName || "--"}
-                            </p>
-
-                            <p className="mt-0.5 text-[9px] font-semibold text-[#A0A7B0]">
-                              User ID:{" "}
-                              {data?._id ? `${data._id.slice(0, 8)}...` : "--"}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* PHONE */}
-
-                      <td className="px-5 py-4">
-                        <span className="text-[11px] font-semibold text-[#59626E]">
-                          {data?.phoneNumber || "--"}
-                        </span>
-                      </td>
-
-                      {/* EMAIL */}
-
-                      <td className="px-5 py-4">
-                        <span
-                          className="
-                            block
-                            max-w-[230px]
-                            truncate
-                            text-[11px]
-                            font-semibold
-                            text-[#59626E]
-                          "
-                          title={data?.email}
-                        >
-                          {data?.email || "--"}
-                        </span>
-                      </td>
-
-                      {/* ROLE */}
-
-                      <td className="px-5 py-4">
-                        <span
-                          className={`
-                            inline-flex
-                            items-center
-                            rounded-full
-                            border
-                            px-2.5
-                            py-1
-                            text-[9px]
-                            font-extrabold
-                            capitalize
-                            ${getRoleClass(data?.role)}
-                          `}
-                        >
-                          {data?.role || "--"}
-                        </span>
-                      </td>
-
-                      {/* STATUS */}
-
-                      <td className="px-5 py-4">
-                        <span
-                          className={`
-                            inline-flex
-                            items-center
-                            gap-1.5
-                            rounded-full
-                            border
-                            px-2.5
-                            py-1
-                            text-[9px]
-                            font-extrabold
-                            capitalize
-                            ${getStatusClass(data?.userStatus)}
-                          `}
-                        >
-                          <span
-                            className={`
-                              h-1.5
-                              w-1.5
-                              rounded-full
-                              ${
-                                data?.userStatus === "active"
-                                  ? "bg-[#159765]"
-                                  : "bg-[#E04444]"
-                              }
-                            `}
-                          />
-
-                          {data?.userStatus === "inactive"
-                            ? "Blocked"
-                            : data?.userStatus || "--"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="px-5 py-14">
-                      <div className="flex flex-col items-center justify-center">
-                        <div
-                          className="
-                            flex
-                            h-14
-                            w-14
-                            items-center
-                            justify-center
-                            rounded-2xl
-                            bg-[#F5F6F8]
-                            text-[#A0A7B0]
-                          "
-                        >
-                          <FaUsers size={22} />
-                        </div>
-
-                        <p className="mt-3 text-[12px] font-extrabold text-[#69727E]">
-                          No users found
-                        </p>
-
-                        <p className="mt-1 text-[10px] font-semibold text-[#A0A7B0]">
-                          Try changing your search keyword.
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* PAGINATION */}
-
-          <div className="border-t border-[#EEF0F3] px-4 py-3">
-            <Pagination
-              totalPages={totalPages}
-              activePage={activePage}
-              limit={limit}
-              setPageValue={handlePagination}
-              setLimit={handlePageLimit}
+          <div className="flex h-[42px] w-full items-center gap-2 rounded-xl border border-[#E4E7EC] bg-white px-3 shadow-sm transition-all duration-200 sm:w-[300px] focus-within:border-[#20242B] focus-within:ring-2 focus-within:ring-[#20242B]/10">
+            <MdSearch size={19} className="shrink-0 text-[#9AA2AC]" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search users..."
+              className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[12px] font-semibold text-[#343B45] outline-none placeholder:text-[#A6ADB6] focus:ring-0"
             />
           </div>
         </div>
+
+        {/* KPI CARDS */}
+        <section className="mb-7">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {metrics.map((item) => {
+              const tone = toneClasses[item.tone];
+              const Icon = item.Icon;
+              return (
+                <div key={item.title} className="group relative min-h-[140px] overflow-hidden rounded-[22px] border border-[#E4E8ED] bg-white p-5 shadow-[0_3px_12px_rgba(30,40,55,0.035)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(30,40,55,0.10)]">
+                  <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full ${tone.soft} opacity-80 transition-transform duration-500 group-hover:scale-[1.45]`} />
+                  <div className={`pointer-events-none absolute -bottom-14 -left-14 h-24 w-24 rounded-full ${tone.soft} opacity-40`} />
+                  <div className="relative z-20 flex items-start justify-between">
+                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[15px] ${tone.icon} text-white shadow-[0_8px_18px_rgba(0,0,0,0.12)] transition-all duration-300 group-hover:scale-110 group-hover:rotate-2`}>
+                      <Icon size={20} color="#fff" />
+                    </div>
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7F8FA] text-[#A0A7B1] transition-all duration-300 group-hover:bg-[#20242B] group-hover:text-white">
+                      <FiArrowUpRight size={14} />
+                    </div>
+                  </div>
+                  <div className="relative z-20 mt-5">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#8B94A0]">{item.title}</p>
+                    <div className="mt-2 flex items-end justify-between gap-2">
+                      <h3 className="text-[24px] font-extrabold leading-none tracking-tight text-[#22272F]">{item.value}</h3>
+                      <span className="text-right text-[10px] font-medium text-[#A2A9B3]">{item.desc}</span>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-5 right-5 z-20 h-[3px] overflow-hidden rounded-full bg-[#F0F2F5]">
+                    <div className={`h-full w-0 ${tone.line} rounded-full transition-all duration-500 group-hover:w-full`} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* TABLE */}
+        <section>
+          <div className="overflow-hidden rounded-[22px] border border-[#E4E8ED] bg-white shadow-[0_3px_12px_rgba(30,40,55,0.035)]">
+            <div className="flex items-center justify-between border-b border-[#F0F2F5] px-6 py-4">
+              <div>
+                <h2 className="text-base font-bold text-[#282D35]">User List</h2>
+                <p className="mt-0.5 text-xs text-[#929AA5]">
+                  {search ? `${filteredUsers.length} matching users` : "All registered users and their account information"}
+                </p>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-[850px] w-full">
+                <thead>
+                  <tr className="bg-[#20242B]">
+                    {["User", "Mobile No.", "Email", "Role", "Status"].map((h) => (
+                      <th key={h} className="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-white">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.length > 0 ? filteredUsers.map((data, i) => (
+                    <tr key={data?._id || i} onClick={() => history.push(`/user?userId=${data?._id}`)}
+                      className="group cursor-pointer border-b border-[#F0F1F3] transition-all duration-200 hover:bg-[#FAFBFC]">
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E6E9EE] bg-[#F4F6F8] transition-all duration-200 group-hover:border-[#20242B] group-hover:bg-[#20242B]">
+                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" className="h-6 w-6 object-contain opacity-80 group-hover:invert" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="max-w-[180px] truncate text-[12px] font-bold text-[#343B45] group-hover:text-[#20242B]">{data?.userName || "--"}</p>
+                            <p className="mt-0.5 text-[9px] font-semibold text-[#A0A7B0]">{data?._id ? `${data._id.slice(0, 8)}...` : "--"}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4"><span className="text-[11px] font-semibold text-[#59626E]">{data?.phoneNumber || "--"}</span></td>
+                      <td className="px-5 py-4"><span className="block max-w-[230px] truncate text-[11px] font-semibold text-[#59626E]" title={data?.email}>{data?.email || "--"}</span></td>
+                      <td className="px-5 py-4">
+                        <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[9px] font-bold capitalize ${getRoleClass(data?.role)}`}>{data?.role || "--"}</span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-bold capitalize ${getStatusClass(data?.userStatus)}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full ${data?.userStatus === "active" ? "bg-[#159765]" : "bg-[#E04444]"}`} />
+                          {data?.userStatus === "inactive" ? "Blocked" : data?.userStatus || "--"}
+                        </span>
+                      </td>
+                    </tr>
+                  )) : (
+                    <tr><td colSpan={5} className="px-5 py-14 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F5F6F8] text-[#A0A7B0]"><FaUsers size={22} /></div>
+                        <p className="mt-3 text-[12px] font-bold text-[#69727E]">No users found</p>
+                      </div>
+                    </td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <div className="border-t border-[#F0F2F5] px-4 py-3">
+              <Pagination totalPages={totalPages} activePage={activePage} limit={limit}
+                setPageValue={(p) => { setActivePage(p); getAllUsers(p, limit); }}
+                setLimit={(l) => { setLimit(l); setActivePage(1); getAllUsers(1, l); }} />
+            </div>
+          </div>
+        </section>
+
       </div>
     </AnimatedContent>
   );

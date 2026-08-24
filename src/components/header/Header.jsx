@@ -75,7 +75,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="z-30 py-4 bg-[var(--primary-color)] backdrop-blur-lg shadow-sm">
+      <header className="sticky top-0 z-30 py-4 bg-[var(--primary-color)] backdrop-blur-lg shadow-sm">
         <div className="container flex items-center justify-between px-6 h-full mx-auto">
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
             {getHeaderTitle()}
