@@ -11,7 +11,6 @@ import ThemeSuspense from "@/components/theme/ThemeSuspense";
 const Page404 = lazy(() => import("@/pages/404"));
 
 const Layout = () => {
-  const { isSidebarOpen } = useContext(SidebarContext);
   const isOnline = navigator.onLine;
 
   return (
@@ -21,13 +20,9 @@ const Layout = () => {
           You are in offline mode!{" "}
         </div>
       )}
-      <div
-        className={`flex h-screen bg-[#F3F6FB] ${
-          isSidebarOpen && "overflow-hidden"
-        }`}
-      >
+      <div className="flex h-screen bg-[#F3F6FB]">
         <Sidebar />
-        <div className="flex flex-col flex-1 w-full">
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden" style={{ marginLeft: "70px" }}>
           <Header />
           <Main>
             <Suspense fallback={<ThemeSuspense />}>

@@ -1,11 +1,44 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useContext, useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiGrid, FiLogOut } from "react-icons/fi";
+import { Avatar } from "@windmill/react-ui";
+import Cookies from "js-cookie";
 import sidebar from "@/routes/sidebar";
+import { AdminContext } from "@/context/AdminContext";
+import AlertDialog from "@/components/common/AlterDialogBox";
 
 const Header = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const { state, dispatch } = useContext(AdminContext);
+  const { adminInfo } = state || {};
+
+  const [profileOpen, setProfileOpen] = useState(false);
+  const pRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pRef.current && !pRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleProfileOpen = () => {
+    setProfileOpen((prev) => !prev);
+  };
+
+  const handleLogOut = () => {
+    dispatch({ type: "USER_LOGOUT" });
+    Cookies.remove("adminInfo");
+    Cookies.remove("token");
+    window.location.replace("/login");
+  };
 
   const getHeaderTitle = () => {
     const extraTitles = [
@@ -42,8 +75,11 @@ const Header = () => {
 
   return (
     <>
-      <header className="z-30 py-4 bg-[var(--primary-color)] backdrop-blur-lg shadow-sm">
-        <div className="container flex items-center justify-end h-full mx-auto">
+      <header className="sticky top-0 z-30 py-4 bg-[var(--primary-color)] backdrop-blur-lg shadow-sm">
+        <div className="container flex items-center justify-between px-6 h-full mx-auto">
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+            {getHeaderTitle()}
+          </h2>
           <ul className="flex justify-end items-center">
             {/* <!-- Profile menu --> */}
             <li className="relative inline-block text-left" ref={pRef}>
@@ -65,7 +101,7 @@ const Header = () => {
               </button>
 
               {profileOpen && (
-                <ul className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-[var(--primary-color)] focus:outline-none">
+                <ul className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 focus:outline-none z-50">
                   <li className="justify-between font-serif font-medium py-2 pl-4 transition-colors duration-150 hover:bg-gray-100 text-gray-500 hover:text-emerald-500 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200">
                     <Link to="/dashboard">
                       <span className="flex items-center text-sm">
@@ -75,17 +111,6 @@ const Header = () => {
                     </Link>
                   </li>
 
-                  {/* <li className="justify-between font-serif font-medium py-2 pl-4 transition-colors duration-150 hover:bg-gray-100 text-gray-500 hover:text-emerald-500 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200">
-                    <Link to="/edit-profile">
-                      <span className="flex items-center text-sm">
-                        <FiSettings
-                          className="w-4 h-4 mr-3"
-                          aria-hidden="true"
-                        />
-                        <span>{t("EditProfile")}</span>
-                      </span>
-                    </Link>
-                  </li> */}
                   <AlertDialog
                     onClickInsider={() => setProfileOpen(true)}
                     onAgree={() => handleLogOut()}
