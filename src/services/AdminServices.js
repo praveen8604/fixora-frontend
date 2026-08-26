@@ -7,6 +7,9 @@ const AdminServices = {
   loginOTPAdmin: async (body) => {
     return requests.post(`/eserve/v1/otp/send`, body);
   },
+  verifyOTP: async (body) => {
+    return requests.post(`/eserve/v1/otp/verify`, body);
+  },
   loginAdmin: async (body) => {
     return requests.post(`/eserve/v1/login`, body);
   },

@@ -11,6 +11,7 @@ import loginvideo from "@/assets/img/loginvideo.mp4";
 import logo from "@/assets/img/logo/logo.png";
 import { AdminContext } from "@/context/AdminContext";
 import { removeSetting } from "@/reduxStore/slice/settingSlice";
+import AdminServices from "@/services/AdminServices";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -60,53 +61,68 @@ const Login = () => {
 
   const goToDashboard = (data = {}) => {
     const adminPayload = {
-      _id: "local-admin",
-      userName: "Admin",
-      email: data.email || "admin@fixora.com",
-      phoneNumber: data.phoneNumber || "",
-      countryCode: data.countryCode || "+91",
-      role: "Admin",
-      createdAt: new Date().toISOString(),
+      _id: data._id || "admin",
+      userName: data.userName || data.name || "Admin",
+      email: data.email || enteredEmail || "admin@fixora.com",
+      phoneNumber: data.phoneNumber || enteredMobileNumber || "",
+      countryCode: data.countryCode || enteredCountryCode || "+91",
+      role: data.role || "Admin",
+      createdAt: data.createdAt || new Date().toISOString(),
     };
+    const token = data.token || data.accessToken || "local-session";
 
     dispatch({ type: "USER_LOGIN", payload: adminPayload });
     localStorage.setItem("theme", "light");
-    Cookies.set("adminInfo", JSON.stringify(adminPayload), {
-      expires: cookieTimeOut,
-    });
-    Cookies.set("token", JSON.stringify("local-session"), {
-      expires: cookieTimeOut,
-    });
+    Cookies.set("adminInfo", JSON.stringify(adminPayload), { expires: cookieTimeOut });
+    Cookies.set("token", JSON.stringify(token), { expires: cookieTimeOut });
     notifySuccess("Login Success!");
     window.location.replace("/dashboard");
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     try {
       setIsLoading(true);
+      const payload =
+        loginMethod === "otp"
+          ? { phoneNumber: data.phoneNumber, countryCode: data.countryCode }
+          : { email: data.email };
+
+      await AdminServices.loginOTPAdmin(payload);
+
       if (loginMethod === "otp") {
         setEnteredMobileNumber(data.phoneNumber);
         setEnteredCountryCode(data.countryCode);
       } else {
         setEnteredEmail(data.email);
       }
-      // TODO: call your send-OTP API here
+      notifySuccess("OTP sent successfully!");
       setIsOtpSent(true);
-      setIsLoading(false);
     } catch (error) {
+      notifyError(error?.response?.data?.message || "Failed to send OTP.");
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleOtpSubmit = () => {
-    if (otp.length === 6) {
-      goToDashboard({
-        email: enteredEmail,
-        phoneNumber: enteredMobileNumber,
-        countryCode: enteredCountryCode,
-      });
-    } else {
-      notifyError("Please enter a valid 6-digit OTP.");
+  const handleOtpSubmit = async () => {
+    if (otp.length < 4) {
+      notifyError("Please enter a valid OTP.");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const payload =
+        loginMethod === "otp"
+          ? { phoneNumber: enteredMobileNumber, countryCode: enteredCountryCode, otp }
+          : { email: enteredEmail, otp };
+
+      const res = await AdminServices.verifyOTP(payload);
+      reduxDispatch(removeSetting("globalSetting"));
+      goToDashboard(res?.data || { email: enteredEmail, phoneNumber: enteredMobileNumber, countryCode: enteredCountryCode });
+    } catch (error) {
+      notifyError(error?.response?.data?.message || "Invalid OTP.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
