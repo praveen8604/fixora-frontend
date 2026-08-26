@@ -1,9 +1,24 @@
 import moment from "moment";
 import DataTable from "react-data-table-component";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
-import { FaMapLocationDot, FaLocationDot } from "react-icons/fa6";
-import { FiArrowUpRight, FiMapPin } from "react-icons/fi";
+
+import {
+  FaMapLocationDot,
+  FaLocationDot,
+  FaUser,
+  FaPlus,
+  FaCalendarDays,
+} from "react-icons/fa6";
+
+import {
+  FiMapPin,
+  FiGlobe,
+  FiClock,
+  FiActivity,
+  FiArrowUpRight,
+} from "react-icons/fi";
+
 import AdminServices from "@/services/AdminServices";
 import { notifySuccess, notifyError } from "@/utils/toast";
 import { DecryptData } from "@/utils/DecryptData";
@@ -16,211 +31,1012 @@ const ServiceCenterLocation = () => {
   const [zoneAddress, setZoneAddress] = useState("");
   const [zones, setZones] = useState([]);
 
+  const { isSidebarOpen } = useContext(SidebarContext);
+
   const getZoneAddress = () => {
     AdminServices.getZones()
       .then((res) => {
         if (res) {
-          const d = DecryptData(res);
-          setZones(d?.data?.addresses || []);
+          const decryptedData = DecryptData(res);
+          setZones(decryptedData?.data?.addresses || []);
         }
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Failed to fetch service centers:", err);
+      });
   };
 
-  useEffect(() => { getZoneAddress(); }, []);
+  useEffect(() => {
+    getZoneAddress();
+  }, []);
 
   const handleZoneSubmit = (e) => {
     e.preventDefault();
-    AdminServices.createZone({ addressName: zoneName, addressInput: zoneAddress, isServiceCenterLocation: true })
+
+    const payload = {
+      addressName: zoneName,
+      addressInput: zoneAddress,
+      isServiceCenterLocation: true,
+    };
+
+    AdminServices.createZone(payload)
       .then((res) => {
         if (res) {
           notifySuccess("Zone created successfully!");
+
           getZoneAddress();
+
           setZoneDragger(false);
           setZoneName("");
           setZoneAddress("");
         }
       })
       .catch((err) => {
-        const d = DecryptData(err?.response?.data);
-        notifyError(d?.error?.message);
+        const decryptedData = DecryptData(err?.response?.data);
+
+        notifyError(
+          decryptedData?.error?.message || "Failed to create service center."
+        );
       });
   };
 
-  const metrics = [
-    { title: "Total Centers", value: zones.length,  desc: "All locations",    Icon: FaMapLocationDot },
-    { title: "Active Zones",  value: zones.length,  desc: "Operational",      Icon: FiMapPin },
-  ];
+  const totalCenters = zones?.length || 0;
+
+  const recentCenters = useMemo(() => {
+    if (!Array.isArray(zones)) return 0;
+
+    const sevenDaysAgo = moment().subtract(7, "days");
+
+    return zones.filter((zone) =>
+      moment(zone?.createdAt).isAfter(sevenDaysAgo)
+    ).length;
+  }, [zones]);
+
+  const coordinateCenters = useMemo(() => {
+    if (!Array.isArray(zones)) return 0;
+
+    return zones.filter(
+      (zone) =>
+        zone?.latitude !== undefined &&
+        zone?.latitude !== null &&
+        zone?.latitude !== "" &&
+        zone?.longitude !== undefined &&
+        zone?.longitude !== null &&
+        zone?.longitude !== ""
+    ).length;
+  }, [zones]);
 
   const columns = [
     {
-      name: "Zone Name",
-      cell: (row) => <span className="text-[12px] font-bold text-[#20242B]">{row?.addressName || "--"}</span>,
-      width: "200px",
+      name: "SERVICE CENTER",
+      cell: (row) => (
+        <div className="flex items-center gap-3 py-2">
+          <div
+            className="
+              flex h-10 w-10 shrink-0 items-center justify-center
+              rounded-[12px]
+              bg-[var(--secondary-light-2-color)]
+              text-[var(--primary-elite-color)]
+            "
+          >
+            <FiMapPin size={18} strokeWidth={2.4} />
+          </div>
+
+          <div className="min-w-0">
+            <div className="truncate text-[12px] font-extrabold text-[var(--secondary-color)]">
+              {row?.addressName || "--"}
+            </div>
+
+            <div className="mt-0.5 flex items-center gap-1 text-[10px] text-[var(--secondary-color)] opacity-50">
+              <FaLocationDot size={8} />
+              Service Center
+            </div>
+          </div>
+        </div>
+      ),
+      width: "230px",
     },
+
     {
-      name: "Address Line",
-      cell: (row) => <span className="text-[11px] text-[#59626E] clamp-text">{row?.addressLine || "--"}</span>,
-      width: "260px",
+      name: "ADDRESS",
+      cell: (row) => (
+        <div className="flex items-start gap-2 py-2">
+          <FiMapPin
+            size={14}
+            className="mt-0.5 shrink-0 text-[var(--primary-elite-color)]"
+          />
+
+          <div
+            className="
+              max-w-[280px]
+              text-[11px]
+              font-medium
+              leading-5
+              text-[var(--secondary-color)]
+            "
+            title={row?.addressLine}
+          >
+            {row?.addressLine || "--"}
+          </div>
+        </div>
+      ),
+      width: "320px",
     },
+
     {
-      name: "Latitude",
-      cell: (row) => <span className="text-[11px] font-mono text-[#59626E]">{row?.latitude || "--"}</span>,
-      width: "140px",
+      name: "COORDINATES",
+      cell: (row) => (
+        <div className="flex flex-col gap-1.5">
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--secondary-light-2-color)] px-2.5 py-1">
+            <span className="text-[9px] font-extrabold uppercase text-[var(--primary-elite-color)]">
+              LAT
+            </span>
+
+            <span className="text-[10px] font-semibold text-[var(--secondary-color)]">
+              {row?.latitude ?? "--"}
+            </span>
+          </div>
+
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--secondary-light-2-color)] px-2.5 py-1">
+            <span className="text-[9px] font-extrabold uppercase text-[var(--primary-elite-color)]">
+              LNG
+            </span>
+
+            <span className="text-[10px] font-semibold text-[var(--secondary-color)]">
+              {row?.longitude ?? "--"}
+            </span>
+          </div>
+        </div>
+      ),
+      width: "190px",
     },
+
     {
-      name: "Longitude",
-      cell: (row) => <span className="text-[11px] font-mono text-[#59626E]">{row?.longitude || "--"}</span>,
-      width: "140px",
+      name: "CREATED BY",
+      cell: (row) => (
+        <div className="flex items-center gap-2.5">
+          <div
+            className="
+              flex h-8 w-8 shrink-0 items-center justify-center
+              rounded-full
+              bg-[var(--secondary-light-2-color)]
+              text-[var(--primary-elite-color)]
+            "
+          >
+            <FaUser size={12} />
+          </div>
+
+          <div className="min-w-0">
+            <div className="truncate text-[11px] font-bold text-[var(--secondary-color)]">
+              {row?.user?.userName || "--"}
+            </div>
+
+            <div className="text-[9px] uppercase tracking-wide opacity-40">
+              Admin
+            </div>
+          </div>
+        </div>
+      ),
+      width: "180px",
     },
+
     {
-      name: "Created By",
-      cell: (row) => <span className="text-[11px] font-semibold text-[#59626E]">{row?.user?.userName || "--"}</span>,
-      width: "150px",
+      name: "CREATED ON",
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--secondary-light-2-color)] text-[var(--primary-elite-color)]">
+            <FiClock size={13} />
+          </div>
+
+          <div>
+            <div className="text-[10px] font-bold text-[var(--secondary-color)]">
+              {row?.createdAt
+                ? moment(row.createdAt).format("DD MMM YYYY")
+                : "--"}
+            </div>
+
+            <div className="mt-0.5 text-[9px] opacity-45">
+              {row?.createdAt
+                ? moment(row.createdAt).format("hh:mm A")
+                : "--"}
+            </div>
+          </div>
+        </div>
+      ),
+      width: "165px",
     },
+
     {
-      name: "Created On",
-      cell: (row) => <span className="text-[11px] text-[#9AA2AC]">{moment(row?.createdAt).format("DD MMM YYYY")}</span>,
-      width: "130px",
+      name: "UPDATED ON",
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--secondary-light-2-color)] text-[var(--primary-elite-color)]">
+            <FiActivity size={13} />
+          </div>
+
+          <div>
+            <div className="text-[10px] font-bold text-[var(--secondary-color)]">
+              {row?.updatedAt
+                ? moment(row.updatedAt).format("DD MMM YYYY")
+                : "--"}
+            </div>
+
+            <div className="mt-0.5 text-[9px] opacity-45">
+              {row?.updatedAt
+                ? moment(row.updatedAt).format("hh:mm A")
+                : "--"}
+            </div>
+          </div>
+        </div>
+      ),
+      width: "165px",
     },
   ];
 
   return (
     <AnimatedContent>
-      <div className="min-h-screen bg-[#FDF8F4] pb-10">
+      <div className="pb-8 text-[var(--secondary-color)]">
+        {/* =========================================================
+            PAGE HEADER
+        ========================================================== */}
 
-        {/* PAGE HEADER */}
-        <div className="mb-7 flex items-end justify-between">
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_0_5px_rgba(249,115,22,0.12)]" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#B07040]">Services</span>
+        <div
+          className="
+            relative mb-6 overflow-hidden
+            rounded-[24px]
+            border border-[var(--secondary-light-2-color)]
+            bg-[var(--primary-color)]
+            px-5 py-5
+            shadow-[0_8px_30px_rgba(15,23,42,0.04)]
+            sm:px-6
+          "
+        >
+          {/* Decorative circles */}
+
+          <div
+            className="
+              pointer-events-none absolute
+              -right-10 -top-16
+              h-40 w-40
+              rounded-full
+              opacity-[0.07]
+            "
+            style={{
+              backgroundColor: "var(--primary-elite-color)",
+            }}
+          />
+
+          <div
+            className="
+              pointer-events-none absolute
+              -bottom-16 right-24
+              h-28 w-28
+              rounded-full
+              opacity-[0.04]
+            "
+            style={{
+              backgroundColor: "var(--primary-elite-color)",
+            }}
+          />
+
+          <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            {/* Left */}
+
+            <div className="flex items-center gap-4">
+              <div
+                className="
+                  flex h-14 w-14 shrink-0
+                  items-center justify-center
+                  rounded-[17px]
+                  text-[var(--primary-color)]
+                  shadow-[0_10px_24px_rgba(0,0,0,0.10)]
+                "
+                style={{
+                  backgroundColor: "var(--primary-elite-color)",
+                }}
+              >
+                <FaMapLocationDot size={24} />
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center gap-2">
+                  <h1 className="text-[20px] font-extrabold tracking-[-0.02em]">
+                    Service Centers
+                  </h1>
+
+                  <span
+                    className="
+                      rounded-full px-2.5 py-1
+                      text-[9px] font-extrabold
+                      uppercase tracking-[0.08em]
+                    "
+                    style={{
+                      color: "var(--primary-elite-color)",
+                      backgroundColor:
+                        "var(--secondary-light-2-color)",
+                    }}
+                  >
+                    Locations
+                  </span>
+                </div>
+
+                <p className="max-w-[560px] text-[11px] leading-5 opacity-55">
+                  Manage service center locations, addresses and
+                  geographical coordinates from one place.
+                </p>
+              </div>
             </div>
-            <h1 className="text-[30px] font-extrabold leading-tight tracking-[-0.03em] text-[#20242B]">Service Centers</h1>
-            <p className="mt-2 text-sm leading-6 text-[#7C8592]">Manage and monitor all service center locations</p>
+
+            {/* Create button */}
+
+            <button
+              type="button"
+              onClick={() => setZoneDragger(true)}
+              className="
+                group flex min-h-[42px] w-full
+                items-center justify-center gap-2
+                rounded-[12px]
+                px-5 py-2.5
+                text-[12px] font-extrabold
+                text-[var(--primary-color)]
+                shadow-[0_8px_20px_rgba(0,0,0,0.10)]
+                transition-all duration-200
+                hover:-translate-y-0.5
+                hover:opacity-90
+                sm:w-auto
+              "
+              style={{
+                backgroundColor: "var(--primary-elite-color)",
+              }}
+            >
+              <FaPlus size={12} />
+
+              <span>Create Service Center</span>
+
+              <FiArrowUpRight
+                size={15}
+                className="
+                  transition-transform duration-200
+                  group-hover:translate-x-0.5
+                  group-hover:-translate-y-0.5
+                "
+              />
+            </button>
           </div>
-          <button onClick={() => setZoneDragger(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 text-white text-sm font-bold shadow-[0_4px_14px_rgba(249,115,22,0.35)] transition hover:bg-orange-600 active:scale-95">
-            <FaMapLocationDot size={16} />
-            Create Zone
-          </button>
         </div>
 
-        {/* KPI CARDS */}
-        <section className="mb-7">
-          <div className="grid grid-cols-2 gap-4">
-            {metrics.map((item) => {
-              const Icon = item.Icon;
-              return (
-                <div key={item.title} className="group relative min-h-[120px] overflow-hidden rounded-[22px] border border-[#F0E8E0] bg-white p-5 shadow-[0_3px_12px_rgba(180,80,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(180,80,0,0.10)]">
-                  <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-orange-50 opacity-80 transition-transform duration-500 group-hover:scale-[1.45]" />
-                  <div className="pointer-events-none absolute -bottom-14 -left-14 h-24 w-24 rounded-full bg-orange-50 opacity-40" />
-                  <div className="relative z-20 flex items-start justify-between">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[15px] bg-orange-500 text-white shadow-[0_8px_18px_rgba(0,0,0,0.12)] transition-all duration-300 group-hover:scale-110 group-hover:rotate-2">
-                      <Icon size={20} color="#fff" />
-                    </div>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FDF8F4] text-[#C4A882] transition-all duration-300 group-hover:bg-orange-500 group-hover:text-white">
-                      <FiArrowUpRight size={14} />
-                    </div>
-                  </div>
-                  <div className="relative z-20 mt-5">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#B07040]">{item.title}</p>
-                    <div className="mt-2 flex items-end justify-between gap-2">
-                      <h3 className="text-[24px] font-extrabold leading-none tracking-tight text-[#22272F]">{item.value}</h3>
-                      <span className="text-right text-[10px] font-medium text-[#C4A882]">{item.desc}</span>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-5 right-5 z-20 h-[3px] overflow-hidden rounded-full bg-[#F5EDE4]">
-                    <div className="h-full w-0 bg-orange-500 rounded-full transition-all duration-500 group-hover:w-full" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/* =========================================================
+            SUMMARY CARDS
+        ========================================================== */}
 
-        {/* TABLE */}
-        <section>
-          <div className="overflow-hidden rounded-[22px] border border-[#F0E8E0] bg-white shadow-[0_3px_12px_rgba(180,80,0,0.06)]">
-            <div className="flex items-center justify-between border-b border-[#F5EDE4] px-6 py-4">
-              <div>
-                <h2 className="text-base font-bold text-[#282D35]">Zone List</h2>
-                <p className="mt-0.5 text-xs text-[#B07040]">All registered service center locations</p>
-              </div>
-              <div className="flex items-center gap-2 rounded-xl bg-orange-50 border border-orange-100 px-3 py-1.5">
-                <FiMapPin size={13} className="text-orange-500" />
-                <span className="text-[10px] font-bold text-orange-600">{zones.length} zones</span>
-              </div>
-            </div>
-            <DataTable
-              columns={columns}
-              data={zones}
-              noDataComponent={
-                <div className="w-full min-h-[220px] flex flex-col items-center justify-center">
-                  <div className="h-16 w-16 rounded-2xl bg-orange-50 flex items-center justify-center mb-3">
-                    <FaMapLocationDot size={24} className="text-orange-400" />
-                  </div>
-                  <p className="font-bold text-sm text-[#59626E]">No Service Centers Found</p>
-                  <p className="text-xs text-[#9AA2AC] mt-1">Create a zone to get started</p>
-                </div>
-              }
-              fixedHeader
-              fixedHeaderScrollHeight="55vh"
-              className="data_table_comp"
-              customStyles={{
-                headRow: { style: { backgroundColor: "#FDF0E6", borderBottom: "1px solid #F0E8E0" } },
-                headCells: { style: { fontWeight: "700", fontSize: "10px", color: "#B07040", textTransform: "uppercase", letterSpacing: "0.08em" } },
-                rows: { style: { minHeight: "65px", borderBottom: "1px solid #FDF0E6", transition: "background-color 0.15s ease" }, highlightOnHoverStyle: { backgroundColor: "#FDF8F4", borderBottomColor: "#F0E8E0", outlineStyle: "none" } },
-                cells: { style: { fontSize: "11.5px", paddingLeft: "16px", paddingRight: "16px" } },
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {/* Total */}
+
+          <div
+            className="
+              group relative overflow-hidden
+              rounded-[20px]
+              border border-[var(--secondary-light-2-color)]
+              bg-[var(--primary-color)]
+              p-4
+              shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+              transition-all duration-300
+              hover:-translate-y-0.5
+              hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+            "
+          >
+            <div
+              className="
+                absolute -right-8 -top-8
+                h-24 w-24 rounded-full
+                opacity-[0.06]
+              "
+              style={{
+                backgroundColor: "var(--primary-elite-color)",
               }}
             />
-          </div>
-        </section>
 
-      </div>
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                  Total Centers
+                </p>
 
-      {/* CREATE ZONE DRAWER */}
-      <MuiDrawer open={zoneDragger} onClose={() => setZoneDragger(false)} drawerWidth="400px">
-        <div className="p-5 bg-[#FDF8F4] h-full flex flex-col">
-          <div className="flex items-center gap-3 pb-4 border-b border-orange-100">
-            <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center">
-              <FaMapLocationDot size={18} className="text-white" />
-            </div>
-            <div>
-              <p className="font-bold text-[#20242B]">Create Zone</p>
-              <p className="text-[10px] text-[#B07040]">Add a new service center location</p>
-            </div>
-          </div>
+                <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                  {totalCenters}
+                </p>
 
-          <form onSubmit={handleZoneSubmit} className="flex flex-col flex-1 mt-5">
-            <div className="flex-1 space-y-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-[#59626E] uppercase tracking-wide">Zone Name</label>
-                <input value={zoneName} onChange={(e) => setZoneName(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-[#E4E8ED] bg-white px-3 text-sm font-semibold text-[#20242B] outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 placeholder:text-[#C4A882]"
-                  placeholder="Enter zone name" />
+                <p className="mt-2 text-[9px] font-semibold opacity-40">
+                  All registered locations
+                </p>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-[#59626E] uppercase tracking-wide">Zone Address</label>
-                <textarea value={zoneAddress} onChange={(e) => setZoneAddress(e.target.value)} rows={4}
-                  className="w-full rounded-xl border border-[#E4E8ED] bg-white px-3 py-2.5 text-sm font-semibold text-[#20242B] outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 placeholder:text-[#C4A882] resize-none"
-                  placeholder="Enter full address" />
+
+              <div
+                className="
+                  flex h-11 w-11 items-center justify-center
+                  rounded-[13px]
+                "
+                style={{
+                  color: "var(--primary-elite-color)",
+                  backgroundColor:
+                    "var(--secondary-light-2-color)",
+                }}
+              >
+                <FaMapLocationDot size={19} />
               </div>
             </div>
+          </div>
 
-            <div className="flex items-center gap-3 pt-4 border-t border-orange-100 mt-4">
-              <button type="button" onClick={() => setZoneDragger(false)}
-                className="flex-1 h-11 rounded-xl border-2 border-orange-300 text-orange-600 text-sm font-bold transition hover:bg-orange-50">
-                Cancel
-              </button>
-              <button type="submit"
-                className="flex-1 h-11 rounded-xl bg-orange-500 text-white text-sm font-bold transition hover:bg-orange-600">
-                Create Zone
-              </button>
+          {/* Coordinates */}
+
+          <div
+            className="
+              group relative overflow-hidden
+              rounded-[20px]
+              border border-[var(--secondary-light-2-color)]
+              bg-[var(--primary-color)]
+              p-4
+              shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+              transition-all duration-300
+              hover:-translate-y-0.5
+              hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+            "
+          >
+            <div
+              className="
+                absolute -right-8 -top-8
+                h-24 w-24 rounded-full
+                opacity-[0.06]
+              "
+              style={{
+                backgroundColor: "var(--primary-elite-color)",
+              }}
+            />
+
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                  Mapped Centers
+                </p>
+
+                <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                  {coordinateCenters}
+                </p>
+
+                <p className="mt-2 text-[9px] font-semibold opacity-40">
+                  Locations with coordinates
+                </p>
+              </div>
+
+              <div
+                className="
+                  flex h-11 w-11 items-center justify-center
+                  rounded-[13px]
+                "
+                style={{
+                  color: "var(--primary-elite-color)",
+                  backgroundColor:
+                    "var(--secondary-light-2-color)",
+                }}
+              >
+                <FiGlobe size={20} />
+              </div>
             </div>
-          </form>
+          </div>
+
+          {/* Recent */}
+
+          <div
+            className="
+              group relative overflow-hidden
+              rounded-[20px]
+              border border-[var(--secondary-light-2-color)]
+              bg-[var(--primary-color)]
+              p-4
+              shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+              transition-all duration-300
+              hover:-translate-y-0.5
+              hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+            "
+          >
+            <div
+              className="
+                absolute -right-8 -top-8
+                h-24 w-24 rounded-full
+                opacity-[0.06]
+              "
+              style={{
+                backgroundColor: "var(--primary-elite-color)",
+              }}
+            />
+
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                  Recently Added
+                </p>
+
+                <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                  {recentCenters}
+                </p>
+
+                <p className="mt-2 text-[9px] font-semibold opacity-40">
+                  Added in the last 7 days
+                </p>
+              </div>
+
+              <div
+                className="
+                  flex h-11 w-11 items-center justify-center
+                  rounded-[13px]
+                "
+                style={{
+                  color: "var(--primary-elite-color)",
+                  backgroundColor:
+                    "var(--secondary-light-2-color)",
+                }}
+              >
+                <FaCalendarDays size={18} />
+              </div>
+            </div>
+          </div>
         </div>
-      </MuiDrawer>
+
+        {/* =========================================================
+            TABLE
+        ========================================================== */}
+
+        <div
+          className="
+            overflow-hidden
+            rounded-[22px]
+            border border-[var(--secondary-light-2-color)]
+            bg-[var(--primary-color)]
+            shadow-[0_8px_30px_rgba(15,23,42,0.045)]
+          "
+        >
+          {/* Table Header */}
+
+          <div
+            className="
+              flex flex-col gap-3
+              border-b border-[var(--secondary-light-2-color)]
+              px-5 py-4
+              sm:flex-row sm:items-center sm:justify-between
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  flex h-9 w-9 items-center justify-center
+                  rounded-[11px]
+                "
+                style={{
+                  color: "var(--primary-elite-color)",
+                  backgroundColor:
+                    "var(--secondary-light-2-color)",
+                }}
+              >
+                <FiMapPin size={17} />
+              </div>
+
+              <div>
+                <h2 className="text-[13px] font-extrabold">
+                  Service Center Locations
+                </h2>
+
+                <p className="mt-0.5 text-[9px] font-medium opacity-45">
+                  Complete list of registered service centers
+                </p>
+              </div>
+            </div>
+
+            <div
+              className="
+                flex w-fit items-center gap-2
+                rounded-full
+                bg-[var(--secondary-light-2-color)]
+                px-3 py-1.5
+              "
+            >
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  backgroundColor:
+                    "var(--primary-elite-color)",
+                }}
+              />
+
+              <span className="text-[9px] font-extrabold uppercase tracking-wide opacity-60">
+                {totalCenters} Centers
+              </span>
+            </div>
+          </div>
+
+          <DataTable
+            columns={columns}
+            data={zones}
+            noDataComponent={
+              <div className="flex min-h-[300px] w-full flex-col items-center justify-center px-5 text-center">
+                <div
+                  className="
+                    mb-4 flex h-16 w-16
+                    items-center justify-center
+                    rounded-[18px]
+                  "
+                  style={{
+                    color: "var(--primary-elite-color)",
+                    backgroundColor:
+                      "var(--secondary-light-2-color)",
+                  }}
+                >
+                  <FaMapLocationDot size={25} />
+                </div>
+
+                <div className="text-[14px] font-extrabold">
+                  No Service Centers Found
+                </div>
+
+                <div className="mt-1 max-w-[300px] text-[10px] leading-5 opacity-45">
+                  Create your first service center location to
+                  start managing your service network.
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setZoneDragger(true)}
+                  className="
+                    mt-5 inline-flex items-center gap-2
+                    rounded-[10px]
+                    px-4 py-2
+                    text-[10px] font-extrabold
+                    text-[var(--primary-color)]
+                    transition-all duration-200
+                    hover:opacity-90
+                  "
+                  style={{
+                    backgroundColor:
+                      "var(--primary-elite-color)",
+                  }}
+                >
+                  <FaPlus size={9} />
+                  Create Service Center
+                </button>
+              </div>
+            }
+            fixedHeader
+            fixedHeaderScrollHeight="65vh"
+            highlightOnHover
+            className={`data_table_comp ${
+              isSidebarOpen
+                ? "data_table_comp_sidebar_opened"
+                : "data_table_comp_sidebar_closed"
+            } text-[var(--secondary-color)]`}
+            customStyles={{
+              table: {
+                style: {
+                  backgroundColor: "var(--primary-color)",
+                },
+              },
+
+              headRow: {
+                style: {
+                  minHeight: "50px",
+                  backgroundColor:
+                    "var(--secondary-light-2-color)",
+                  borderBottom:
+                    "1px solid var(--secondary-light-2-color)",
+                },
+              },
+
+              headCells: {
+                style: {
+                  fontSize: "9.5px",
+                  fontWeight: "800",
+                  color: "var(--secondary-color)",
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                  paddingLeft: "18px",
+                  paddingRight: "18px",
+                },
+              },
+
+              rows: {
+                style: {
+                  minHeight: "78px",
+                  backgroundColor: "var(--primary-color)",
+                  borderBottom:
+                    "1px solid var(--secondary-light-2-color)",
+                  transition: "all 0.2s ease",
+                },
+
+                highlightOnHoverStyle: {
+                  backgroundColor:
+                    "var(--secondary-light-2-color)",
+                  borderBottomColor:
+                    "var(--secondary-light-2-color)",
+                  outline: "none",
+                },
+              },
+
+              cells: {
+                style: {
+                  paddingLeft: "18px",
+                  paddingRight: "18px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                },
+              },
+
+              progress: {
+                style: {
+                  backgroundColor: "var(--primary-color)",
+                },
+              },
+            }}
+          />
+        </div>
+
+        {/* =========================================================
+            CREATE SERVICE CENTER DRAWER
+        ========================================================== */}
+
+        <MuiDrawer
+          open={zoneDragger}
+          onClose={() => setZoneDragger(false)}
+          drawerWidth="420px"
+        >
+          <div className="h-[var(--doc-height)] bg-[var(--primary-color)]">
+            {/* Drawer Header */}
+
+            <div
+              className="
+                relative overflow-hidden
+                border-b border-[var(--secondary-light-2-color)]
+                px-5 py-5
+              "
+            >
+              <div
+                className="
+                  pointer-events-none absolute
+                  -right-8 -top-10
+                  h-28 w-28
+                  rounded-full
+                  opacity-[0.07]
+                "
+                style={{
+                  backgroundColor:
+                    "var(--primary-elite-color)",
+                }}
+              />
+
+              <div className="relative z-10 flex items-center gap-3">
+                <div
+                  className="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-[13px]
+                    text-[var(--primary-color)]
+                  "
+                  style={{
+                    backgroundColor:
+                      "var(--primary-elite-color)",
+                  }}
+                >
+                  <FaMapLocationDot size={19} />
+                </div>
+
+                <div>
+                  <h2 className="text-[15px] font-extrabold">
+                    Create Service Center
+                  </h2>
+
+                  <p className="mt-0.5 text-[10px] opacity-45">
+                    Add a new location to your service network
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Form */}
+
+            <form onSubmit={handleZoneSubmit}>
+              <div
+                className="overflow-auto px-5"
+                style={{
+                  height: "calc(var(--doc-height) - 135px)",
+                }}
+              >
+                {/* Info Card */}
+
+                <div
+                  className="
+                    mt-5 flex gap-3
+                    rounded-[14px]
+                    border border-[var(--secondary-light-2-color)]
+                    bg-[var(--secondary-light-2-color)]
+                    p-3
+                  "
+                >
+                  <div
+                    className="mt-0.5 shrink-0"
+                    style={{
+                      color:
+                        "var(--primary-elite-color)",
+                    }}
+                  >
+                    <FiMapPin size={16} />
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] font-extrabold">
+                      Location details
+                    </p>
+
+                    <p className="mt-1 text-[9px] leading-4 opacity-50">
+                      Enter a clear center name and complete
+                      address so the location can be identified
+                      easily.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Service Center Name */}
+
+                <div className="mt-6">
+                  <label className="mb-2 block text-[11px] font-extrabold">
+                    Service Center Name
+                  </label>
+
+                  <input
+                    required
+                    value={zoneName}
+                    onChange={(e) =>
+                      setZoneName(e.target.value)
+                    }
+                    className="
+                      default-input
+                      !h-11
+                      !rounded-[10px]
+                      !border-[var(--secondary-light-2-color)]
+                      !text-[12px]
+                    "
+                    placeholder="e.g. Fixora Ranchi Center"
+                  />
+                </div>
+
+                {/* Address */}
+
+                <div className="mt-5">
+                  <label className="mb-2 block text-[11px] font-extrabold">
+                    Service Center Address
+                  </label>
+
+                  <textarea
+                    required
+                    value={zoneAddress}
+                    onChange={(e) =>
+                      setZoneAddress(e.target.value)
+                    }
+                    className="
+                      default-textarea
+                      !rounded-[10px]
+                      !border-[var(--secondary-light-2-color)]
+                      !text-[12px]
+                      !leading-5
+                    "
+                    placeholder="Enter the complete service center address"
+                    rows={5}
+                  />
+                </div>
+
+                {/* Preview */}
+
+                {(zoneName || zoneAddress) && (
+                  <div className="mt-5">
+                    <p className="mb-2 text-[9px] font-extrabold uppercase tracking-[0.12em] opacity-45">
+                      Preview
+                    </p>
+
+                    <div
+                      className="
+                        rounded-[14px]
+                        border border-[var(--secondary-light-2-color)]
+                        p-3
+                      "
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="
+                            flex h-9 w-9 shrink-0
+                            items-center justify-center
+                            rounded-[10px]
+                          "
+                          style={{
+                            color:
+                              "var(--primary-elite-color)",
+                            backgroundColor:
+                              "var(--secondary-light-2-color)",
+                          }}
+                        >
+                          <FiMapPin size={16} />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="truncate text-[11px] font-extrabold">
+                            {zoneName ||
+                              "Service Center Name"}
+                          </p>
+
+                          <p className="mt-0.5 line-clamp-2 text-[9px] leading-4 opacity-45">
+                            {zoneAddress ||
+                              "Service center address"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+
+              <div
+                className="
+                  flex items-center gap-2
+                  border-t border-[var(--secondary-light-2-color)]
+                  bg-[var(--primary-color)]
+                  px-5 py-3
+                "
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setZoneDragger(false);
+                    setZoneName("");
+                    setZoneAddress("");
+                  }}
+                  className="
+                    h-10 w-full
+                    rounded-[10px]
+                    border-2
+                    border-[var(--primary-elite-color)]
+                    text-[11px]
+                    font-extrabold
+                    text-[var(--primary-elite-color)]
+                    transition-all duration-200
+                    hover:bg-[var(--secondary-light-2-color)]
+                  "
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="
+                    flex h-10 w-full
+                    items-center justify-center gap-2
+                    rounded-[10px]
+                    text-[11px]
+                    font-extrabold
+                    text-[var(--primary-color)]
+                    shadow-[0_6px_16px_rgba(0,0,0,0.10)]
+                    transition-all duration-200
+                    hover:opacity-90
+                  "
+                  style={{
+                    backgroundColor:
+                      "var(--primary-elite-color)",
+                  }}
+                >
+                  <FaPlus size={10} />
+                  Create Center
+                </button>
+              </div>
+            </form>
+          </div>
+        </MuiDrawer>
+      </div>
     </AnimatedContent>
   );
 };
