@@ -84,8 +84,15 @@ const Login = () => {
   const onSubmit = (data) => {
     try {
       setIsLoading(true);
-      reduxDispatch(removeSetting("globalSetting"));
-      goToDashboard(data);
+      if (loginMethod === "otp") {
+        setEnteredMobileNumber(data.phoneNumber);
+        setEnteredCountryCode(data.countryCode);
+      } else {
+        setEnteredEmail(data.email);
+      }
+      // TODO: call your send-OTP API here
+      setIsOtpSent(true);
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
     }
