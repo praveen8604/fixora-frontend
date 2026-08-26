@@ -1,13 +1,282 @@
 import React, { useEffect, useState } from "react";
+
 import { MdAddchart, MdAddPhotoAlternate } from "react-icons/md";
-import { FaRegNewspaper, FaTag } from "react-icons/fa";
+
+import {
+  FaRegNewspaper,
+  FaTag,
+  FaCalendarAlt,
+  FaPercent,
+  FaMoneyBillWave,
+} from "react-icons/fa";
+
+import { FiFileText, FiImage, FiTag as FiTagIcon } from "react-icons/fi";
+
 import MuiDrawer from "@/components/drawer/MuiDrawer";
 import Dropdown from "@/components/common/DropDown";
 import AdminServices from "@/services/AdminServices";
 import { DecryptData } from "@/utils/DecryptData";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
+/* ============================================================
+   LINKS
+============================================================ */
+
 export const links = ["Offers", "Blogs"];
+
+/* ============================================================
+   THEME
+============================================================ */
+
+const THEME = {
+  navy: "#0f172a",
+  text: "#111827",
+  textMuted: "#64748b",
+  blue: "#2563eb",
+  blueDark: "#1d4ed8",
+  blueSoft: "#eff6ff",
+  blueBorder: "#dbeafe",
+  white: "#ffffff",
+  border: "#e5e7eb",
+  borderSoft: "#eef2f7",
+  surface: "#f8fafc",
+};
+
+/* ============================================================
+   ICON BOX
+============================================================ */
+
+const IconBox = ({
+  children,
+  size = "h-10 w-10",
+  radius = "rounded-[12px]",
+}) => {
+  return (
+    <div
+      className={`${size} ${radius} flex shrink-0 items-center justify-center`}
+      style={{
+        color: THEME.blue,
+        backgroundColor: THEME.blueSoft,
+        border: `1px solid ${THEME.blueBorder}`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+/* ============================================================
+   INPUT WITH ICON
+============================================================ */
+
+const InputWithIcon = ({
+  icon,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  className = "",
+  inputClassName = "",
+  ...props
+}) => {
+  return (
+    <div
+      className={`flex h-11 w-full items-center overflow-hidden rounded-[12px] bg-white transition-all duration-200 ${className}`}
+      style={{
+        border: `1px solid ${THEME.border}`,
+      }}
+    >
+      <div
+        className="flex h-full w-[40px] shrink-0 items-center justify-center"
+        style={{
+          color: THEME.textMuted,
+        }}
+      >
+        {icon}
+      </div>
+
+      <input
+        {...props}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`
+          h-full
+          min-w-0
+          flex-1
+          bg-transparent
+          pr-3
+          text-[11px]
+          font-semibold
+          outline-none
+          placeholder:text-slate-400
+          ${inputClassName}
+        `}
+        style={{
+          color: THEME.text,
+        }}
+      />
+    </div>
+  );
+};
+
+/* ============================================================
+   TEXTAREA
+============================================================ */
+
+const textareaClass = `
+  w-full
+  rounded-[12px]
+  bg-white
+  px-3.5
+  py-3
+  text-[11px]
+  font-semibold
+  leading-5
+  outline-none
+  resize-none
+  placeholder:text-slate-400
+`;
+
+/* ============================================================
+   LABEL
+============================================================ */
+
+const labelClass = `
+  mb-2
+  block
+  text-[9px]
+  font-extrabold
+  uppercase
+  tracking-[0.12em]
+`;
+
+/* ============================================================
+   IMAGE UPLOADER
+============================================================ */
+
+const ImageUploader = ({
+  id,
+  imageValue,
+  onChange,
+  label,
+  alt,
+}) => {
+  return (
+    <div>
+      <label
+        className={labelClass}
+        style={{
+          color: THEME.textMuted,
+        }}
+      >
+        {label}
+      </label>
+
+      <input
+        className="hidden"
+        id={id}
+        type="file"
+        accept="image/*"
+        onChange={onChange}
+      />
+
+      <label
+        htmlFor={id}
+        className="
+          group
+          flex
+          h-40
+          w-full
+          cursor-pointer
+          items-center
+          justify-center
+          overflow-hidden
+          rounded-[15px]
+          bg-white
+          transition-all
+          duration-300
+        "
+        style={{
+          border: `1px dashed ${THEME.blueBorder}`,
+        }}
+      >
+        {imageValue.image ? (
+          <div className="relative h-full w-full">
+            <img
+              src={imageValue.image}
+              alt={alt}
+              className="
+                h-full
+                w-full
+                object-cover
+                transition-transform
+                duration-500
+                group-hover:scale-[1.02]
+              "
+            />
+
+            <div
+              className="
+                absolute
+                bottom-2
+                left-2
+                flex
+                items-center
+                gap-1.5
+                rounded-full
+                px-2.5
+                py-1.5
+                text-[8px]
+                font-bold
+              "
+              style={{
+                color: THEME.navy,
+                backgroundColor: THEME.white,
+                border: `1px solid ${THEME.border}`,
+              }}
+            >
+              <FiImage size={10} />
+              Change image
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center">
+            <IconBox
+              size="h-12 w-12"
+              radius="rounded-[13px]"
+            >
+              <MdAddPhotoAlternate size={23} />
+            </IconBox>
+
+            <span
+              className="mt-2 text-[9px] font-bold"
+              style={{
+                color: THEME.textMuted,
+              }}
+            >
+              Click to upload image
+            </span>
+
+            <span
+              className="mt-1 text-[8px]"
+              style={{
+                color: "#94a3b8",
+              }}
+            >
+              JPG, PNG or WEBP
+            </span>
+          </div>
+        )}
+      </label>
+    </div>
+  );
+};
+
+/* ============================================================
+   COMPONENT
+============================================================ */
 
 const AppManagementHeader = ({
   getManagementList,
@@ -19,43 +288,73 @@ const AppManagementHeader = ({
 }) => {
   const [nameValue, setNameValue] = useState("");
   const [descriptionValue, setDescriptionValue] = useState("");
+
   const [offerStartDate, setOfferStartDate] = useState("");
   const [offerEndDate, setOfferEndDate] = useState("");
-  const [restrictedMinimumPrice, setRestrictedMinimumPrice] = useState("");
+
+  const [restrictedMinimumPrice, setRestrictedMinimumPrice] =
+    useState("");
+
   const [maxOfferPrice, setMaxOfferPrice] = useState("");
+
   const [imageValue, setImageValue] = useState({
     fileName: "",
     image: "",
   });
+
   const [flatPrice, setFlatPrice] = useState("");
   const [offerPercentage, setOfferPercentage] = useState("");
   const [couponCode, setCouponCode] = useState("");
-  const [restrictedServiceMode, setRestrictedServiceModeSelectedOption] =
-    useState("");
+
+  const [
+    restrictedServiceMode,
+    setRestrictedServiceModeSelectedOption,
+  ] = useState("");
+
   const [offerBy, setOfferBySelectedOption] = useState("");
+
+  /* ============================================================
+     RESET FORM
+  ============================================================ */
 
   const resetForm = () => {
     setNameValue("");
     setDescriptionValue("");
+
     setOfferStartDate("");
     setOfferEndDate("");
+
     setRestrictedMinimumPrice("");
     setMaxOfferPrice("");
+
     setImageValue({
       fileName: "",
       image: "",
     });
+
     setFlatPrice("");
     setOfferPercentage("");
     setCouponCode("");
+
     setRestrictedServiceModeSelectedOption("");
     setOfferBySelectedOption("");
   };
 
+  /* ============================================================
+     TAB CHANGE
+  ============================================================ */
+
   const handleTabChange = (link) => {
     resetForm();
-    setCurrentLink(link);
+
+    if (typeof setCurrentLink === "function") {
+      setCurrentLink(link);
+    }
   };
+
+  /* ============================================================
+     IMAGE CHANGE
+  ============================================================ */
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -64,15 +363,19 @@ const AppManagementHeader = ({
 
     const reader = new FileReader();
 
-    reader.readAsDataURL(file);
-
     reader.onload = () => {
       setImageValue({
-        fileName: `img${Date.now()}`,
+        fileName: file.name,
         image: reader.result,
       });
     };
+
+    reader.readAsDataURL(file);
   };
+
+  /* ============================================================
+     SUBMIT
+  ============================================================ */
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -82,16 +385,20 @@ const AppManagementHeader = ({
       offerDescription: descriptionValue,
       offerStartDate,
       offerEndDate,
-      restrictedServiceMode: restrictedServiceMode.toLowerCase(),
+
+      restrictedServiceMode:
+        restrictedServiceMode?.toLowerCase() || "",
+
       restrictedMinimumPrice,
       maxOfferPrice,
       couponCode,
+
       offerBy: {
-        ...(offerBy.toLowerCase() === "percentage"
+        ...(offerBy?.toLowerCase() === "percentage"
           ? {
               percentage: offerPercentage,
             }
-          : offerBy.toLowerCase() === "coupon"
+          : offerBy?.toLowerCase() === "coupon"
             ? {
                 coupon: offerPercentage,
               }
@@ -99,6 +406,7 @@ const AppManagementHeader = ({
                 flatPrice,
               }),
       },
+
       offerImage: imageValue,
     };
 
@@ -108,17 +416,28 @@ const AppManagementHeader = ({
       blogImage: imageValue,
     };
 
-    const onSuccess = (msg) => {
-      notifySuccess(msg);
-      getManagementList();
+    const onSuccess = (message) => {
+      notifySuccess(message);
+
+      if (typeof getManagementList === "function") {
+        getManagementList();
+      }
+
       setFilterDragger(false);
       resetForm();
     };
 
     const onError = (err) => {
       const d = DecryptData(err?.response?.data);
-      notifyError(d?.error?.message);
+
+      notifyError(
+        d?.error?.message || "Something went wrong"
+      );
     };
+
+    /* ========================================================
+       OFFERS
+    ======================================================== */
 
     if (currentLink === "Offers") {
       const call = editValue?._id
@@ -130,10 +449,20 @@ const AppManagementHeader = ({
 
       call
         .then(() =>
-          onSuccess(editValue?._id ? "Offer updated!" : "Offer created!")
+          onSuccess(
+            editValue?._id
+              ? "Offer updated successfully!"
+              : "Offer created successfully!"
+          )
         )
         .catch(onError);
+
+      return;
     }
+
+    /* ========================================================
+       BLOGS
+    ======================================================== */
 
     if (currentLink === "Blogs") {
       const call = editValue?._id
@@ -145,26 +474,44 @@ const AppManagementHeader = ({
 
       call
         .then(() =>
-          onSuccess(editValue?._id ? "Blog updated!" : "Blog created!")
+          onSuccess(
+            editValue?._id
+              ? "Blog updated successfully!"
+              : "Blog created successfully!"
+          )
         )
         .catch(onError);
     }
   };
 
+  /* ============================================================
+     LOAD EDIT DATA
+  ============================================================ */
+
   useEffect(() => {
-    if (currentLink === "Blogs" && editValue?._id) {
+    if (!editValue?._id) return;
+
+    if (currentLink === "Blogs") {
       setNameValue(editValue?.blogTitle || "");
-      setDescriptionValue(editValue?.blogDescription || "");
+
+      setDescriptionValue(
+        editValue?.blogDescription || ""
+      );
 
       setImageValue({
         fileName: "",
         image: editValue?.blogImage || "",
       });
+
+      return;
     }
 
-    if (currentLink === "Offers" && editValue?._id) {
+    if (currentLink === "Offers") {
       setNameValue(editValue?.offerName || "");
-      setDescriptionValue(editValue?.offerDescription || "");
+
+      setDescriptionValue(
+        editValue?.offerDescription || ""
+      );
 
       setOfferStartDate(
         editValue?.offerStartDate
@@ -186,14 +533,18 @@ const AppManagementHeader = ({
         editValue?.restrictedMinimumPrice || ""
       );
 
-      setMaxOfferPrice(editValue?.maxOfferPrice || "");
+      setMaxOfferPrice(
+        editValue?.maxOfferPrice || ""
+      );
 
       setImageValue({
         fileName: "",
         image: editValue?.offerImage || "",
       });
 
-      setFlatPrice(editValue?.offerBy?.flatPrice || "");
+      setFlatPrice(
+        editValue?.offerBy?.flatPrice || ""
+      );
 
       setOfferPercentage(
         editValue?.offerBy?.percentage ||
@@ -213,85 +564,322 @@ const AppManagementHeader = ({
             : "Percentage"
       );
 
-      setCouponCode(editValue?.couponCode || "");
+      setCouponCode(
+        editValue?.couponCode || ""
+      );
     }
   }, [editValue, currentLink]);
 
-  useEffect(() => {
-    setCurrentLink(links[0]);
-  }, [setCurrentLink]);
+  /* ============================================================
+     STATES
+  ============================================================ */
 
   const isEditing = Boolean(editValue?._id);
   const isBlog = currentLink === "Blogs";
 
-  const inputClass =
-    "h-11 w-full rounded-xl border border-[#E4E8ED] bg-white px-3 text-xs font-semibold text-[#414853] outline-none transition-all placeholder:text-[#9AA2AC] focus:border-[#2563EB] focus:ring-2 focus:ring-[#DBEAFE]";
+  const today = new Date()
+    .toISOString()
+    .split("T")[0];
 
-  const labelClass =
-    "mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-[#7C8592]";
+  /* ============================================================
+     RETURN
+  ============================================================ */
 
   return (
-    <div className="mt-4 mb-6">
-      {/* =====================================================
+    <div className="mb-6 mt-4">
+
+      {/* ========================================================
           PAGE HEADER
-      ====================================================== */}
+      ======================================================== */}
 
-      <div className="mb-7 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="mb-3 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#20242B] shadow-[0_0_0_5px_rgba(0,0,0,0.06)]" />
+      <div
+        className="
+          relative
+          mb-6
+          overflow-hidden
+          rounded-[22px]
+          bg-white
+          px-5
+          py-5
+          shadow-[0_8px_30px_rgba(15,23,42,0.05)]
+          sm:px-6
+        "
+        style={{
+          border: `1px solid ${THEME.border}`,
+        }}
+      >
+        <div
+          className="
+            pointer-events-none
+            absolute
+            -right-16
+            -top-20
+            h-48
+            w-48
+            rounded-full
+            opacity-[0.045]
+          "
+          style={{
+            backgroundColor: THEME.blue,
+          }}
+        />
 
-            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#89919D]">
-              App Management
-            </span>
+        <div
+          className="
+            pointer-events-none
+            absolute
+            -bottom-20
+            -left-16
+            h-40
+            w-40
+            rounded-full
+            opacity-[0.035]
+          "
+          style={{
+            backgroundColor: THEME.blue,
+          }}
+        />
+
+        <div
+          className="
+            relative
+            z-10
+            flex
+            flex-col
+            gap-5
+            lg:flex-row
+            lg:items-center
+            lg:justify-between
+          "
+        >
+
+          {/* LEFT */}
+
+          <div className="flex items-center gap-4">
+
+            <IconBox
+              size="h-14 w-14"
+              radius="rounded-[17px]"
+            >
+              {isBlog ? (
+                <FaRegNewspaper size={22} />
+              ) : (
+                <MdAddchart size={24} />
+              )}
+            </IconBox>
+
+            <div>
+
+              <div className="mb-1.5 flex items-center gap-2">
+
+                <h1
+                  className="
+                    text-[21px]
+                    font-extrabold
+                    tracking-[-0.02em]
+                  "
+                  style={{
+                    color: THEME.navy,
+                  }}
+                >
+                  {isBlog ? "Blogs" : "Offers"}
+                </h1>
+
+                <span
+                  className="
+                    inline-flex
+                    items-center
+                    gap-1.5
+                    rounded-full
+                    px-2.5
+                    py-1
+                    text-[8px]
+                    font-extrabold
+                    uppercase
+                    tracking-[0.1em]
+                  "
+                  style={{
+                    color: THEME.navy,
+                    backgroundColor: THEME.blueSoft,
+                    border: `1px solid ${THEME.blueBorder}`,
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      backgroundColor: THEME.blue,
+                    }}
+                  />
+
+                  {isBlog ? "Content" : "Promotion"}
+                </span>
+
+              </div>
+
+              <p
+                className="
+                  max-w-[520px]
+                  text-[10px]
+                  leading-5
+                "
+                style={{
+                  color: THEME.textMuted,
+                }}
+              >
+                {isBlog
+                  ? "Publish and manage blog content from one place."
+                  : "Create and manage promotional offers and discounts."}
+              </p>
+
+            </div>
           </div>
 
-          <h1 className="text-[30px] font-extrabold leading-tight tracking-[-0.03em] text-[#20242B]">
-            {isBlog ? "Blogs" : "Offers"}
-          </h1>
+          {/* TABS */}
 
-          <p className="mt-2 text-sm leading-6 text-[#7C8592]">
-            {isBlog
-              ? "Publish and manage blog content"
-              : "Create and manage promotional offers"}
-          </p>
-        </div>
+          <div
+            className="
+              flex
+              items-center
+              gap-1
+              rounded-[13px]
+              bg-white
+              p-1
+            "
+            style={{
+              border: `1px solid ${THEME.border}`,
+            }}
+          >
+            {links.map((link) => {
+              const active = link === currentLink;
 
-        {/* =====================================================
-            TABS
-        ====================================================== */}
+              return (
+                <button
+                  key={link}
+                  type="button"
+                  onClick={() => handleTabChange(link)}
+                  className={`
+                    group
+                    relative
+                    flex
+                    items-center
+                    gap-2
+                    overflow-hidden
+                    rounded-[10px]
+                    px-4
+                    py-2.5
+                    text-[10px]
+                    font-extrabold
+                    transition-all
+                    duration-300
+                    ease-out
+                    ${
+                      active
+                        ? "shadow-[0_4px_12px_rgba(37,99,235,0.10)]"
+                        : "hover:-translate-y-[1px] hover:shadow-[0_5px_14px_rgba(37,99,235,0.10)]"
+                    }
+                  `}
+                  style={{
+                    color: active
+                      ? THEME.blue
+                      : THEME.textMuted,
 
-        <div className="flex items-center gap-1 rounded-xl border border-[#E4E8ED] bg-white p-1 shadow-sm">
-          {links.map((link) => {
-            const active = link === currentLink;
+                    backgroundColor: active
+                      ? THEME.blueSoft
+                      : THEME.white,
 
-            return (
-              <button
-                key={link}
-                type="button"
-                onClick={() => handleTabChange(link)}
-                className={`flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-bold transition-all duration-200 ${
-                  active
-                    ? "bg-[#20242B] text-white shadow-sm"
-                    : "text-[#59626E] hover:bg-[#F4F6F8] hover:text-[#20242B]"
-                }`}
-              >
-                {link === "Offers" ? (
-                  <FaTag size={12} />
-                ) : (
-                  <FaRegNewspaper size={12} />
-                )}
+                    border: active
+                      ? `1px solid ${THEME.blueBorder}`
+                      : `1px solid ${THEME.border}`,
+                  }}
+                >
 
-                {link}
-              </button>
-            );
-          })}
+                  {/* Hover background */}
+
+                  <span
+                    className={`
+                      pointer-events-none
+                      absolute
+                      inset-0
+                      rounded-[10px]
+                      bg-[#eff6ff]
+                      transition-all
+                      duration-300
+                      ${
+                        active
+                          ? "opacity-0"
+                          : "opacity-0 group-hover:opacity-100"
+                      }
+                    `}
+                  />
+
+                  {/* Bottom animated line */}
+
+                  <span
+                    className={`
+                      pointer-events-none
+                      absolute
+                      bottom-0
+                      left-1/2
+                      h-[2px]
+                      -translate-x-1/2
+                      rounded-full
+                      bg-[#2563eb]
+                      transition-all
+                      duration-300
+                      ${
+                        active
+                          ? "w-5 opacity-100"
+                          : "w-0 opacity-0 group-hover:w-5 group-hover:opacity-100"
+                      }
+                    `}
+                  />
+
+                  {/* Icon */}
+
+                  <span
+                    className="
+                      relative
+                      z-10
+                      flex
+                      items-center
+                      justify-center
+                      transition-all
+                      duration-300
+                      group-hover:scale-110
+                      group-hover:-translate-y-[1px]
+                    "
+                  >
+                    {link === "Offers" ? (
+                      <FaTag size={11} />
+                    ) : (
+                      <FaRegNewspaper size={11} />
+                    )}
+                  </span>
+
+                  {/* Text */}
+
+                  <span
+                    className="
+                      relative
+                      z-10
+                      transition-all
+                      duration-300
+                      group-hover:tracking-[0.02em]
+                    "
+                  >
+                    {link}
+                  </span>
+
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* =====================================================
+      {/* ========================================================
           DRAWER
-      ====================================================== */}
+      ======================================================== */}
 
       <MuiDrawer
         open={filterDragger}
@@ -301,204 +889,310 @@ const AppManagementHeader = ({
         }}
         drawerWidth="420px"
       >
-        <div className="flex h-full flex-col bg-[#F4F6F8]">
-          {/* =================================================
+        <div className="flex h-full flex-col bg-white">
+
+          {/* ====================================================
               DRAWER HEADER
-          ================================================== */}
+          ==================================================== */}
 
-          <div className="relative flex items-center gap-3 overflow-hidden border-b border-[#DCE2EA] bg-[#20242B] px-5 py-4 text-white">
-            <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full bg-[#2563EB]/20 blur-3xl" />
+          <div
+            className="
+              relative
+              overflow-hidden
+              border-b
+              px-5
+              py-4
+            "
+            style={{
+              borderColor: THEME.border,
+              backgroundColor: THEME.white,
+            }}
+          >
+            <div
+              className="
+                pointer-events-none
+                absolute
+                -right-12
+                -top-16
+                h-40
+                w-40
+                rounded-full
+                opacity-[0.06]
+              "
+              style={{
+                backgroundColor: THEME.blue,
+              }}
+            />
 
-            <div className="pointer-events-none absolute -bottom-16 left-[30%] h-32 w-32 rounded-full bg-emerald-400/10 blur-2xl" />
+            <div className="relative z-10 flex items-center gap-3">
 
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.08]">
-              {isBlog ? (
-                <FaRegNewspaper size={16} className="text-[#93C5FD]" />
-              ) : (
-                <MdAddchart size={19} className="text-[#93C5FD]" />
-              )}
-            </div>
+              <IconBox
+                size="h-11 w-11"
+                radius="rounded-[13px]"
+              >
+                {isBlog ? (
+                  <FaRegNewspaper size={17} />
+                ) : (
+                  <MdAddchart size={19} />
+                )}
+              </IconBox>
 
-            <div className="relative">
-              <p className="text-sm font-extrabold">
-                {isEditing
-                  ? `Update ${isBlog ? "Blog" : "Offer"}`
-                  : `Create ${isBlog ? "Blog" : "Offer"}`}
-              </p>
+              <div>
 
-              <p className="mt-0.5 text-[10px] text-slate-400">
-                {isEditing
-                  ? `Edit existing ${isBlog ? "blog" : "offer"}`
-                  : `Add a new ${isBlog ? "blog" : "offer"}`}
-              </p>
+                <p
+                  className="text-[13px] font-extrabold"
+                  style={{
+                    color: THEME.navy,
+                  }}
+                >
+                  {isEditing
+                    ? `Update ${isBlog ? "Blog" : "Offer"}`
+                    : `Create ${isBlog ? "Blog" : "Offer"}`}
+                </p>
+
+                <p
+                  className="mt-0.5 text-[9px]"
+                  style={{
+                    color: THEME.textMuted,
+                  }}
+                >
+                  {isEditing
+                    ? `Edit existing ${
+                        isBlog ? "blog" : "offer"
+                      }`
+                    : `Add a new ${
+                        isBlog ? "blog" : "offer"
+                      }`}
+                </p>
+
+              </div>
+
             </div>
           </div>
 
-          {/* =================================================
+          {/* ====================================================
               FORM
-          ================================================== */}
+          ==================================================== */}
 
           <form
             onSubmit={handleSubmit}
             className="flex min-h-0 flex-1 flex-col"
           >
+
             <div
-              className="flex-1 overflow-y-auto px-5 py-5"
+              className="
+                flex-1
+                overflow-y-auto
+                px-5
+                py-5
+              "
               style={{
                 scrollbarWidth: "thin",
               }}
             >
-              {/* =================================================
-                  BLOG FORM
+
+              {/* ==================================================
+                  BLOG
               ================================================== */}
 
               {isBlog ? (
                 <>
-                  {/* Blog Title */}
+
+                  {/* BLOG TITLE */}
 
                   <div className="mb-5">
-                    <label className={labelClass}>Blog Title</label>
 
-                    <input
+                    <label
+                      className={labelClass}
+                      style={{
+                        color: THEME.textMuted,
+                      }}
+                    >
+                      Blog Title
+                    </label>
+
+                    <InputWithIcon
+                      icon={<FiFileText size={13} />}
                       value={nameValue}
-                      onChange={(e) => setNameValue(e.target.value)}
-                      className={inputClass}
+                      onChange={(e) =>
+                        setNameValue(e.target.value)
+                      }
                       placeholder="Enter blog title"
                     />
+
                   </div>
 
-                  {/* Blog Description */}
+                  {/* BLOG DESCRIPTION */}
 
                   <div className="mb-5">
-                    <label className={labelClass}>
+
+                    <label
+                      className={labelClass}
+                      style={{
+                        color: THEME.textMuted,
+                      }}
+                    >
                       Blog Description
                     </label>
 
                     <textarea
                       value={descriptionValue}
                       onChange={(e) =>
-                        setDescriptionValue(e.target.value)
+                        setDescriptionValue(
+                          e.target.value
+                        )
                       }
-                      className={`${inputClass} h-auto resize-none py-3`}
+                      className={textareaClass}
+                      style={{
+                        color: THEME.text,
+                        border: `1px solid ${THEME.border}`,
+                      }}
                       placeholder="Enter blog description"
                       rows={5}
                     />
+
                   </div>
 
-                  {/* Blog Image */}
+                  {/* BLOG IMAGE */}
 
-                  <div>
-                    <label className={labelClass}>Blog Image</label>
+                  <ImageUploader
+                    id="blog-img"
+                    label="Blog Image"
+                    imageValue={imageValue}
+                    onChange={handleImageChange}
+                    alt="Blog"
+                  />
 
-                    <input
-                      className="hidden"
-                      id="blog-img"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-
-                    <label
-                      htmlFor="blog-img"
-                      className="group flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[#DCE2EA] bg-white transition-all duration-300 hover:border-[#93C5FD] hover:bg-[#EFF6FF]"
-                    >
-                      {imageValue.image ? (
-                        <img
-                          src={imageValue.image}
-                          alt={imageValue.fileName || "Blog"}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB] transition-all duration-300 group-hover:scale-110 group-hover:bg-[#DBEAFE]">
-                            <MdAddPhotoAlternate size={25} />
-                          </div>
-
-                          <span className="mt-2 text-[10px] font-bold text-slate-400">
-                            Click to upload image
-                          </span>
-                        </div>
-                      )}
-                    </label>
-                  </div>
                 </>
               ) : (
-                /* =================================================
-                    OFFER FORM
+
+                /* ==================================================
+                   OFFER
                 ================================================== */
 
                 <>
-                  {/* Offer Name */}
+
+                  {/* OFFER NAME */}
 
                   <div className="mb-5">
-                    <label className={labelClass}>Offer Name</label>
 
-                    <input
+                    <label
+                      className={labelClass}
+                      style={{
+                        color: THEME.textMuted,
+                      }}
+                    >
+                      Offer Name
+                    </label>
+
+                    <InputWithIcon
+                      icon={<FiTagIcon size={13} />}
                       value={nameValue}
-                      onChange={(e) => setNameValue(e.target.value)}
-                      className={inputClass}
+                      onChange={(e) =>
+                        setNameValue(e.target.value)
+                      }
                       placeholder="Enter offer name"
                     />
+
                   </div>
 
-                  {/* Offer Description */}
+                  {/* OFFER DESCRIPTION */}
 
                   <div className="mb-5">
-                    <label className={labelClass}>
+
+                    <label
+                      className={labelClass}
+                      style={{
+                        color: THEME.textMuted,
+                      }}
+                    >
                       Offer Description
                     </label>
 
                     <textarea
                       value={descriptionValue}
                       onChange={(e) =>
-                        setDescriptionValue(e.target.value)
+                        setDescriptionValue(
+                          e.target.value
+                        )
                       }
-                      className={`${inputClass} h-auto resize-none py-3`}
+                      className={textareaClass}
+                      style={{
+                        color: THEME.text,
+                        border: `1px solid ${THEME.border}`,
+                      }}
                       placeholder="Enter offer description"
                       rows={4}
                     />
+
                   </div>
 
-                  {/* Dates */}
+                  {/* DATES */}
 
                   <div className="mb-5 grid grid-cols-2 gap-3">
-                    <div>
-                      <label className={labelClass}>Start Date</label>
 
-                      <input
+                    <div>
+
+                      <label
+                        className={labelClass}
+                        style={{
+                          color: THEME.textMuted,
+                        }}
+                      >
+                        Start Date
+                      </label>
+
+                      <InputWithIcon
+                        icon={<FaCalendarAlt size={11} />}
                         value={offerStartDate}
                         onChange={(e) =>
-                          setOfferStartDate(e.target.value)
+                          setOfferStartDate(
+                            e.target.value
+                          )
                         }
-                        className={inputClass}
                         type="date"
-                        min={new Date()
-                          .toISOString()
-                          .split("T")[0]}
+                        min={today}
                       />
+
                     </div>
 
                     <div>
-                      <label className={labelClass}>End Date</label>
 
-                      <input
+                      <label
+                        className={labelClass}
+                        style={{
+                          color: THEME.textMuted,
+                        }}
+                      >
+                        End Date
+                      </label>
+
+                      <InputWithIcon
+                        icon={<FaCalendarAlt size={11} />}
                         value={offerEndDate}
                         onChange={(e) =>
-                          setOfferEndDate(e.target.value)
+                          setOfferEndDate(
+                            e.target.value
+                          )
                         }
-                        className={inputClass}
                         type="date"
-                        min={new Date()
-                          .toISOString()
-                          .split("T")[0]}
+                        min={today}
                       />
+
                     </div>
+
                   </div>
 
-                  {/* Service Mode */}
+                  {/* SERVICE MODE */}
 
                   <div className="mb-5">
-                    <label className={labelClass}>
+
+                    <label
+                      className={labelClass}
+                      style={{
+                        color: THEME.textMuted,
+                      }}
+                    >
                       Restricted Service Mode
                     </label>
 
@@ -508,61 +1202,97 @@ const AppManagementHeader = ({
                       onSelect={
                         setRestrictedServiceModeSelectedOption
                       }
-                      options={["pickup", "home", "none"]}
+                      options={[
+                        "pickup",
+                        "home",
+                        "none",
+                      ]}
                       disabled={false}
                     />
+
                   </div>
 
-                  {/* Prices */}
+                  {/* PRICES */}
 
                   <div className="mb-5 grid grid-cols-2 gap-3">
+
                     <div>
-                      <label className={labelClass}>
+
+                      <label
+                        className={labelClass}
+                        style={{
+                          color: THEME.textMuted,
+                        }}
+                      >
                         Minimum Price
                       </label>
 
-                      <input
+                      <InputWithIcon
+                        icon={
+                          <FaMoneyBillWave size={11} />
+                        }
                         value={restrictedMinimumPrice}
                         onChange={(e) =>
                           setRestrictedMinimumPrice(
                             e.target.value
                           )
                         }
-                        className={inputClass}
                         placeholder="Min price"
                         type="number"
                       />
+
                     </div>
 
                     <div>
-                      <label className={labelClass}>
+
+                      <label
+                        className={labelClass}
+                        style={{
+                          color: THEME.textMuted,
+                        }}
+                      >
                         Max Offer Price
                       </label>
 
-                      <input
+                      <InputWithIcon
+                        icon={
+                          <FaMoneyBillWave size={11} />
+                        }
                         value={maxOfferPrice}
                         onChange={(e) =>
-                          setMaxOfferPrice(e.target.value)
+                          setMaxOfferPrice(
+                            e.target.value
+                          )
                         }
-                        className={inputClass}
                         placeholder="Max price"
                         type="number"
                       />
+
                     </div>
+
                   </div>
 
-                  {/* Offer Type */}
+                  {/* OFFER TYPE */}
 
                   <div className="mb-5 grid grid-cols-2 gap-3">
+
                     <div>
-                      <label className={labelClass}>
+
+                      <label
+                        className={labelClass}
+                        style={{
+                          color: THEME.textMuted,
+                        }}
+                      >
                         Offer Type
                       </label>
 
                       <Dropdown
                         value={offerBy}
                         placeholder="Select type"
-                        onSelect={setOfferBySelectedOption}
+                        onSelect={
+                          setOfferBySelectedOption
+                        }
                         options={[
                           "Flat Price",
                           "Percentage",
@@ -570,132 +1300,192 @@ const AppManagementHeader = ({
                         ]}
                         disabled={false}
                       />
+
                     </div>
 
                     {offerBy && (
                       <div>
-                        <label className={labelClass}>
-                          {offerBy.toLowerCase() === "flat price"
+
+                        <label
+                          className={labelClass}
+                          style={{
+                            color: THEME.textMuted,
+                          }}
+                        >
+                          {offerBy.toLowerCase() ===
+                          "flat price"
                             ? "Flat Price"
-                            : offerBy.toLowerCase() === "coupon"
+                            : offerBy.toLowerCase() ===
+                                "coupon"
                               ? "Discount"
                               : "Percentage"}
                         </label>
 
-                        <input
+                        <InputWithIcon
+                          icon={
+                            offerBy.toLowerCase() ===
+                            "flat price" ? (
+                              <FaMoneyBillWave size={11} />
+                            ) : (
+                              <FaPercent size={10} />
+                            )
+                          }
                           value={
-                            offerBy.toLowerCase() === "flat price"
+                            offerBy.toLowerCase() ===
+                            "flat price"
                               ? flatPrice
                               : offerPercentage
                           }
                           onChange={(e) =>
-                            offerBy.toLowerCase() === "flat price"
-                              ? setFlatPrice(e.target.value)
+                            offerBy.toLowerCase() ===
+                            "flat price"
+                              ? setFlatPrice(
+                                  e.target.value
+                                )
                               : setOfferPercentage(
                                   e.target.value
                                 )
                           }
-                          className={inputClass}
                           placeholder={
-                            offerBy.toLowerCase() === "flat price"
+                            offerBy.toLowerCase() ===
+                            "flat price"
                               ? "Enter amount"
                               : "Enter percentage"
                           }
                           type="number"
                         />
+
                       </div>
                     )}
+
                   </div>
 
-                  {/* Coupon */}
+                  {/* COUPON */}
 
-                  {offerBy.toLowerCase() === "coupon" && (
+                  {offerBy.toLowerCase() ===
+                    "coupon" && (
                     <div className="mb-5">
-                      <label className={labelClass}>
+
+                      <label
+                        className={labelClass}
+                        style={{
+                          color: THEME.textMuted,
+                        }}
+                      >
                         Coupon Code
                       </label>
 
-                      <input
+                      <InputWithIcon
+                        icon={<FaTag size={11} />}
                         value={couponCode}
                         onChange={(e) =>
                           setCouponCode(
                             e.target.value.toUpperCase()
                           )
                         }
-                        className={`${inputClass} font-bold uppercase tracking-widest`}
                         placeholder="ENTER COUPON CODE"
                         type="text"
+                        inputClassName="
+                          font-extrabold
+                          uppercase
+                          tracking-[0.12em]
+                        "
                       />
+
                     </div>
                   )}
 
-                  {/* Offer Image */}
+                  {/* OFFER IMAGE */}
 
-                  <div>
-                    <label className={labelClass}>
-                      Offer Image
-                    </label>
+                  <ImageUploader
+                    id="offer-img"
+                    label="Offer Image"
+                    imageValue={imageValue}
+                    onChange={handleImageChange}
+                    alt="Offer"
+                  />
 
-                    <input
-                      className="hidden"
-                      id="offer-img"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-
-                    <label
-                      htmlFor="offer-img"
-                      className="group flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[#DCE2EA] bg-white transition-all duration-300 hover:border-[#93C5FD] hover:bg-[#EFF6FF]"
-                    >
-                      {imageValue.image ? (
-                        <img
-                          src={imageValue.image}
-                          alt={imageValue.fileName || "Offer"}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB] transition-all duration-300 group-hover:scale-110 group-hover:bg-[#DBEAFE]">
-                            <MdAddPhotoAlternate size={25} />
-                          </div>
-
-                          <span className="mt-2 text-[10px] font-bold text-slate-400">
-                            Click to upload image
-                          </span>
-                        </div>
-                      )}
-                    </label>
-                  </div>
                 </>
               )}
+
             </div>
 
-            {/* =================================================
-                ACTIONS
+            {/* ==================================================
+                ACTION BUTTONS
             ================================================== */}
 
-            <div className="flex gap-3 border-t border-[#DCE2EA] bg-white px-5 py-4">
+            <div
+              className="
+                flex
+                gap-3
+                border-t
+                bg-white
+                px-5
+                py-4
+              "
+              style={{
+                borderColor: THEME.border,
+              }}
+            >
+
+              {/* CANCEL */}
+
               <button
                 type="button"
                 onClick={() => {
                   setFilterDragger(false);
                   resetForm();
                 }}
-                className="h-11 w-full rounded-xl border border-[#E4E8ED] bg-white text-xs font-bold text-[#59626E] transition-all duration-300 hover:border-[#BFDBFE] hover:bg-[#EFF6FF] hover:text-[#2563EB]"
+                className="
+                  h-11
+                  w-full
+                  rounded-[11px]
+                  bg-white
+                  text-[10px]
+                  font-extrabold
+                  transition-all
+                  duration-200
+                  hover:bg-slate-50
+                "
+                style={{
+                  color: THEME.navy,
+                  border: `1px solid ${THEME.border}`,
+                }}
               >
                 Cancel
               </button>
 
+              {/* SUBMIT */}
+
               <button
                 type="submit"
-                className="h-11 w-full rounded-xl bg-[#20242B] text-xs font-extrabold text-white shadow-[0_8px_20px_rgba(32,36,43,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#111827] hover:shadow-[0_12px_25px_rgba(32,36,43,0.24)]"
+                className="
+                  h-11
+                  w-full
+                  rounded-[11px]
+                  text-[10px]
+                  font-extrabold
+                  text-white
+                  shadow-[0_6px_18px_rgba(37,99,235,0.16)]
+                  transition-all
+                  duration-200
+                  hover:-translate-y-0.5
+                "
+                style={{
+                  backgroundColor: THEME.blue,
+                }}
               >
                 {isEditing
-                  ? `Update ${isBlog ? "Blog" : "Offer"}`
-                  : `Create ${isBlog ? "Blog" : "Offer"}`}
+                  ? `Update ${
+                      isBlog ? "Blog" : "Offer"
+                    }`
+                  : `Create ${
+                      isBlog ? "Blog" : "Offer"
+                    }`}
               </button>
+
             </div>
+
           </form>
         </div>
       </MuiDrawer>
