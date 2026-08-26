@@ -550,15 +550,12 @@ import {
   FaCalendarAlt,
   FaCheckCircle,
 } from "react-icons/fa";
-import {
-  LuComputer,
-  LuPackageOpen,
-  LuSparkles,
-  LuLayers,
-} from "react-icons/lu";
+import { LuComputer, LuPackageOpen } from "react-icons/lu";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { HiOutlineCube } from "react-icons/hi2";
 import { TbBrandProducthunt } from "react-icons/tb";
+import { FiArrowUpRight } from "react-icons/fi";
+import { BsBox } from "react-icons/bs";
 import AnimatedContent from "@/components/common/AnimatedContent";
 import MuiDrawer from "@/components/drawer/MuiDrawer";
 import Dropdown from "@/components/common/DropDown";
@@ -568,6 +565,40 @@ import BackdropProgressLoader from "@/components/common/BackdropProgressLoader";
 import moment from "moment";
 import { deviceImages } from "@/data/deviceImages";
 import otherdevice from "../assets/img/gadgets/other-gadget.png";
+
+const tones = {
+  slate: { soft: "from-[#EEF0FF] to-[#F4FDFF]", line: "from-[#5E63D9] to-[#35C7F3]" },
+  emerald: { soft: "from-[#ECFDF5] to-[#F0FDFA]", line: "from-[#10B981] to-[#59D6BF]" },
+  amber: { soft: "from-[#F4F0FF] to-[#F5F3FF]", line: "from-[#8B5CF6] to-[#4CC9F0]" },
+  rose: { soft: "from-[#FFF1F3] to-[#FFF5F7]", line: "from-[#F43F5E] to-[#FB7185]" },
+};
+
+const KpiCard = ({ title, value, desc, tone, Icon }) => {
+  const t = tones[tone];
+  return (
+    <div className="group relative overflow-hidden rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.035)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#C9D7EF] hover:shadow-[0_22px_45px_rgba(15,23,42,0.09)]">
+      <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${t.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`} />
+      <div className="relative z-10 flex items-start justify-between">
+        <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${t.soft} text-[#2563EB] transition-all duration-300 group-hover:scale-110`}>
+          <Icon size={18} />
+        </div>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F6FA] text-[#98A2B3] transition-all duration-300 group-hover:bg-[#111827] group-hover:text-white">
+          <FiArrowUpRight size={14} />
+        </div>
+      </div>
+      <div className="relative z-10 mt-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8B95A7]">{title}</p>
+        <div className="mt-2.5 flex items-end justify-between gap-2">
+          <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#111827]">{value}</h3>
+          <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#A0A8B8]">{desc}</span>
+        </div>
+      </div>
+      <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#EDF0F5]">
+        <div className={`h-full w-0 rounded-full bg-gradient-to-r ${t.line} transition-all duration-500 group-hover:w-full`} />
+      </div>
+    </div>
+  );
+};
 
 export const getDeviceImage = (item) => {
   return (
@@ -891,365 +922,107 @@ const Appliance = () => {
 
   const openAppliance = (item) => {
     const encodedAppData = encode(item);
-
-    history.push(
-      `/appliance/overview?applianceId=${
-        item?.appliance?.applianceId
-      }&appData=${encodeURIComponent(
-        encodedAppData
-      )}`
-    );
+    history.push(`/appliance/overview?applianceId=${item?.appliance?.applianceId}&appData=${encodeURIComponent(encodedAppData)}`);
   };
 
   const getWarrantyStatus = (item) => {
-    const status =
-      item?.model?.isWarrantyApproved;
-
-    if (status === "approved") {
-      return {
-        label: "Approved",
-        icon: <FaCheckCircle size={9} />,
-        className:
-          "border-emerald-200 bg-emerald-50 text-emerald-600",
-      };
-    }
-
-    if (status === "pending") {
-      return {
-        label: "Pending",
-        icon: <FaRegClock size={9} />,
-        className:
-          "border-amber-200 bg-amber-50 text-amber-600",
-      };
-    }
-
-    return {
-      label: "Not Approved",
-      icon: <FaShieldAlt size={9} />,
-      className:
-        "border-slate-200 bg-slate-50 text-slate-500",
-    };
+    const s = item?.model?.isWarrantyApproved;
+    if (s === "approved") return { label: "Approved", icon: <FaCheckCircle size={9} />, cls: "border-[#D1FAE5] bg-[#ECFDF5] text-[#059669]" };
+    if (s === "pending") return { label: "Pending", icon: <FaRegClock size={9} />, cls: "border-[#FDE7C7] bg-[#FFF7ED] text-[#D97706]" };
+    return { label: "Not Approved", icon: <FaShieldAlt size={9} />, cls: "border-[#E7EBF1] bg-[#F4F6FA] text-[#667085]" };
   };
 
-  const stats = [
-    {
-      label: "Total Appliances",
-      value: totalAppliances,
-      icon: <LuPackageOpen size={19} />,
-      number: "text-indigo-600",
-      bg: "bg-indigo-50",
-    },
-
-    {
-      label: "Total Brands",
-      value: totalBrands,
-      icon: <TbBrandProducthunt size={19} />,
-      number: "text-cyan-600",
-      bg: "bg-cyan-50",
-    },
-
-    {
-      label: "Total Models",
-      value: totalModels,
-      icon: <HiOutlineCube size={19} />,
-      number: "text-violet-600",
-      bg: "bg-violet-50",
-    },
-
-    {
-      label: "Warranty Approved",
-      value: approvedWarranty,
-      icon: <FaShieldAlt size={17} />,
-      number: "text-emerald-600",
-      bg: "bg-emerald-50",
-    },
+  const metrics = [
+    { title: "Total Appliances", value: totalAppliances, desc: "All appliances", tone: "slate", Icon: LuPackageOpen },
+    { title: "Total Brands", value: totalBrands, desc: "Unique brands", tone: "emerald", Icon: TbBrandProducthunt },
+    { title: "Total Models", value: totalModels, desc: "Unique models", tone: "amber", Icon: HiOutlineCube },
+    { title: "Warranty Approved", value: approvedWarranty, desc: "Approved warranties", tone: "rose", Icon: FaShieldAlt },
   ];
 
   return (
     <>
       <AnimatedContent>
-        <div className="min-h-[var(--doc-height)] bg-[#f5f7ff] px-4 py-5 md:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#F4F7FB] pb-10">
 
-          {/* ================= HERO ================= */}
-
-          <section className="relative overflow-hidden rounded-[32px] border border-indigo-100/80 bg-white shadow-[0_15px_50px_rgba(79,70,229,0.07)]">
-
-            {/* Background decoration */}
-            <div className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full bg-indigo-500/10 blur-3xl" />
-
-            <div className="pointer-events-none absolute -bottom-32 left-[35%] h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
-
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.35]"
-              style={{
-                backgroundImage:
-                  "radial-gradient(#c7d2fe 1px, transparent 1px)",
-                backgroundSize: "22px 22px",
-              }}
-            />
-
-            <div className="relative z-10 flex flex-col justify-between gap-8 px-6 py-7 md:px-9 md:py-9 lg:flex-row lg:items-center">
-
-              {/* Hero content */}
-
-              <div className="max-w-2xl">
-
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/80 px-3 py-1.5">
-
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white shadow-sm">
-                    <LuSparkles size={10} />
-                  </span>
-
-                  <span className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-indigo-600">
-                    Appliance Management
-                  </span>
-
-                </div>
-
-                <h1 className="max-w-[650px] text-[30px] font-black leading-[1.08] tracking-[-0.04em] text-slate-900 md:text-[42px]">
-
-                  Everything you need to
-                  <span className="block bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 bg-clip-text text-transparent">
-                    manage your appliances.
-                  </span>
-
-                </h1>
-
-                <p className="mt-4 max-w-[590px] text-sm leading-6 text-slate-500">
-                  Keep appliances, brands, models and warranty
-                  information organized in one beautifully designed
-                  workspace.
-                </p>
-
-                <div className="mt-7 flex flex-wrap items-center gap-3">
-
-                  <button
-                    onClick={() =>
-                      setCreateApplianceModal(true)
-                    }
-                    className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 px-5 py-3 text-xs font-extrabold text-white shadow-[0_10px_25px_rgba(79,70,229,0.22)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(79,70,229,0.28)]"
-                  >
-                    <span className="flex h-5 w-5 items-center justify-center rounded-md bg-white/15">
-                      <FaPlus
-                        size={9}
-                        className="transition-transform duration-300 group-hover:rotate-90"
-                      />
-                    </span>
-
-                    Create Appliance
-                  </button>
-
-                  <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm">
-
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-50 text-cyan-600">
-                      <FaBoxOpen size={12} />
-                    </div>
-
-                    <div>
-                      <p className="text-[8px] font-bold uppercase tracking-wider text-slate-400">
-                        Collection
-                      </p>
-
-                      <p className="text-xs font-black text-slate-700">
-                        {totalAppliances} Appliances
-                      </p>
-                    </div>
-
+          {/* HERO BANNER */}
+          <section className="mb-8">
+            <div className="relative overflow-hidden rounded-[30px] bg-[#0B1220] px-6 py-7 shadow-[0_20px_55px_rgba(15,23,42,0.15)] sm:px-8 sm:py-9">
+              <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#2563EB]/20 blur-[2px]" />
+              <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
+              <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <div className="mb-3 flex items-center gap-2.5">
+                    <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38BDF8]/50" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38BDF8]" /></span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">Appliance Management</span>
                   </div>
-
+                  <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-[34px]">Appliances</h1>
+                  <p className="mt-2 max-w-[520px] text-[13px] leading-6 text-white/50">Manage appliances, brands, models and warranty information from one place.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
+                    <FaBoxOpen size={13} className="text-[#60A5FA]" />
+                    <span className="text-[12px] font-bold text-white/85">{totalAppliances} Appliances</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
+                    <FaShieldAlt size={13} className="text-emerald-400" />
+                    <span className="text-[12px] font-bold text-white/85">{approvedWarranty} Warranty Approved</span>
+                  </div>
                 </div>
               </div>
+              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent" />
+            </div>
+          </section>
 
-              {/* ================= HERO VISUAL ================= */}
+          {/* KPICARDS */}
+          <section className="mb-8">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {metrics.map((m) => (
+                <KpiCard key={m.title} {...m} />
+              ))}
+            </div>
+          </section>
 
-              <div className="relative mx-auto h-52 w-72 shrink-0 lg:mx-0">
-
-                <div className="absolute right-3 top-2 h-40 w-40 rounded-full bg-indigo-400/20 blur-3xl" />
-
-                <div className="absolute bottom-0 left-2 h-32 w-32 rounded-full bg-cyan-400/20 blur-3xl" />
-
-                <div className="absolute right-7 top-4 h-40 w-40 rounded-full border border-indigo-100" />
-
-                <div className="absolute right-14 top-11 h-28 w-28 rounded-full border border-cyan-100" />
-
-                {/* Main appliance */}
-
-                <div className="absolute right-10 top-7 flex h-32 w-32 rotate-3 items-center justify-center rounded-[34px] border border-white bg-white/90 shadow-[0_25px_55px_rgba(79,70,229,0.16)] backdrop-blur-xl transition-all duration-500 hover:rotate-0 hover:scale-105">
-
-                  <div className="absolute inset-3 rounded-[27px] bg-gradient-to-br from-indigo-50 via-white to-cyan-50" />
-
-                  <div className="relative flex h-[78px] w-[78px] items-center justify-center rounded-[24px] bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-[0_14px_30px_rgba(79,70,229,0.3)]">
-                    <LuComputer
-                      size={38}
-                      strokeWidth={1.5}
-                    />
-                  </div>
-
+          {/* SECTION HEADER */}
+          <section>
+            <div className="mb-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E8F0FF] text-[#2563EB]">
+                  <LuPackageOpen size={15} />
                 </div>
-
-                {/* Active */}
-
-                <div className="absolute right-0 top-2 flex items-center gap-1.5 rounded-full border border-emerald-100 bg-white px-3 py-1.5 shadow-lg">
-
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-
-                  <span className="text-[8px] font-black tracking-[0.12em] text-emerald-600">
-                    ACTIVE
-                  </span>
-
+                <div>
+                  <h2 className="text-[16px] font-extrabold tracking-[-0.025em] text-[#111827]">Appliance Collection</h2>
+                  <p className="mt-0.5 text-[11px] text-[#8993A5]">Manage and monitor your registered appliances</p>
                 </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="hidden text-[10px] font-bold uppercase tracking-[0.15em] text-[#A0A8B8] sm:block">{totalAppliances} Records</span>
+                <button
+                  onClick={() => setCreateApplianceModal(true)}
+                  className="flex items-center gap-2 rounded-xl bg-[#111827] px-4 py-2.5 text-[11px] font-extrabold text-white transition hover:bg-[#1e293b]"
+                >
+                  <FaPlus size={9} /> Create Appliance
+                </button>
+              </div>
+            </div>
 
-                {/* Bottom card */}
-
-                <div className="absolute bottom-2 left-0 flex items-center gap-2.5 rounded-2xl border border-white bg-white/95 px-3 py-2.5 shadow-[0_14px_35px_rgba(15,23,42,0.1)]">
-
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-50 to-cyan-50 text-indigo-600">
-                    <FaBoxOpen size={14} />
-                  </div>
-
+            <div className="overflow-hidden rounded-[30px] border border-[#E8ECF5] bg-white shadow-[0_18px_42px_rgba(84,98,130,0.10)]">
+              <div className="border-b border-[#F0F2F7] bg-[linear-gradient(180deg,rgba(247,248,255,0.95),rgba(255,255,255,0.9))] px-6 py-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-[8px] font-bold uppercase tracking-wider text-slate-400">
-                      Managed Items
-                    </p>
-
-                    <p className="text-sm font-black text-slate-800">
-                      {totalAppliances}
-                    </p>
+                    <h3 className="text-base font-bold text-[#282F3D]">Appliance List</h3>
+                    <p className="mt-1 text-xs text-[#98A1B0]">Appliance information, brands, models and warranty status</p>
                   </div>
-
+                  <span className="inline-flex w-fit items-center rounded-full bg-[#F5F7FC] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7F8897]">Live Data</span>
                 </div>
-
-                {/* Floating icon */}
-
-                <div className="absolute bottom-12 right-1 flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-100 bg-white text-cyan-500 shadow-md">
-                  <LuLayers size={15} />
-                </div>
-
-              </div>
-            </div>
-          </section>
-
-          {/* ================= STATS ================= */}
-
-          <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="group relative overflow-hidden rounded-[22px] border border-slate-200/80 bg-white p-5 shadow-[0_7px_25px_rgba(15,23,42,0.035)] transition-all duration-300 hover:-translate-y-1.5 hover:border-indigo-100 hover:shadow-[0_18px_40px_rgba(79,70,229,0.09)]"
-              >
-
-                <div className="flex items-start justify-between">
-
-                  <div>
-
-                    <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
-                      {stat.label}
-                    </p>
-
-                    <p
-                      className={`mt-2 text-[30px] font-black tracking-tight ${stat.number}`}
-                    >
-                      {stat.value}
-                    </p>
-
-                    <div className="mt-2 flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-
-                      <span className="text-[9px] font-medium text-slate-400">
-                        Updated automatically
-                      </span>
-                    </div>
-
-                  </div>
-
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-[17px] ${stat.bg} ${stat.number} transition-all duration-300 group-hover:scale-110`}
-                  >
-                    {stat.icon}
-                  </div>
-
-                </div>
-
-                <div className="mt-5 h-1 overflow-hidden rounded-full bg-slate-100">
-
-                  <div
-                    className={`h-full w-[68%] rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400 transition-all duration-500 group-hover:w-[90%]`}
-                  />
-
-                </div>
-
-              </div>
-            ))}
-          </section>
-
-          {/* ================= COLLECTION HEADER ================= */}
-
-          <section className="mt-9 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
-            <div className="flex items-center gap-3">
-
-              <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-[0_8px_20px_rgba(79,70,229,0.2)]">
-                <LuPackageOpen size={19} />
               </div>
 
-              <div>
-                <h2 className="text-xl font-black tracking-tight text-slate-800">
-                  Appliance Collection
-                </h2>
-
-                <p className="mt-0.5 text-[10px] text-slate-400">
-                  Manage and monitor your registered appliances
-                </p>
-              </div>
-
-            </div>
-
-            <div className="flex items-center gap-2 self-start rounded-full border border-slate-200 bg-white px-3.5 py-2 shadow-sm md:self-auto">
-
-              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-500">
-                {totalAppliances} Records
-              </span>
-
-            </div>
-
-          </section>
-
-          {/* ================= TABLE ================= */}
-
-          <section className="mt-4 overflow-hidden rounded-[22px] border border-slate-200/80 bg-white shadow-[0_10px_35px_rgba(15,23,42,0.045)]">
-
-            <div className="overflow-x-auto">
-
+              <div className="overflow-x-auto">
               <table className="w-full min-w-[1120px]">
-
                 <thead>
-                  <tr className="border-b border-slate-100 bg-[#fafbff]">
-
-                    {[
-                      "Appliance",
-                      "Created By",
-                      "Brand",
-                      "Model",
-                      "Warranty",
-                      "Purchase",
-                      "Expiry",
-                      "Created",
-                    ].map((heading, index) => (
-                      <th
-                        key={heading}
-                        className={`px-5 py-4 text-[9px] font-extrabold uppercase tracking-[0.14em] text-slate-400 ${
-                          index === 7
-                            ? "text-right"
-                            : "text-left"
-                        }`}
-                      >
-                        {heading}
-                      </th>
+                  <tr className="bg-[#F8FAFD]">
+                    {["Appliance","Created By","Brand","Model","Warranty","Purchase","Expiry","Created"].map((h, i) => (
+                      <th key={h} className={`px-5 py-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[#99A3B3] ${i === 7 ? "text-right" : "text-left"}`}>{h}</th>
                     ))}
-
                   </tr>
                 </thead>
 
@@ -1417,7 +1190,7 @@ const Appliance = () => {
                         <td className="px-5 py-4">
 
                           <span
-                            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[9px] font-extrabold ${warranty.className}`}
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[9px] font-extrabold ${warranty.cls}`}
                           >
                             {warranty.icon}
                             {warranty.label}
@@ -1521,46 +1294,15 @@ const Appliance = () => {
               </table>
             </div>
 
-            {/* Empty state */}
-
             {appliance?.length === 0 && (
-              <div className="flex min-h-[380px] flex-col items-center justify-center px-6 text-center">
-
-                <div className="relative">
-
-                  <div className="absolute inset-0 rounded-full bg-indigo-300/20 blur-2xl" />
-
-                  <div className="relative flex h-24 w-24 items-center justify-center rounded-[30px] border border-indigo-100 bg-gradient-to-br from-indigo-50 to-cyan-50 text-indigo-500">
-                    <LuPackageOpen
-                      size={40}
-                    />
-                  </div>
-
+              <div className="flex min-h-[280px] flex-col items-center justify-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#F4F7FD] text-[#A0A9B8]">
+                  <BsBox size={24} />
                 </div>
-
-                <h3 className="mt-6 text-lg font-black text-slate-800">
-                  No appliances yet
-                </h3>
-
-                <p className="mt-2 max-w-sm text-xs leading-5 text-slate-400">
-                  Start building your appliance
-                  collection by adding your first
-                  appliance.
-                </p>
-
-                <button
-                  onClick={() =>
-                    setCreateApplianceModal(true)
-                  }
-                  className="mt-5 flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-lg transition-all hover:-translate-y-0.5"
-                >
-                  <FaPlus size={9} />
-                  Add Appliance
-                </button>
-
+                <p className="mt-4 text-[13px] font-bold text-[#69727E]">No Appliances Found</p>
               </div>
             )}
-
+            </div>
           </section>
         </div>
 

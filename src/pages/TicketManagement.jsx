@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
 
 import {
-  FaTicket,
-  FaUserGear,
+  FaTicketAlt,
+  FaUserCog,
   FaPaperclip,
   FaPlus,
   FaExternalLinkAlt,
@@ -376,7 +376,7 @@ const TicketManagement = () => {
               text-[var(--primary-elite-color)]
             "
           >
-            <FaTicket size={15} />
+            <FaTicketAlt size={15} />
           </div>
 
           <div className="min-w-0">
@@ -752,7 +752,7 @@ const TicketManagement = () => {
               text-[var(--primary-elite-color)]
             "
           >
-            <FaUserGear size={12} />
+            <FaUserCog size={12} />
           </div>
 
           <div className="min-w-0">
@@ -929,7 +929,7 @@ const TicketManagement = () => {
                     "var(--primary-elite-color)",
                 }}
               >
-                <FaTicket size={23} />
+                <FaTicketAlt size={23} />
               </div>
 
               <div>
@@ -1176,7 +1176,7 @@ const TicketManagement = () => {
               title: "Total Requests",
               value: requestStats.total,
               desc: "Requests on this page",
-              Icon: FaTicket,
+              Icon: FaTicketAlt,
             },
             {
               title: "Open Requests",
@@ -1188,7 +1188,7 @@ const TicketManagement = () => {
               title: "Assigned",
               value: requestStats.assigned,
               desc: "With technician",
-              Icon: FaUserGear,
+              Icon: FaUserCog,
             },
             {
               title: "Pending",
@@ -1375,7 +1375,7 @@ const TicketManagement = () => {
                     "var(--secondary-light-2-color)",
                 }}
               >
-                <FaTicket size={14} />
+                <FaTicketAlt size={14} />
               </div>
 
               <div>
@@ -1483,7 +1483,7 @@ const TicketManagement = () => {
                       "var(--secondary-light-2-color)",
                   }}
                 >
-                  <FaTicket size={24} />
+                  <FaTicketAlt size={24} />
                 </div>
 
                 <div className="text-[14px] font-extrabold">
