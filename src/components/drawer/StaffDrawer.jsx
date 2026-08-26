@@ -14,7 +14,6 @@ import useLanguageSubmit from "@/hooks/useLanguageSubmit";
 import DrawerButton from "@/components/form/button/DrawerButton";
 import SelectUserStatus from "../form/selectOption/SelectUserStatus";
 import DashboardServices from "@/services/DashboardServices";
-import DrawerButtonJust from "../form/button/DrawerButtonJust";
 import { DecryptData } from "@/utils/DecryptData";
 import { notifySuccess } from "@/utils/toast";
 import { useEffect } from "react";
@@ -118,9 +117,7 @@ const StaffDrawer = ({ id, toggleDrawer, handleCallBack, defaultStatus }) => {
             </div>
           </div>
 
-          <DrawerButtonJust />
-
-          <div className="fixed z-10 bottom-0 w-full right-0 py-4 px-6 grid gap-2 bg-gray-50 border-t border-gray-100">
+          <div className="sticky bottom-0 z-10 w-full py-4 px-6 grid gap-2 bg-gray-50 border-t border-gray-100">
             <button
               type="button"
               onClick={handletoggle}

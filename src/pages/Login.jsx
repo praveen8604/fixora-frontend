@@ -38,7 +38,10 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userCountry, setUserCountry] = useState("in");
 
-  const maskedNumber = enteredMobileNumber?.replace(/\d(?=\d{4})/g, "*");
+  const maskedNumber = enteredMobileNumber?.replace(
+    /\d(?=\d{4})/g,
+    "*"
+  );
 
   const maskedEmail = enteredEmail?.replace(
     /^(.)(.*)(.@.*)$/,
@@ -49,8 +52,14 @@ const Login = () => {
   useEffect(() => {
     fetch("https://ipapi.co/json/")
       .then((res) => res.json())
-      .then((data) => setUserCountry(data.country_code.toLowerCase()))
-      .catch(() => setUserCountry("in"));
+      .then((data) => {
+        if (data?.country_code) {
+          setUserCountry(data.country_code.toLowerCase());
+        }
+      })
+      .catch(() => {
+        setUserCountry("in");
+      });
   }, []);
 
   const handlePhoneChange = (value, country) => {
@@ -106,9 +115,28 @@ const Login = () => {
 
       reduxDispatch(removeSetting("globalSetting"));
 
+      if (loginMethod === "otp") {
+        setEnteredMobileNumber(data.phoneNumber || "");
+        setEnteredCountryCode(data.countryCode || "+91");
+
+        setIsOtpSent(true);
+        setIsLoading(false);
+        return;
+      }
+
+      if (loginMethod === "email") {
+        setEnteredEmail(data.email || "");
+
+        setIsOtpSent(true);
+        setIsLoading(false);
+        return;
+      }
+
       goToDashboard(data);
     } catch (error) {
+      console.error("Login error:", error);
       setIsLoading(false);
+      notifyError("Something went wrong. Please try again.");
     }
   };
 
@@ -128,22 +156,22 @@ const Login = () => {
     setLoginMethod(method);
     setIsOtpSent(false);
     setOtp("");
+    setIsLoading(false);
   };
 
   return (
     <>
-      {/* =========================================================
-          PAGE STYLES
-      ========================================================= */}
       <style>
         {`
           @keyframes loginGradient {
             0% {
               background-position: 0% 50%;
             }
+
             50% {
               background-position: 100% 50%;
             }
+
             100% {
               background-position: 0% 50%;
             }
@@ -153,6 +181,7 @@ const Login = () => {
             0%, 100% {
               transform: translate3d(0, 0, 0) scale(1);
             }
+
             50% {
               transform: translate3d(35px, -25px, 0) scale(1.08);
             }
@@ -162,6 +191,7 @@ const Login = () => {
             0%, 100% {
               transform: translate3d(0, 0, 0) scale(1);
             }
+
             50% {
               transform: translate3d(-30px, 30px, 0) scale(0.94);
             }
@@ -171,6 +201,7 @@ const Login = () => {
             0%, 100% {
               transform: translate3d(0, 0, 0);
             }
+
             50% {
               transform: translate3d(20px, 25px, 0);
             }
@@ -181,6 +212,7 @@ const Login = () => {
               opacity: .35;
               transform: scale(1);
             }
+
             50% {
               opacity: .65;
               transform: scale(1.15);
@@ -191,6 +223,7 @@ const Login = () => {
             0% {
               transform: translateY(0);
             }
+
             100% {
               transform: translateY(45px);
             }
@@ -201,6 +234,7 @@ const Login = () => {
               opacity: 0;
               transform: translateY(25px) scale(.98);
             }
+
             to {
               opacity: 1;
               transform: translateY(0) scale(1);
@@ -212,6 +246,7 @@ const Login = () => {
               opacity: 0;
               transform: translateX(30px);
             }
+
             to {
               opacity: 1;
               transform: translateX(0);
@@ -222,6 +257,7 @@ const Login = () => {
             0% {
               transform: translateX(-120%);
             }
+
             100% {
               transform: translateX(120%);
             }
@@ -253,6 +289,7 @@ const Login = () => {
                 #eef2ff 45%,
                 #f4f9ff 100%
               );
+
             background-size: 180% 180%;
             animation: loginGradient 16s ease infinite;
           }
@@ -268,6 +305,7 @@ const Login = () => {
                 rgba(80, 88, 156, .035) 1px,
                 transparent 1px
               );
+
             background-size: 42px 42px;
             animation: gridMove 12s linear infinite;
           }
@@ -286,6 +324,10 @@ const Login = () => {
 
           .login-pulse {
             animation: pulseGlow 4s ease-in-out infinite;
+          }
+
+          .login-shimmer {
+            position: relative;
           }
 
           .login-shimmer::after {
@@ -350,17 +392,11 @@ const Login = () => {
         `}
       </style>
 
-      {/* =========================================================
-          MAIN PAGE
-      ========================================================= */}
-      <div className="login-gradient relative flex min-h-screen h-screen overflow-hidden">
-
-        {/* Animated grid */}
+      <div className="login-gradient relative flex h-screen min-h-screen overflow-hidden">
+        {/* Animated Grid */}
         <div className="login-grid pointer-events-none absolute inset-0 z-0" />
 
-        {/* =======================================================
-            FLOATING ORBS
-        ======================================================== */}
+        {/* Floating Orb 1 */}
         <div
           className="
             login-orb-one
@@ -377,6 +413,7 @@ const Login = () => {
           "
         />
 
+        {/* Floating Orb 2 */}
         <div
           className="
             login-orb-two
@@ -393,6 +430,7 @@ const Login = () => {
           "
         />
 
+        {/* Floating Orb 3 */}
         <div
           className="
             login-orb-three
@@ -409,9 +447,9 @@ const Login = () => {
           "
         />
 
-        {/* =======================================================
+        {/* =====================================================
             LEFT LOGIN AREA
-        ======================================================== */}
+        ====================================================== */}
         <div
           className="
             relative
@@ -430,12 +468,8 @@ const Login = () => {
           "
         >
           <div className="login-card-animation w-full max-w-[440px]">
-
-            {/* ===================================================
-                BRAND
-            ==================================================== */}
+            {/* Brand */}
             <div className="mb-7 flex items-center justify-between">
-
               <div
                 className="
                   inline-flex
@@ -495,11 +529,8 @@ const Login = () => {
               </div>
             </div>
 
-            {/* ===================================================
-                HEADING
-            ==================================================== */}
+            {/* Heading */}
             <div className="mb-7">
-
               <div className="mb-3 flex items-center gap-2">
                 <div className="h-[2px] w-8 rounded-full bg-[#50589C]" />
 
@@ -519,9 +550,7 @@ const Login = () => {
               </p>
             </div>
 
-            {/* ===================================================
-                LOGIN CARD
-            ==================================================== */}
+            {/* Login Card */}
             <div
               className="
                 rounded-[26px]
@@ -536,10 +565,7 @@ const Login = () => {
             >
               {!isOtpSent ? (
                 <form onSubmit={handleSubmit(onSubmit)}>
-
-                  {/* =============================================
-                      METHOD TABS
-                  ============================================== */}
+                  {/* Login Method Tabs */}
                   <div
                     className="
                       mb-6
@@ -567,7 +593,6 @@ const Login = () => {
                         py-3
                         text-sm
                         font-semibold
-
                         ${
                           loginMethod === "otp"
                             ? "bg-white text-[#50589C] shadow-[0_5px_15px_rgba(80,88,156,.10)]"
@@ -593,7 +618,6 @@ const Login = () => {
                         py-3
                         text-sm
                         font-semibold
-
                         ${
                           loginMethod === "email"
                             ? "bg-white text-[#50589C] shadow-[0_5px_15px_rgba(80,88,156,.10)]"
@@ -606,23 +630,14 @@ const Login = () => {
                     </button>
                   </div>
 
-                  {/* =============================================
-                      MOBILE
-                  ============================================== */}
+                  {/* Mobile Login */}
                   {loginMethod === "otp" ? (
-                    <div className="login-field">
-
+                    <div>
                       <label className="mb-2 block text-[13px] font-semibold text-[#33406D]">
                         Mobile number
                       </label>
 
-                      <div
-                        className="
-                          overflow-hidden
-                          rounded-xl
-                          bg-white
-                        "
-                      >
+                      <div className="overflow-hidden rounded-xl bg-white">
                         <PhoneInput
                           country={userCountry}
                           onChange={handlePhoneChange}
@@ -661,12 +676,15 @@ const Login = () => {
                           })}
                           type="hidden"
                         />
+
+                        <input
+                          {...register("countryCode")}
+                          type="hidden"
+                        />
                       </div>
                     </div>
                   ) : (
-                    /* ===========================================
-                       EMAIL
-                    ============================================ */
+                    /* Email Login */
                     <div>
                       <label className="mb-2 block text-[13px] font-semibold text-[#33406D]">
                         Email address
@@ -717,6 +735,8 @@ const Login = () => {
                               loginMethod === "email"
                                 ? "Please enter your Email"
                                 : false,
+                            onChange: (e) =>
+                              setEnteredEmail(e.target.value),
                           })}
                         />
                       </div>
@@ -727,9 +747,7 @@ const Login = () => {
                   <Error errorName={errors.phoneNumber} />
                   <Error errorName={errors.email} />
 
-                  {/* =============================================
-                      SECURITY INFO
-                  ============================================== */}
+                  {/* Security Information */}
                   <div
                     className="
                       mt-5
@@ -771,9 +789,7 @@ const Login = () => {
                     </div>
                   </div>
 
-                  {/* =============================================
-                      CONTINUE BUTTON
-                  ============================================== */}
+                  {/* Continue */}
                   <Button
                     type="submit"
                     className="
@@ -805,9 +821,7 @@ const Login = () => {
                     </span>
                   </Button>
 
-                  {/* =============================================
-                      SIGN UP
-                  ============================================== */}
+                  {/* Signup */}
                   <p className="mt-5 text-center text-xs text-[#7A879B]">
                     Don’t have an account?{" "}
                     <Link
@@ -824,19 +838,9 @@ const Login = () => {
                   </p>
                 </form>
               ) : (
-                /* =================================================
-                   OTP SCREEN
-                ================================================== */
+                /* OTP Screen */
                 <div>
-
-                  <div
-                    className="
-                      mb-5
-                      flex
-                      items-center
-                      justify-center
-                    "
-                  >
+                  <div className="mb-5 flex items-center justify-center">
                     <div
                       className="
                         flex
@@ -855,7 +859,6 @@ const Login = () => {
                   </div>
 
                   <div className="text-center">
-
                     <h2 className="text-lg font-bold text-[#26315F]">
                       Verification code
                     </h2>
@@ -868,7 +871,6 @@ const Login = () => {
                   </div>
 
                   <div className="mt-6">
-
                     <input
                       type="text"
                       inputMode="numeric"
@@ -903,6 +905,7 @@ const Login = () => {
                   </div>
 
                   <Button
+                    type="button"
                     onClick={handleOtpSubmit}
                     className="
                       login-button
@@ -949,9 +952,7 @@ const Login = () => {
               )}
             </div>
 
-            {/* ===================================================
-                BOTTOM STATUS
-            ==================================================== */}
+            {/* Bottom Status */}
             <div className="mt-5 flex items-center justify-center gap-5 text-[10px] font-medium text-[#94A0B2]">
               <span className="flex items-center gap-1.5">
                 <FiShield className="text-[#50589C]" />
@@ -968,9 +969,9 @@ const Login = () => {
           </div>
         </div>
 
-        {/* =======================================================
+        {/* =====================================================
             RIGHT VIDEO SECTION
-        ======================================================== */}
+        ====================================================== */}
         <div
           className="
             relative
@@ -995,7 +996,6 @@ const Login = () => {
               bg-[#50589C]
             "
           >
-
             {/* Video */}
             <video
               autoPlay
@@ -1013,7 +1013,7 @@ const Login = () => {
               <source src={loginvideo} type="video/mp4" />
             </video>
 
-            {/* Main overlay */}
+            {/* Main Overlay */}
             <div
               className="
                 absolute
@@ -1025,7 +1025,7 @@ const Login = () => {
               "
             />
 
-            {/* Soft color glow */}
+            {/* Glow */}
             <div
               className="
                 login-pulse
@@ -1053,7 +1053,7 @@ const Login = () => {
               "
             />
 
-            {/* Top badge */}
+            {/* Top Badge */}
             <div
               className="
                 absolute
@@ -1105,7 +1105,7 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Bottom content */}
+            {/* Bottom Content */}
             <div
               className="
                 absolute
@@ -1116,10 +1116,8 @@ const Login = () => {
                 sm:p-9
               "
             >
-
-              {/* Feature pills */}
+              {/* Feature Pills */}
               <div className="mb-5 flex flex-wrap gap-2">
-
                 <div
                   className="
                     rounded-full
@@ -1187,7 +1185,6 @@ const Login = () => {
               </p>
 
               <div className="mt-6 flex items-center gap-3">
-
                 <div
                   className="
                     flex

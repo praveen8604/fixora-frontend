@@ -1,53 +1,3 @@
-// import React, { useContext } from "react";
-// import SidebarContent from "@/components/sidebar/SidebarContent";
-// import { AdminContext } from "@/context/AdminContext";
-// import { SidebarContext } from "@/context/SidebarContext";
-
-// const DesktopSidebar = () => {
-//   const { dimentions } = useContext(AdminContext);
-//   const { isSidebarOpen } = useContext(SidebarContext);
-
-//   const sidebarWidth = isSidebarOpen ? "256px" : "70px";
-
-//   return (
-//     <aside
-//       className="
-//         fixed
-//         left-0
-//         top-0
-//         z-[50]
-//         flex-shrink-0
-//         overflow-hidden
-//         bg-white
-//         shadow-[4px_0_24px_rgba(30,40,55,0.06)]
-//       "
-//       style={{
-//         width: sidebarWidth,
-//         height: dimentions?.height,
-//         transition: "width 0.35s ease-in-out, left 0.35s ease-in-out",
-//         borderRight: "1px solid #E8EBEF",
-
-//         ...(dimentions?.width <= 1024 && !isSidebarOpen
-//           ? {
-//               left: "-70px",
-//             }
-//           : {}),
-//       }}
-//     >
-//       <div className="h-full w-full overflow-hidden">
-//         <SidebarContent />
-//       </div>
-//     </aside>
-//   );
-// };
-
-// export default DesktopSidebar;
-
-
-
-
-
-
 import React, { useContext } from "react";
 import SidebarContent from "@/components/sidebar/SidebarContent";
 import { AdminContext } from "@/context/AdminContext";
@@ -68,9 +18,9 @@ const DesktopSidebar = () => {
         z-[50]
         flex-shrink-0
         overflow-hidden
+        bg-[#0f172a]
         border-r
         border-white/10
-        bg-[#0f172a]
         shadow-[8px_0_35px_rgba(15,23,42,0.16)]
       "
       style={{
@@ -79,8 +29,7 @@ const DesktopSidebar = () => {
         transition:
           "width 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s ease-in-out",
 
-        ...(dimentions?.width <= 1024 &&
-        !isSidebarOpen
+        ...(dimentions?.width <= 1024 && !isSidebarOpen
           ? {
               left: "-70px",
             }
@@ -90,8 +39,8 @@ const DesktopSidebar = () => {
       {/* ================= BACKGROUND GLOW ================= */}
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-
         {/* Indigo glow */}
+
         <div
           className="
             absolute
@@ -106,6 +55,7 @@ const DesktopSidebar = () => {
         />
 
         {/* Cyan glow */}
+
         <div
           className="
             absolute
@@ -120,6 +70,7 @@ const DesktopSidebar = () => {
         />
 
         {/* Violet glow */}
+
         <div
           className="
             absolute
@@ -134,6 +85,7 @@ const DesktopSidebar = () => {
         />
 
         {/* Subtle grid */}
+
         <div
           className="
             absolute
@@ -151,11 +103,8 @@ const DesktopSidebar = () => {
       {/* ================= SIDEBAR CONTENT ================= */}
 
       <div className="relative z-10 h-full w-full overflow-hidden">
-
         <SidebarContent />
-
       </div>
-
     </aside>
   );
 };

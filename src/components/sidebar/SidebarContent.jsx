@@ -1,300 +1,39 @@
-// import React, { useContext } from "react";
-// import { NavLink, useLocation } from "react-router-dom";
-// import Cookies from "js-cookie";
-// import { useTranslation } from "react-i18next";
-
-// import sidebar from "@/routes/sidebar";
-
-// import logo from "@/assets/img/logo/logo.png";
-// import logo_short from "@/assets/img/logo/logohead.png";
-
-// import { SidebarContext } from "@/context/SidebarContext";
-// import SidebarProfile from "@/components/sidebar/SidebarProfile";
-// import { AdminContext } from "@/context/AdminContext";
-
-// import { FaArrowCircleLeft } from "react-icons/fa";
-// import { IoIosArrowDown } from "react-icons/io";
-// import { IoLogOutOutline } from "react-icons/io5";
-
-// import SidebarSubMenu from "@/components/sidebar/SidebarSubMenu";
-// import AlertDialog from "@/components/common/AlterDialogBox";
-
-// import Button from "@mui/material/Button";
-
-// const SidebarContent = () => {
-//   const { dimentions, dispatch } = useContext(AdminContext);
-
-//   const { isSidebarOpen, toggleSidebar, openSidebar } =
-//     useContext(SidebarContext);
-
-//   const { t } = useTranslation();
-//   const { pathname } = useLocation();
-
-//   const handleLogOut = () => {
-//     dispatch({ type: "USER_LOGOUT" });
-//     Cookies.remove("adminInfo");
-//   };
-
-//   return (
-//     <div className="py-4 text-gray-500 dark:text-gray-400">
-//       {/* =====================================================
-//           LOGO
-//       ====================================================== */}
-
-//       <div className="flex items-center">
-//         <a href="/dashboard" className="overflow-hidden p-4 py-0">
-//           <div className="w-64">
-//             <img
-//               src={isSidebarOpen ? logo : logo_short}
-//               alt="fixmate"
-//               style={{
-//                 height: "40px",
-//               }}
-//               onMouseOver={openSidebar}
-//             />
-//           </div>
-//         </a>
-
-//         {/* COLLAPSE BUTTON */}
-
-//         <div className="absolute right-[-10px] mt-[10px] text-[var(--primary-elite-color)]">
-//           <button
-//             type="button"
-//             className={`
-//               relative
-//               rounded-full
-//               bg-white
-//               transition-all
-//               duration-500
-//               ease-in-out
-//               focus:outline-none
-//               ${isSidebarOpen ? "rotate-0" : "rotate-180"}
-//             `}
-//             style={{
-//               transitionDuration: "0.5s",
-//               ...(dimentions?.width <= 1024 && !isSidebarOpen
-//                 ? { left: "20px" }
-//                 : { left: "0px" }),
-//             }}
-//             onClick={toggleSidebar}
-//             aria-label="Menu"
-//           >
-//             <FaArrowCircleLeft size="20" aria-hidden="true" />
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* =====================================================
-//           SIDEBAR MENU
-//       ====================================================== */}
-
-//       <ul className="mt-8 px-2">
-//         {sidebar.map((route) => {
-//           const isActive =
-//             route?.path === pathname ||
-//             route?.path?.split("/")[1] === pathname?.split("/")[1];
-
-//           return (
-//             <li className="relative mb-1" key={route?.name}>
-//               <NavLink
-//                 exact
-//                 to={route?.path}
-//                 rel="noreferrer"
-//                 onMouseOver={openSidebar}
-//                 className={`
-//                   group
-//                   relative
-//                   flex
-//                   h-[55px]
-//                   w-full
-//                   items-center
-//                   justify-between
-//                   rounded-[12px]
-//                   px-4
-//                   text-sm
-//                   font-semibold
-//                   no-underline
-//                   transition-all
-//                   duration-200
-//                   ease-in-out
-
-//                   ${
-//                     isActive
-//                       ? "bg-[#20242B] text-white shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
-//                       : "bg-transparent text-[#68717F] hover:bg-[#F1F2F4] hover:text-[#282D35]"
-//                   }
-//                 `}
-//               >
-//                 {/* =================================================
-//                     ICON + TEXT
-//                 ================================================== */}
-
-//                 <div className="inline-flex min-w-0 items-center">
-//                   <route.icon
-//                     className={`
-//                       h-5
-//                       w-5
-//                       shrink-0
-//                       transition-colors
-//                       duration-200
-
-//                       ${
-//                         isActive
-//                           ? "text-white"
-//                           : "text-[#68717F] group-hover:text-[#282D35]"
-//                       }
-//                     `}
-//                     aria-hidden="true"
-//                   />
-
-//                   {isSidebarOpen && (
-//                     <div
-//                       className={`
-//                         ml-4
-//                         overflow-hidden
-//                         text-nowrap
-//                         transition-colors
-//                         duration-200
-
-//                         ${
-//                           isActive
-//                             ? "text-white"
-//                             : "text-[#68717F] group-hover:text-[#282D35]"
-//                         }
-//                       `}
-//                     >
-//                       {t(`${route?.name}`)}
-//                     </div>
-//                   )}
-//                 </div>
-
-//                 {/* =================================================
-//                     SUBMENU ARROW
-//                 ================================================== */}
-
-//                 {route?.subMenu?.length > 0 && (
-//                   <div
-//                     className={`
-//                       shrink-0
-//                       transition-all
-//                       duration-300
-
-//                       ${
-//                         route?.path?.split("/")[1] === pathname?.split("/")[1]
-//                           ? "-rotate-180"
-//                           : ""
-//                       }
-
-//                       ${
-//                         isActive
-//                           ? "text-white"
-//                           : "text-[#8C94A0] group-hover:text-[#282D35]"
-//                       }
-//                     `}
-//                   >
-//                     <IoIosArrowDown size={16} />
-//                   </div>
-//                 )}
-//               </NavLink>
-
-//               {/* =================================================
-//                   SUBMENU
-//               ================================================== */}
-
-//               {route?.subMenu?.length > 0 && (
-//                 <SidebarSubMenu
-//                   route={route?.subMenu}
-//                   parentLink={route?.path?.split("/")[1]}
-//                   currentParentPath={pathname?.split("/")[1]}
-//                   pathname={pathname}
-//                 />
-//               )}
-//             </li>
-//           );
-//         })}
-//       </ul>
-
-//       {/* =====================================================
-//           LOGOUT
-//       ====================================================== */}
-
-//       <div
-//         className={`
-//           absolute
-//           bottom-0
-//           p-6
-//           ${
-//             isSidebarOpen
-//               ? "w-64 px-6 py-6"
-//               : "flex items-center justify-center"
-//           }
-//         `}
-//         style={{
-//           width: "-webkit-fill-available",
-//         }}
-//       >
-//         <AlertDialog
-//           onAgree={() => handleLogOut()}
-//           dialogTitle={"Logout?"}
-//           dialogDetails={"Are you sure you want to logout?"}
-//           AgreeButtonValue="Yes, Logout!"
-//           CancelButton="Cancel"
-//           triggerButton={(onClickFunc) => {
-//             return (
-//               <Button
-//                 onClick={onClickFunc}
-//                 size="large"
-//                 className="logout-btn w-full overflow-hidden"
-//               >
-//                 <span className="flex items-center gap-3">
-//                   <IoLogOutOutline className="text-lg" />
-
-//                   {isSidebarOpen && (
-//                     <span className="text-sm text-nowrap">{t("LogOut")}</span>
-//                   )}
-//                 </span>
-//               </Button>
-//             );
-//           }}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SidebarContent;
-
-
-
-
-
-
-
-import React, { useContext } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useTranslation } from "react-i18next";
+import { Button } from "@windmill/react-ui";
+import {
+  FaArrowCircleLeft,
+} from "react-icons/fa";
+import {
+  IoIosArrowDown,
+} from "react-icons/io";
+import {
+  IoLogOutOutline,
+} from "react-icons/io5";
+import {
+  LuSparkles,
+} from "react-icons/lu";
 
 import sidebar from "@/routes/sidebar";
-
 import logo from "@/assets/img/logo/logo.png";
 import logo_short from "@/assets/img/logo/logohead.png";
 
 import { SidebarContext } from "@/context/SidebarContext";
 import { AdminContext } from "@/context/AdminContext";
 
-import { FaArrowCircleLeft } from "react-icons/fa";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoLogOutOutline } from "react-icons/io5";
-import { LuSparkles } from "react-icons/lu";
-
 import SidebarSubMenu from "@/components/sidebar/SidebarSubMenu";
 import AlertDialog from "@/components/common/AlterDialogBox";
 
-import Button from "@mui/material/Button";
-
 const SidebarContent = () => {
-  const { dimentions, dispatch } = useContext(AdminContext);
+  const { dimentions, dispatch } =
+    useContext(AdminContext);
 
   const {
     isSidebarOpen,
@@ -305,19 +44,153 @@ const SidebarContent = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
+  const [openMenu, setOpenMenu] = useState(null);
+  const [panelPos, setPanelPos] = useState(0);
+
+  const itemRefs = useRef({});
+  const panelRef = useRef(null);
+
+  /*
+   * =========================================================
+   * LOGOUT
+   * =========================================================
+   */
+
   const handleLogOut = () => {
-    dispatch({ type: "USER_LOGOUT" });
+    dispatch({
+      type: "USER_LOGOUT",
+    });
+
     Cookies.remove("adminInfo");
+    Cookies.remove("token");
+
+    window.location.replace("/login");
+  };
+
+  /*
+   * =========================================================
+   * HANDLE SUBMENU
+   * =========================================================
+   */
+
+  const handleIconClick = (route) => {
+    if (!route?.subMenu?.length) {
+      setOpenMenu(null);
+      return;
+    }
+
+    if (openMenu === route.name) {
+      setOpenMenu(null);
+      return;
+    }
+
+    const element = itemRefs.current[route.name];
+
+    if (element) {
+      setPanelPos(
+        element.getBoundingClientRect().top
+      );
+    }
+
+    setOpenMenu(route.name);
+  };
+
+  /*
+   * =========================================================
+   * CLOSE FLOATING SUBMENU WHEN CLICKING OUTSIDE
+   * =========================================================
+   */
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(event.target)
+      ) {
+        setOpenMenu(null);
+      }
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
+
+  /*
+   * =========================================================
+   * CLOSE FLOATING MENU WHEN SIDEBAR OPENS
+   * =========================================================
+   */
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      setOpenMenu(null);
+    }
+  }, [isSidebarOpen]);
+
+  /*
+   * =========================================================
+   * ACTIVE FLOATING PANEL
+   * =========================================================
+   */
+
+  const activePanel = sidebar.find(
+    (route) => route.name === openMenu
+  );
+
+  /*
+   * =========================================================
+   * ACTIVE ROUTE CHECK
+   * =========================================================
+   */
+
+  const isRouteActive = (route) => {
+    if (!route) return false;
+
+    const currentPath = pathname || "";
+
+    const routePath = route.path || "";
+
+    return (
+      routePath === currentPath ||
+      routePath.split("/")[1] ===
+        currentPath.split("/")[1]
+    );
   };
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden bg-[#0f172a] text-slate-300">
-
+    <div
+      className="
+        relative
+        flex
+        h-full
+        flex-col
+        overflow-hidden
+        bg-[#0f172a]
+        text-slate-300
+      "
+    >
       {/* =====================================================
           BACKGROUND EFFECTS
       ====================================================== */}
 
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          overflow-hidden
+        "
+      >
+        {/* Indigo glow */}
 
         <div
           className="
@@ -332,6 +205,8 @@ const SidebarContent = () => {
           "
         />
 
+        {/* Violet glow */}
+
         <div
           className="
             absolute
@@ -344,6 +219,8 @@ const SidebarContent = () => {
             blur-3xl
           "
         />
+
+        {/* Cyan glow */}
 
         <div
           className="
@@ -358,8 +235,14 @@ const SidebarContent = () => {
           "
         />
 
+        {/* Subtle grid */}
+
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="
+            absolute
+            inset-0
+            opacity-[0.025]
+          "
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
@@ -372,8 +255,15 @@ const SidebarContent = () => {
           LOGO HEADER
       ====================================================== */}
 
-      <div className="relative z-20 shrink-0 px-3 pt-4">
-
+      <div
+        className="
+          relative
+          z-20
+          shrink-0
+          px-3
+          pt-4
+        "
+      >
         <div
           className={`
             relative
@@ -397,7 +287,6 @@ const SidebarContent = () => {
             }
           `}
         >
-
           {/* Decorative top line */}
 
           <div
@@ -437,13 +326,8 @@ const SidebarContent = () => {
               }
             `}
           >
-
             {isSidebarOpen ? (
-
-              /* ==============================
-                 EXPANDED LOGO
-              ============================== */
-
+              /* Expanded Logo */
               <div
                 className="
                   flex
@@ -457,7 +341,6 @@ const SidebarContent = () => {
                   shadow-[0_5px_18px_rgba(0,0,0,0.12)]
                 "
               >
-
                 <img
                   src={logo}
                   alt="Fix Mantra"
@@ -470,15 +353,9 @@ const SidebarContent = () => {
                     object-left
                   "
                 />
-
               </div>
-
             ) : (
-
-              /* ==============================
-                 COLLAPSED LOGO
-              ============================== */
-
+              /* Collapsed Logo */
               <div
                 className="
                   flex
@@ -491,7 +368,6 @@ const SidebarContent = () => {
                   shadow-[0_5px_18px_rgba(0,0,0,0.15)]
                 "
               >
-
                 <img
                   src={logo_short}
                   alt="Fix Mantra"
@@ -502,11 +378,8 @@ const SidebarContent = () => {
                     object-contain
                   "
                 />
-
               </div>
-
             )}
-
           </a>
 
           {/* =================================================
@@ -558,7 +431,6 @@ const SidebarContent = () => {
           >
             <FaArrowCircleLeft size={14} />
           </button>
-
         </div>
 
         {/* =================================================
@@ -566,8 +438,15 @@ const SidebarContent = () => {
         ================================================== */}
 
         {isSidebarOpen && (
-          <div className="mt-5 flex items-center gap-2 px-2">
-
+          <div
+            className="
+              mt-5
+              flex
+              items-center
+              gap-2
+              px-2
+            "
+          >
             <LuSparkles
               size={11}
               className="text-cyan-400"
@@ -585,11 +464,15 @@ const SidebarContent = () => {
               Workspace
             </span>
 
-            <div className="h-px flex-1 bg-white/[0.06]" />
-
+            <div
+              className="
+                h-px
+                flex-1
+                bg-white/[0.06]
+              "
+            />
           </div>
         )}
-
       </div>
 
       {/* =====================================================
@@ -613,27 +496,29 @@ const SidebarContent = () => {
           [&::-webkit-scrollbar-thumb]:bg-slate-700/50
         "
       >
-
         <ul className="space-y-1">
-
           {sidebar.map((route) => {
-
-            const isActive =
-              route?.path === pathname ||
-              route?.path?.split("/")[1] ===
-                pathname?.split("/")[1];
+            const isActive = isRouteActive(route);
 
             return (
               <li
                 className="relative"
                 key={route?.name}
               >
+                {/* =================================================
+                    MAIN ROUTE
+                ================================================== */}
 
                 <NavLink
                   exact
                   to={route?.path}
                   rel="noreferrer"
                   onMouseOver={openSidebar}
+                  onClick={() => {
+                    if (!route?.subMenu?.length) {
+                      setOpenMenu(null);
+                    }
+                  }}
                   className={`
                     group
                     relative
@@ -680,7 +565,6 @@ const SidebarContent = () => {
                     }
                   `}
                 >
-
                   {/* Hover shine */}
 
                   {!isActive && (
@@ -738,6 +622,7 @@ const SidebarContent = () => {
                       }
                     `}
                   >
+                    {/* Icon */}
 
                     <div
                       className={`
@@ -768,17 +653,19 @@ const SidebarContent = () => {
                         }
                       `}
                     >
-
-                      <route.icon
-                        className="
-                          h-[17px]
-                          w-[17px]
-                          shrink-0
-                        "
-                        aria-hidden="true"
-                      />
-
+                      {route?.icon && (
+                        <route.icon
+                          className="
+                            h-[17px]
+                            w-[17px]
+                            shrink-0
+                          "
+                          aria-hidden="true"
+                        />
+                      )}
                     </div>
+
+                    {/* Text */}
 
                     {isSidebarOpen && (
                       <div
@@ -802,34 +689,37 @@ const SidebarContent = () => {
                         {t(`${route?.name}`)}
                       </div>
                     )}
-
                   </div>
 
-                  {/* Submenu arrow */}
+                  {/* Submenu Arrow */}
 
                   {route?.subMenu?.length > 0 &&
                     isSidebarOpen && (
-
-                      <div
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          handleIconClick(route);
+                        }}
                         className={`
                           relative
                           z-10
                           flex
                           h-7
                           w-7
+                          shrink-0
                           items-center
                           justify-center
                           rounded-lg
+                          border-0
+                          bg-transparent
                           transition-all
                           duration-300
 
                           ${
-                            route?.path?.split(
-                              "/"
-                            )[1] ===
-                            pathname?.split(
-                              "/"
-                            )[1]
+                            openMenu === route.name ||
+                            isActive
                               ? "-rotate-180"
                               : ""
                           }
@@ -840,12 +730,11 @@ const SidebarContent = () => {
                               : "text-slate-600 group-hover:bg-indigo-500/10 group-hover:text-cyan-300"
                           }
                         `}
+                        aria-label={`Toggle ${route.name} submenu`}
                       >
                         <IoIosArrowDown size={13} />
-                      </div>
-
+                      </button>
                     )}
-
                 </NavLink>
 
                 {/* =================================================
@@ -853,7 +742,6 @@ const SidebarContent = () => {
                 ================================================== */}
 
                 {!isSidebarOpen && (
-
                   <div
                     className="
                       pointer-events-none
@@ -881,7 +769,6 @@ const SidebarContent = () => {
                       group-hover:opacity-100
                     "
                   >
-
                     {t(`${route?.name}`)}
 
                     <span
@@ -896,36 +783,30 @@ const SidebarContent = () => {
                         bg-[#172033]
                       "
                     />
-
                   </div>
-
                 )}
 
                 {/* =================================================
-                    SUBMENU
+                    EXPANDED SUBMENU
                 ================================================== */}
 
-                {route?.subMenu?.length > 0 && (
-
-                  <SidebarSubMenu
-                    route={route?.subMenu}
-                    parentLink={
-                      route?.path?.split("/")[1]
-                    }
-                    currentParentPath={
-                      pathname?.split("/")[1]
-                    }
-                    pathname={pathname}
-                  />
-
-                )}
-
+                {route?.subMenu?.length > 0 &&
+                  isSidebarOpen && (
+                    <SidebarSubMenu
+                      route={route?.subMenu}
+                      parentLink={
+                        route?.path?.split("/")[1]
+                      }
+                      currentParentPath={
+                        pathname?.split("/")[1]
+                      }
+                      pathname={pathname}
+                    />
+                  )}
               </li>
             );
           })}
-
         </ul>
-
       </div>
 
       {/* =====================================================
@@ -953,89 +834,144 @@ const SidebarContent = () => {
           }
         `}
       >
-
         <AlertDialog
-          onAgree={() => handleLogOut()}
-          dialogTitle={"Logout?"}
-          dialogDetails={
-            "Are you sure you want to logout?"
-          }
+          onAgree={handleLogOut}
+          dialogTitle="Logout?"
+          dialogDetails="Are you sure you want to logout?"
           AgreeButtonValue="Yes, Logout!"
           CancelButton="Cancel"
-          triggerButton={(onClickFunc) => {
+          triggerButton={(onClickFunc) => (
+            <Button
+              onClick={onClickFunc}
+              size="large"
+              className="
+                !m-0
+                !min-h-[48px]
+                !w-full
+                !min-w-0
+                !overflow-hidden
+                !rounded-[14px]
+                !border
+                !border-red-400/[0.08]
+                !bg-red-500/[0.05]
+                !px-3
+                !normal-case
+                !text-slate-400
+                !shadow-none
+                transition-all
+                duration-300
+                hover:!translate-x-[2px]
+                hover:!border-red-400/20
+                hover:!bg-red-500/10
+                hover:!text-red-300
+              "
+            >
+              <span
+                className={`
+                  flex
+                  w-full
+                  items-center
 
-            return (
-              <Button
-                onClick={onClickFunc}
-                size="large"
-                className="
-                  !m-0
-                  !min-h-[48px]
-                  !w-full
-                  !min-w-0
-                  !overflow-hidden
-                  !rounded-[14px]
-                  !border
-                  !border-red-400/[0.08]
-                  !bg-red-500/[0.05]
-                  !px-3
-                  !normal-case
-                  !text-slate-400
-                  !shadow-none
-                  transition-all
-                  duration-300
-                  hover:!translate-x-[2px]
-                  hover:!border-red-400/20
-                  hover:!bg-red-500/10
-                  hover:!text-red-300
-                "
+                  ${
+                    isSidebarOpen
+                      ? "gap-3"
+                      : "justify-center"
+                  }
+                `}
               >
-
                 <span
-                  className={`
+                  className="
                     flex
-                    w-full
+                    h-9
+                    w-9
+                    shrink-0
                     items-center
-
-                    ${
-                      isSidebarOpen
-                        ? "gap-3"
-                        : "justify-center"
-                    }
-                  `}
+                    justify-center
+                    rounded-xl
+                    bg-red-500/[0.08]
+                    text-red-400
+                  "
                 >
-
-                  <span
-                    className="
-                      flex
-                      h-9
-                      w-9
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-red-500/[0.08]
-                      text-red-400
-                    "
-                  >
-                    <IoLogOutOutline className="text-lg" />
-                  </span>
-
-                  {isSidebarOpen && (
-                    <span className="text-xs font-bold text-nowrap">
-                      {t("LogOut")}
-                    </span>
-                  )}
-
+                  <IoLogOutOutline className="text-lg" />
                 </span>
 
-              </Button>
-            );
-          }}
+                {isSidebarOpen && (
+                  <span className="text-xs font-bold text-nowrap">
+                    {t("LogOut")}
+                  </span>
+                )}
+              </span>
+            </Button>
+          )}
         />
-
       </div>
 
+      {/* =====================================================
+          COLLAPSED FLOATING SUBMENU
+      ====================================================== */}
+
+      {!isSidebarOpen &&
+        openMenu &&
+        activePanel?.subMenu?.length > 0 && (
+          <div
+            ref={panelRef}
+            className="
+              fixed
+              left-[78px]
+              z-[300]
+              min-w-[180px]
+              rounded-[12px]
+              border
+              border-[#E8EBEF]
+              bg-white
+              py-2
+              shadow-[0_8px_32px_rgba(30,40,55,0.14)]
+            "
+            style={{
+              top: panelPos,
+            }}
+          >
+            <p
+              className="
+                px-4
+                py-1.5
+                text-xs
+                font-bold
+                uppercase
+                tracking-wider
+                text-[#8C94A0]
+              "
+            >
+              {t(activePanel.name)}
+            </p>
+
+            {activePanel.subMenu.map((child) => (
+              <NavLink
+                key={child.path}
+                to={child.path}
+                onClick={() => setOpenMenu(null)}
+                className={`
+                  block
+                  px-4
+                  py-2.5
+                  text-sm
+                  font-medium
+                  no-underline
+                  transition-colors
+                  duration-150
+
+                  ${
+                    pathname === child.path
+                      ? "bg-[#F1F2F4] font-semibold text-[#20242B]"
+                      : "text-[#68717F] hover:bg-[#F1F2F4] hover:text-[#282D35]"
+                  }
+                `}
+              >
+                {t(child.name)}
+              </NavLink>
+            ))}
+          </div>
+        )}
     </div>
   );
 };

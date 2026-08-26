@@ -1,8 +1,17 @@
-import React, { useContext, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
-import { FiGrid, FiLogOut, FiChevronDown } from "react-icons/fi";
+import {
+  FiChevronDown,
+  FiGrid,
+  FiLogOut,
+} from "react-icons/fi";
 
 import sidebar from "@/routes/sidebar";
 import { AdminContext } from "@/context/AdminContext";
@@ -12,24 +21,62 @@ const Header = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
-  const profileRef = useRef(null);
+  const { state, dispatch } = useContext(AdminContext);
+  const { adminInfo } = state || {};
+
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const { adminInfo, dispatch } = useContext(AdminContext);
+  const profileRef = useRef(null);
 
+  /*
+   * Close profile dropdown when clicking outside
+   */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target)
+      ) {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
+
+  /*
+   * Profile dropdown toggle
+   */
   const handleProfileOpen = () => {
     setProfileOpen((prev) => !prev);
   };
 
+  /*
+   * Logout
+   */
   const handleLogOut = () => {
     dispatch({ type: "USER_LOGOUT" });
+
     Cookies.remove("adminInfo");
+    Cookies.remove("token");
+
     setProfileOpen(false);
+
+    window.location.replace("/login");
   };
 
-  /* =========================================================
-     HEADER TITLE
-  ========================================================= */
+  /*
+   * =========================================================
+   * HEADER TITLE
+   * =========================================================
+   */
 
   const getHeaderTitle = () => {
     const extraTitles = [
@@ -60,7 +107,9 @@ const Header = () => {
     ];
 
     const extraMatch = extraTitles.find(
-      (item) => pathname === item.path || pathname.startsWith(`${item.path}?`),
+      (item) =>
+        pathname === item.path ||
+        pathname.startsWith(`${item.path}?`)
     );
 
     if (extraMatch) {
@@ -73,7 +122,8 @@ const Header = () => {
           .sort((a, b) => b.path.length - a.path.length)
           .find(
             (item) =>
-              pathname === item.path || pathname.startsWith(`${item.path}/`),
+              pathname === item.path ||
+              pathname.startsWith(`${item.path}/`)
           );
 
         if (child) {
@@ -81,7 +131,10 @@ const Header = () => {
         }
       }
 
-      if (pathname === route.path || pathname.startsWith(`${route.path}/`)) {
+      if (
+        pathname === route.path ||
+        pathname.startsWith(`${route.path}/`)
+      ) {
         return route.name;
       }
     }
@@ -99,18 +152,18 @@ const Header = () => {
 
       <header
         className="
-    fixed
-    top-0
-    right-0
-    z-[40]
-    h-[72px]
-    w-full
-    bg-white/95
-    backdrop-blur-xl
-    border-b
-    border-[#E7EAF3]
-    shadow-[0_4px_20px_rgba(99,102,241,0.06)]
-  "
+          fixed
+          top-0
+          right-0
+          z-[40]
+          h-[72px]
+          w-full
+          bg-white/95
+          backdrop-blur-xl
+          border-b
+          border-[#E7EAF3]
+          shadow-[0_4px_20px_rgba(99,102,241,0.06)]
+        "
       >
         <div
           className="
@@ -180,7 +233,11 @@ const Header = () => {
 
           <div className="flex items-center">
             {/* PROFILE */}
-            <div className="relative" ref={profileRef}>
+
+            <div
+              className="relative"
+              ref={profileRef}
+            >
               <button
                 type="button"
                 onClick={handleProfileOpen}
@@ -267,13 +324,19 @@ const Header = () => {
                   </p>
                 </div>
 
+                {/* Dropdown icon */}
+
                 <FiChevronDown
                   size={15}
                   className={`
                     text-[#7379A0]
                     transition-transform
                     duration-200
-                    ${profileOpen ? "rotate-180" : "rotate-0"}
+                    ${
+                      profileOpen
+                        ? "rotate-180"
+                        : "rotate-0"
+                    }
                   `}
                 />
               </button>
@@ -340,7 +403,9 @@ const Header = () => {
 
                   <Link
                     to="/dashboard"
-                    onClick={() => setProfileOpen(false)}
+                    onClick={() =>
+                      setProfileOpen(false)
+                    }
                     className="
                       group
                       flex
@@ -376,13 +441,17 @@ const Header = () => {
                       <FiGrid size={16} />
                     </span>
 
-                    <span>{t("Dashboard")}</span>
+                    <span>
+                      {t("Dashboard")}
+                    </span>
                   </Link>
 
                   {/* Logout */}
 
                   <AlertDialog
-                    onClickInsider={() => setProfileOpen(true)}
+                    onClickInsider={() =>
+                      setProfileOpen(true)
+                    }
                     onAgree={handleLogOut}
                     dialogTitle="Logout?"
                     dialogDetails="Are you sure you want to logout?"
@@ -430,7 +499,9 @@ const Header = () => {
                           <FiLogOut size={16} />
                         </span>
 
-                        <span>{t("LogOut")}</span>
+                        <span>
+                          {t("LogOut")}
+                        </span>
                       </button>
                     )}
                   />
