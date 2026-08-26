@@ -225,10 +225,10 @@ const AppManagementHeader = ({
   const isBlog = currentLink === "Blogs";
 
   const inputClass =
-    "h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
+    "h-11 w-full rounded-xl border border-[#E4E8ED] bg-white px-3 text-xs font-semibold text-[#414853] outline-none transition-all placeholder:text-[#9AA2AC] focus:border-[#2563EB] focus:ring-2 focus:ring-[#DBEAFE]";
 
   const labelClass =
-    "mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-slate-500";
+    "mb-2 block text-[10px] font-extrabold uppercase tracking-wider text-[#7C8592]";
 
   return (
     <div className="mt-4 mb-6">
@@ -306,16 +306,16 @@ const AppManagementHeader = ({
               DRAWER HEADER
           ================================================== */}
 
-          <div className="relative flex items-center gap-3 overflow-hidden border-b border-slate-200 bg-[#0F172A] px-5 py-4 text-white">
-            <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="relative flex items-center gap-3 overflow-hidden border-b border-[#DCE2EA] bg-[#20242B] px-5 py-4 text-white">
+            <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full bg-[#2563EB]/20 blur-3xl" />
 
-            <div className="pointer-events-none absolute -bottom-16 left-[30%] h-32 w-32 rounded-full bg-cyan-400/10 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-16 left-[30%] h-32 w-32 rounded-full bg-emerald-400/10 blur-2xl" />
 
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.08]">
               {isBlog ? (
-                <FaRegNewspaper size={16} className="text-cyan-300" />
+                <FaRegNewspaper size={16} className="text-[#93C5FD]" />
               ) : (
-                <MdAddchart size={19} className="text-cyan-300" />
+                <MdAddchart size={19} className="text-[#93C5FD]" />
               )}
             </div>
 
@@ -400,7 +400,7 @@ const AppManagementHeader = ({
 
                     <label
                       htmlFor="blog-img"
-                      className="group flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white transition-all duration-300 hover:border-indigo-300 hover:bg-indigo-50/[0.35]"
+                      className="group flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[#DCE2EA] bg-white transition-all duration-300 hover:border-[#93C5FD] hover:bg-[#EFF6FF]"
                     >
                       {imageValue.image ? (
                         <img
@@ -410,7 +410,7 @@ const AppManagementHeader = ({
                         />
                       ) : (
                         <div className="flex flex-col items-center">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500 transition-all duration-300 group-hover:scale-110 group-hover:bg-indigo-100">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB] transition-all duration-300 group-hover:scale-110 group-hover:bg-[#DBEAFE]">
                             <MdAddPhotoAlternate size={25} />
                           </div>
 
@@ -646,7 +646,7 @@ const AppManagementHeader = ({
 
                     <label
                       htmlFor="offer-img"
-                      className="group flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white transition-all duration-300 hover:border-indigo-300 hover:bg-indigo-50/[0.35]"
+                      className="group flex h-36 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-[#DCE2EA] bg-white transition-all duration-300 hover:border-[#93C5FD] hover:bg-[#EFF6FF]"
                     >
                       {imageValue.image ? (
                         <img
@@ -656,7 +656,7 @@ const AppManagementHeader = ({
                         />
                       ) : (
                         <div className="flex flex-col items-center">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500 transition-all duration-300 group-hover:scale-110 group-hover:bg-indigo-100">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB] transition-all duration-300 group-hover:scale-110 group-hover:bg-[#DBEAFE]">
                             <MdAddPhotoAlternate size={25} />
                           </div>
 
@@ -675,21 +675,21 @@ const AppManagementHeader = ({
                 ACTIONS
             ================================================== */}
 
-            <div className="flex gap-3 border-t border-slate-200 bg-white px-5 py-4">
+            <div className="flex gap-3 border-t border-[#DCE2EA] bg-white px-5 py-4">
               <button
                 type="button"
                 onClick={() => {
                   setFilterDragger(false);
                   resetForm();
                 }}
-                className="h-11 w-full rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-500 transition-all duration-300 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                className="h-11 w-full rounded-xl border border-[#E4E8ED] bg-white text-xs font-bold text-[#59626E] transition-all duration-300 hover:border-[#BFDBFE] hover:bg-[#EFF6FF] hover:text-[#2563EB]"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="h-11 w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-xs font-extrabold text-white shadow-[0_8px_20px_rgba(79,70,229,0.20)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_25px_rgba(79,70,229,0.28)]"
+                className="h-11 w-full rounded-xl bg-[#20242B] text-xs font-extrabold text-white shadow-[0_8px_20px_rgba(32,36,43,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#111827] hover:shadow-[0_12px_25px_rgba(32,36,43,0.24)]"
               >
                 {isEditing
                   ? `Update ${isBlog ? "Blog" : "Offer"}`

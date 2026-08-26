@@ -901,7 +901,7 @@ const PaymentLogs = () => {
 
   return (
     <AnimatedContent>
-      <div className="min-h-screen bg-[#F5F7FF] pb-10">
+      <div className="min-h-screen bg-[#F4F6F8] pb-10">
 
         {/* =================================================
             HERO
@@ -914,11 +914,11 @@ const PaymentLogs = () => {
             overflow-hidden
             rounded-[36px]
             border
-            border-[#E9ECF7]
-            bg-[radial-gradient(circle_at_top_right,_rgba(222,244,255,0.9),_rgba(255,255,255,0.96)_30%,_rgba(246,242,255,0.92)_65%,_rgba(255,255,255,0.98)_100%)]
+            border-[#E4E8ED]
+            bg-[radial-gradient(circle_at_top_right,_rgba(219,234,254,0.8),_rgba(255,255,255,0.96)_32%,_rgba(240,249,255,0.9)_68%,_rgba(255,255,255,0.98)_100%)]
             px-6
             py-8
-            shadow-[0_20px_50px_rgba(91,107,138,0.12)]
+            shadow-[0_16px_36px_rgba(30,40,55,0.08)]
             lg:px-10
             lg:py-10
           "
@@ -1007,7 +1007,7 @@ const PaymentLogs = () => {
                   bg-white/80
                   px-4
                   py-2
-                  shadow-[0_8px_18px_rgba(95,99,221,0.08)]
+                  shadow-[0_8px_18px_rgba(37,99,235,0.08)]
                   backdrop-blur-sm
                 "
               >
@@ -1019,7 +1019,7 @@ const PaymentLogs = () => {
                     items-center
                     justify-center
                     rounded-full
-                    bg-[#5E63D9]
+                    bg-[#20242B]
                     text-white
                   "
                 >
@@ -1032,7 +1032,7 @@ const PaymentLogs = () => {
                     font-bold
                     uppercase
                     tracking-[0.2em]
-                    text-[#5E63D9]
+                    text-[#20242B]
                   "
                 >
                   Finance
@@ -1056,9 +1056,9 @@ const PaymentLogs = () => {
                 <span
                   className="
                     bg-gradient-to-r
-                    from-[#6A4FF6]
-                    via-[#5A67F2]
-                    to-[#2EA8E6]
+                    from-[#20242B]
+                    via-[#2563EB]
+                    to-[#0EA5E9]
                     bg-clip-text
                     text-transparent
                   "
@@ -1095,12 +1095,12 @@ const PaymentLogs = () => {
                     gap-3
                     rounded-[18px]
                     bg-gradient-to-r
-                    from-[#5F5CF1]
-                    to-[#7E42F5]
+                    from-[#20242B]
+                    to-[#2563EB]
                     px-5
                     py-4
                     text-white
-                    shadow-[0_16px_32px_rgba(101,86,243,0.28)]
+                    shadow-[0_16px_32px_rgba(37,99,235,0.20)]
                   "
                 >
                   <span
@@ -1164,8 +1164,8 @@ const PaymentLogs = () => {
                       items-center
                       justify-center
                       rounded-2xl
-                      bg-[#ECF2FF]
-                      text-[#5E63D9]
+                      bg-[#EFF6FF]
+                      text-[#2563EB]
                     "
                   >
                     <MdPayment size={18} />
@@ -1247,7 +1247,7 @@ const PaymentLogs = () => {
                   border
                   border-[#E0EDFF]
                   bg-white
-                  text-[#3BAEDC]
+                  text-[#2563EB]
                   shadow-[0_14px_28px_rgba(69,146,201,0.14)]
                 "
               >
@@ -1260,7 +1260,7 @@ const PaymentLogs = () => {
                   rounded-[30px]
                   bg-white/72
                   p-5
-                  shadow-[0_20px_40px_rgba(102,109,176,0.18)]
+                  shadow-[0_20px_40px_rgba(30,40,55,0.10)]
                   backdrop-blur-sm
                 "
               >
@@ -1275,7 +1275,7 @@ const PaymentLogs = () => {
                     bg-white
                     px-5
                     py-3
-                    shadow-[0_12px_26px_rgba(92,102,160,0.12)]
+                    shadow-[0_12px_26px_rgba(30,40,55,0.08)]
                   "
                 >
                   <p
@@ -1451,7 +1451,7 @@ const PaymentLogs = () => {
               border
               border-[#E8ECF5]
               bg-white/92
-              shadow-[0_18px_42px_rgba(84,98,130,0.10)]
+              shadow-[0_16px_36px_rgba(30,40,55,0.08)]
               backdrop-blur-sm
             "
           >

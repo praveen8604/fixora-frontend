@@ -2,7 +2,7 @@ import ApplianceServices from "@/services/ApplianceServices";
 import { getQueryParam } from "@/utils/getQueryParam";
 import React, { useEffect, useState } from "react";
 import TopLayout from "./layouts/TopLayout";
-import { decode } from "@/utils/DecryptData";
+import { decode, DecryptData } from "@/utils/DecryptData";
 import ContentLayout from "./layouts/ContentLayout";
 
 const ApplianceManagement = () => {
@@ -16,8 +16,8 @@ const ApplianceManagement = () => {
     ApplianceServices.getAppliance(applianceId)
       .then((res) => {
         if (res) {
-          const decodedata = DecryptData(res);
-          setApplianceData(decodedata?.data?.appliance);
+          const decodedData = DecryptData(res);
+          setApplianceData(decodedData?.data?.appliance);
         }
       })
       .catch((err) => {
@@ -25,7 +25,7 @@ const ApplianceManagement = () => {
       });
   }, [applianceId]);
   return (
-    <div className="py-4">
+    <div className="min-h-screen bg-[#F4F6F8] px-1 py-4 pb-10">
       <TopLayout applianceData={applianceData} appData={appData} />
       <ContentLayout applianceData={applianceData} appData={appData} />
     </div>
