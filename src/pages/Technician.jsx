@@ -51,25 +51,24 @@ const getEligibilityClass = (s) =>
 const KpiCard = ({ title, value, desc, tone, Icon }) => {
   const t = tones[tone];
   return (
-    <div className="group relative overflow-hidden rounded-[28px] border border-white/70 bg-white/88 p-6 shadow-[0_12px_36px_rgba(84,98,130,0.12)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_44px_rgba(84,98,130,0.18)]">
-      <div className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br ${t.soft} opacity-95 blur-sm transition-transform duration-500 group-hover:scale-125`} />
-      <div className="pointer-events-none absolute bottom-3 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
-      <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] bg-gradient-to-br ${t.icon} text-white shadow-[0_16px_30px_rgba(99,102,241,0.28)] transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3`}>
-          <Icon size={20} />
+    <div className="group relative overflow-hidden rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.035)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#C9D7EF] hover:shadow-[0_22px_45px_rgba(15,23,42,0.09)]">
+      <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${t.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`} />
+      <div className="relative z-10 flex items-start justify-between">
+        <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${t.soft} text-[#2563EB] transition-all duration-300 group-hover:scale-110`}>
+          <Icon size={18} />
         </div>
-        <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[#EEF0F6] bg-white/85 text-[#9AA2B1] transition-all duration-300 group-hover:border-[#DADDF3] group-hover:text-[#5E63D9]">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F6FA] text-[#98A2B3] transition-all duration-300 group-hover:bg-[#111827] group-hover:text-white">
           <FiArrowUpRight size={14} />
         </div>
       </div>
-      <div className="relative z-10 mt-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#98A1B2]">{title}</p>
-        <div className="mt-3 flex items-end justify-between gap-3">
-          <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.04em] text-[#1F2430]">{value}</h3>
-          <span className="max-w-[110px] text-right text-[10px] font-semibold text-[#A1A9B8]">{desc}</span>
+      <div className="relative z-10 mt-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8B95A7]">{title}</p>
+        <div className="mt-2.5 flex items-end justify-between gap-2">
+          <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#111827]">{value}</h3>
+          <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#A0A8B8]">{desc}</span>
         </div>
       </div>
-      <div className="absolute bottom-0 left-6 right-6 h-1 overflow-hidden rounded-full bg-[#EEF2F8]">
+      <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#EDF0F5]">
         <div className={`h-full w-0 rounded-full bg-gradient-to-r ${t.line} transition-all duration-500 group-hover:w-full`} />
       </div>
     </div>
@@ -114,75 +113,32 @@ const Technician = () => {
 
   return (
     <AnimatedContent>
-      <div className="min-h-screen bg-[#F5F7FF] pb-10">
-        <section className="relative mb-8 overflow-hidden rounded-[36px] border border-[#E9ECF7] bg-[radial-gradient(circle_at_top_right,_rgba(222,244,255,0.9),_rgba(255,255,255,0.96)_30%,_rgba(246,242,255,0.92)_65%,_rgba(255,255,255,0.98)_100%)] px-6 py-8 shadow-[0_20px_50px_rgba(91,107,138,0.12)] lg:px-10 lg:py-10">
-          <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(#DBE1F0_0.8px,transparent_0.8px)] [background-size:18px_18px]" />
-          <div className="pointer-events-none absolute right-16 top-20 h-40 w-40 rounded-full border border-[#DCEEFF] opacity-80" />
-          <div className="pointer-events-none absolute right-8 top-28 h-52 w-52 rounded-full border border-[#E8DFFF] opacity-70" />
-          <div className="pointer-events-none absolute -bottom-12 left-1/2 h-40 w-80 -translate-x-1/2 rounded-full bg-[#CFF4FF] opacity-35 blur-3xl" />
-
-          <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-[720px]">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#E8EAFE] bg-white/80 px-4 py-2 shadow-[0_8px_18px_rgba(95,99,221,0.08)] backdrop-blur-sm">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#5E63D9] text-white">
-                  <FaUserCog size={12} />
-                </span>
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#5E63D9]">User Management</span>
-              </div>
-
-              <h1 className="mt-6 max-w-[760px] text-[38px] font-extrabold leading-[1.03] tracking-[-0.05em] text-[#1B2230] lg:text-[56px]">
-                Everything you need to
-                <span className="bg-gradient-to-r from-[#6A4FF6] via-[#5A67F2] to-[#2EA8E6] bg-clip-text text-transparent">
-                  {" "}manage your technicians.
-                </span>
-              </h1>
-
-              <p className="mt-5 max-w-[620px] text-[15px] leading-8 text-[#6F7B8F]">
-                Keep technician profiles, approval status, and eligibility visible in one beautifully designed workspace built for service operations.
-              </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <div className="inline-flex items-center gap-3 rounded-[18px] bg-gradient-to-r from-[#5F5CF1] to-[#7E42F5] px-5 py-4 text-white shadow-[0_16px_32px_rgba(101,86,243,0.28)]">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/16">
-                    <FaUsers size={16} />
-                  </span>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/75">Collection</p>
-                    <p className="text-[20px] font-extrabold leading-none">{technicians.length} Technicians</p>
-                  </div>
+      <div className="min-h-screen bg-[#F4F7FB] pb-10">
+        <section className="mb-8">
+          <div className="relative overflow-hidden rounded-[30px] bg-[#0B1220] px-6 py-7 shadow-[0_20px_55px_rgba(15,23,42,0.15)] sm:px-8 sm:py-9">
+            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#2563EB]/20 blur-[2px]" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
+            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <div className="mb-3 flex items-center gap-2.5">
+                  <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38BDF8]/50" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38BDF8]" /></span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">User Management</span>
                 </div>
-
-                <div className="flex items-center gap-3 rounded-[18px] border border-[#E5E9F4] bg-white/92 px-4 py-3 shadow-[0_10px_22px_rgba(60,78,110,0.06)]">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#ECF2FF] text-[#5E63D9]">
-                    <FaCheckCircle size={16} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#A0A8B6]">Eligible</p>
-                    <p className="text-[22px] font-extrabold leading-none text-[#222938]">{eligibleCount} Ready</p>
-                  </div>
+                <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-[34px]">Technicians</h1>
+                <p className="mt-2 max-w-[520px] text-[13px] leading-6 text-white/50">Manage technician profiles, approval status and eligibility from one place.</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
+                  <FaUsers size={13} className="text-[#60A5FA]" />
+                  <span className="text-[12px] font-bold text-white/85">{technicians.length} Technicians</span>
+                </div>
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
+                  <FaCheckCircle size={13} className="text-emerald-400" />
+                  <span className="text-[12px] font-bold text-white/85">{eligibleCount} Eligible</span>
                 </div>
               </div>
             </div>
-
-            <div className="relative flex min-h-[250px] items-center justify-center lg:min-w-[320px]">
-              <div className="absolute right-0 top-2 rounded-full border border-[#D9F5E9] bg-white px-5 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#16A36B] shadow-[0_8px_22px_rgba(22,163,107,0.12)]">
-                Verified
-              </div>
-              <div className="absolute right-4 bottom-8 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#E0EDFF] bg-white text-[#3BAEDC] shadow-[0_14px_28px_rgba(69,146,201,0.14)]">
-                <FaCheckCircle size={16} />
-              </div>
-              <div className="relative rounded-[30px] bg-white/72 p-5 shadow-[0_20px_40px_rgba(102,109,176,0.18)] backdrop-blur-sm">
-                <div className="absolute -left-6 top-5 rounded-[22px] border border-[#EEF0FF] bg-white px-5 py-3 shadow-[0_12px_26px_rgba(92,102,160,0.12)]">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#A0A9BA]">Approved</p>
-                  <p className="mt-1 text-[30px] font-extrabold leading-none text-[#202737]">{eligibleCount}</p>
-                </div>
-                <div className="flex h-[180px] w-[180px] items-center justify-center rounded-[34px] bg-gradient-to-br from-[#6E52F5] via-[#6458F6] to-[#2FA8E7] shadow-[inset_0_2px_0_rgba(255,255,255,0.35)]">
-                  <div className="rounded-[28px] border border-white/25 bg-white/10 p-5 text-white backdrop-blur-sm">
-                    <FaUserCog size={54} />
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent" />
           </div>
         </section>
 

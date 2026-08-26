@@ -1,16 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
+
 import { IoMdMail } from "react-icons/io";
 import { FaPhoneAlt, FaArrowRight } from "react-icons/fa";
 import { FiShield, FiLock, FiCheckCircle } from "react-icons/fi";
+
 import { Button } from "@windmill/react-ui";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+
 import { useForm } from "react-hook-form";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import Error from "@/components/form/others/Error";
+
 import logo from "@/assets/img/logo/logo.png";
+
 import { AdminContext } from "@/context/AdminContext";
 import { removeSetting } from "@/reduxStore/slice/settingSlice";
+import AdminServices from "@/services/AdminServices";
+
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -30,11 +37,14 @@ const Login = () => {
 
   const [loginMethod, setLoginMethod] = useState("otp");
   const [isOtpSent, setIsOtpSent] = useState(false);
+
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredMobileNumber, setEnteredMobileNumber] = useState("");
   const [enteredCountryCode, setEnteredCountryCode] = useState("");
+
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const [userCountry, setUserCountry] = useState("in");
 
   const maskedNumber = enteredMobileNumber?.replace(
@@ -43,7 +53,7 @@ const Login = () => {
   );
 
   const maskedEmail = enteredEmail?.replace(
-    /^(.)(.*)(.@.*)$/,
+    /^(.)(.*)(@.*)$/,
     (match, firstChar, middleChars, domain) =>
       firstChar + middleChars.replace(/./g, "*") + domain
   );
@@ -56,9 +66,7 @@ const Login = () => {
           setUserCountry(data.country_code.toLowerCase());
         }
       })
-      .catch(() => {
-        setUserCountry("in");
-      });
+      .catch(() => setUserCountry("in"));
   }, []);
 
   const handlePhoneChange = (value, country) => {
@@ -68,25 +76,41 @@ const Login = () => {
       ? value.slice(dialCode.length)
       : value;
 
-    const countryCode = `+${dialCode}`;
+    const formattedCountryCode = dialCode ? `+${dialCode}` : "";
+
+    setValue("countryCode", formattedCountryCode);
+    setValue("phoneNumber", nationalNumber);
 
     setEnteredMobileNumber(nationalNumber);
-    setEnteredCountryCode(countryCode);
-
-    setValue("countryCode", countryCode);
-    setValue("phoneNumber", nationalNumber);
+    setEnteredCountryCode(formattedCountryCode);
   };
 
   const goToDashboard = (data = {}) => {
     const adminPayload = {
-      _id: "local-admin",
-      userName: "Admin",
-      email: data.email || "admin@fixmantra.com",
-      phoneNumber: data.phoneNumber || "",
-      countryCode: data.countryCode || "+91",
-      role: "Admin",
-      createdAt: new Date().toISOString(),
+      _id: data._id || "local-admin",
+      userName: data.userName || data.name || "Admin",
+      email:
+        data.email ||
+        enteredEmail ||
+        "admin@fixmantra.com",
+      phoneNumber:
+        data.phoneNumber ||
+        enteredMobileNumber ||
+        "",
+      countryCode:
+        data.countryCode ||
+        enteredCountryCode ||
+        "+91",
+      role: data.role || "Admin",
+      createdAt:
+        data.createdAt ||
+        new Date().toISOString(),
     };
+
+    const token =
+      data.token ||
+      data.accessToken ||
+      "local-session";
 
     dispatch({
       type: "USER_LOGIN",
@@ -95,63 +119,106 @@ const Login = () => {
 
     localStorage.setItem("theme", "light");
 
-    Cookies.set("adminInfo", JSON.stringify(adminPayload), {
-      expires: cookieTimeOut,
-    });
+    Cookies.set(
+      "adminInfo",
+      JSON.stringify(adminPayload),
+      {
+        expires: cookieTimeOut,
+      }
+    );
 
-    Cookies.set("token", JSON.stringify("local-session"), {
-      expires: cookieTimeOut,
-    });
+    Cookies.set(
+      "token",
+      JSON.stringify(token),
+      {
+        expires: cookieTimeOut,
+      }
+    );
 
     notifySuccess("Login Success!");
 
     window.location.replace("/dashboard");
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     try {
       setIsLoading(true);
 
-      reduxDispatch(removeSetting("globalSetting"));
+      const payload =
+        loginMethod === "otp"
+          ? {
+              phoneNumber: data.phoneNumber,
+              countryCode: data.countryCode,
+            }
+          : {
+              email: data.email,
+            };
+
+      await AdminServices.loginOTPAdmin(payload);
 
       if (loginMethod === "otp") {
-        setEnteredMobileNumber(data.phoneNumber || "");
-        setEnteredCountryCode(data.countryCode || "+91");
-
-        setIsOtpSent(true);
-        setIsLoading(false);
-        return;
+        setEnteredMobileNumber(data.phoneNumber);
+        setEnteredCountryCode(data.countryCode);
+      } else {
+        setEnteredEmail(data.email);
       }
 
-      if (loginMethod === "email") {
-        setEnteredEmail(data.email || "");
+      notifySuccess("OTP sent successfully!");
 
-        setIsOtpSent(true);
-        setIsLoading(false);
-        return;
-      }
-
-      goToDashboard(data);
+      setIsOtpSent(true);
     } catch (error) {
-      console.error("Login error:", error);
+      notifyError(
+        error?.response?.data?.message ||
+          "Failed to send OTP."
+      );
+    } finally {
       setIsLoading(false);
-      notifyError("Something went wrong. Please try again.");
     }
   };
 
-  const handleOtpSubmit = () => {
-    if (otp.length === 6) {
-      goToDashboard({
-        email: enteredEmail,
-        phoneNumber: enteredMobileNumber,
-        countryCode: enteredCountryCode,
-      });
-    } else {
-      notifyError("Please enter a valid 6-digit OTP.");
+  const handleOtpSubmit = async () => {
+    if (otp.length < 4) {
+      notifyError("Please enter a valid OTP.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const payload =
+        loginMethod === "otp"
+          ? {
+              phoneNumber: enteredMobileNumber,
+              countryCode: enteredCountryCode,
+              otp,
+            }
+          : {
+              email: enteredEmail,
+              otp,
+            };
+
+      const res = await AdminServices.verifyOTP(payload);
+
+      reduxDispatch(removeSetting("globalSetting"));
+
+      goToDashboard(
+        res?.data || {
+          email: enteredEmail,
+          phoneNumber: enteredMobileNumber,
+          countryCode: enteredCountryCode,
+        }
+      );
+    } catch (error) {
+      notifyError(
+        error?.response?.data?.message ||
+          "Invalid OTP."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const changeLoginMethod = (method) => {
+  const handleChangeLoginMethod = (method) => {
     setLoginMethod(method);
     setIsOtpSent(false);
     setOtp("");
@@ -801,12 +868,23 @@ const Login = () => {
             .fm-brand-description {
               font-size: 13px;
             }
+
+            .fm-form-top {
+              margin-bottom: 22px;
+            }
+
+            .fm-console-label {
+              font-size: 9px;
+            }
+
+            .fm-status {
+              font-size: 9px;
+            }
           }
         `}
       </style>
 
       <div className="fm-login flex w-full items-center justify-center px-4 py-8 sm:px-6">
-
         <div className="fm-shell">
 
           {/* =====================================================
@@ -814,7 +892,6 @@ const Login = () => {
           ===================================================== */}
 
           <div className="fm-brand-panel">
-
             <div>
 
               {/* Logo */}
@@ -881,7 +958,6 @@ const Login = () => {
             <div className="fm-brand-footer">
               Built for simple, reliable service management.
             </div>
-
           </div>
 
           {/* =====================================================
@@ -889,7 +965,6 @@ const Login = () => {
           ===================================================== */}
 
           <div className="fm-form-panel">
-
             <div className="fm-form-container">
 
               {/* Top Information */}
@@ -920,9 +995,13 @@ const Login = () => {
 
                     <button
                       type="button"
-                      onClick={() => changeLoginMethod("otp")}
+                      onClick={() =>
+                        handleChangeLoginMethod("otp")
+                      }
                       className={`fm-method ${
-                        loginMethod === "otp" ? "active" : ""
+                        loginMethod === "otp"
+                          ? "active"
+                          : ""
                       }`}
                     >
                       <span className="flex items-center justify-center gap-2">
@@ -933,9 +1012,13 @@ const Login = () => {
 
                     <button
                       type="button"
-                      onClick={() => changeLoginMethod("email")}
+                      onClick={() =>
+                        handleChangeLoginMethod("email")
+                      }
                       className={`fm-method ${
-                        loginMethod === "email" ? "active" : ""
+                        loginMethod === "email"
+                          ? "active"
+                          : ""
                       }`}
                     >
                       <span className="flex items-center justify-center gap-2">
@@ -961,6 +1044,7 @@ const Login = () => {
                         </label>
 
                         <div className="fm-phone">
+
                           <PhoneInput
                             country={userCountry}
                             onChange={handlePhoneChange}
@@ -985,11 +1069,16 @@ const Login = () => {
                           />
 
                           <input
-                            {...register("countryCode")}
+                            {...register("countryCode", {
+                              required:
+                                loginMethod === "otp"
+                                  ? "Please select your country code"
+                                  : false,
+                            })}
                             type="hidden"
                           />
-                        </div>
 
+                        </div>
                       </div>
                     ) : (
                       /* Email */
@@ -1014,7 +1103,9 @@ const Login = () => {
                                   ? "Please enter your Email"
                                   : false,
                               onChange: (e) =>
-                                setEnteredEmail(e.target.value),
+                                setEnteredEmail(
+                                  e.target.value
+                                ),
                             })}
                           />
 
@@ -1025,9 +1116,17 @@ const Login = () => {
 
                     {/* Errors */}
                     <div className="mt-2">
-                      <Error errorName={errors.countryCode} />
-                      <Error errorName={errors.phoneNumber} />
-                      <Error errorName={errors.email} />
+                      <Error
+                        errorName={errors.countryCode}
+                      />
+
+                      <Error
+                        errorName={errors.phoneNumber}
+                      />
+
+                      <Error
+                        errorName={errors.email}
+                      />
                     </div>
 
                     {/* Security */}
@@ -1071,6 +1170,7 @@ const Login = () => {
                     {/* Signup */}
                     <p className="fm-signup">
                       Don't have an account?{" "}
+
                       <Link to="/signup">
                         Sign up
                       </Link>
@@ -1079,6 +1179,7 @@ const Login = () => {
                   </form>
                 </>
               ) : (
+
                 /* =================================================
                    OTP SCREEN
                 ================================================= */
@@ -1116,7 +1217,9 @@ const Login = () => {
                       placeholder="••••••"
                       value={otp}
                       onChange={(e) =>
-                        setOtp(e.target.value.replace(/\D/g, ""))
+                        setOtp(
+                          e.target.value.replace(/\D/g, "")
+                        )
                       }
                       className="fm-otp"
                       maxLength={6}
@@ -1134,11 +1237,19 @@ const Login = () => {
                     type="button"
                     onClick={handleOtpSubmit}
                     className="fm-button !flex items-center justify-center"
+                    disabled={isLoading}
                   >
-                    <span className="flex items-center gap-2">
-                      Verify & Continue
-                      <FaArrowRight className="text-[10px]" />
-                    </span>
+                    {isLoading ? (
+                      <span className="flex items-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                        Verifying...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        Verify & Continue
+                        <FaArrowRight className="text-[10px]" />
+                      </span>
+                    )}
                   </Button>
 
                   {/* Change */}
@@ -1169,11 +1280,9 @@ const Login = () => {
               </div>
 
             </div>
-
           </div>
 
         </div>
-
       </div>
     </>
   );

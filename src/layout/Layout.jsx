@@ -12,6 +12,7 @@ const Page404 = lazy(() => import("@/pages/404"));
 
 const Layout = () => {
   const isOnline = navigator.onLine;
+  const { isSidebarOpen } = useContext(SidebarContext);
 
   return (
     <>
@@ -22,7 +23,13 @@ const Layout = () => {
       )}
       <div className="flex h-screen bg-[#F3F6FB]">
         <Sidebar />
-        <div className="flex flex-col flex-1 min-h-0 overflow-hidden" style={{ marginLeft: "70px" }}>
+        <div
+          className="flex flex-col flex-1 min-h-0 overflow-hidden"
+          style={{
+            marginLeft: isSidebarOpen ? "256px" : "70px",
+            transition: "margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+        >
           <Header />
           <Main>
             <Suspense fallback={<ThemeSuspense />}>

@@ -1,9 +1,7 @@
-
-
-
-
 import React, { useEffect, useState } from "react";
+
 import { MdAddchart, MdAddPhotoAlternate } from "react-icons/md";
+
 import {
   FaRegNewspaper,
   FaTag,
@@ -11,6 +9,7 @@ import {
   FaPercent,
   FaMoneyBillWave,
 } from "react-icons/fa";
+
 import { FiFileText, FiImage, FiTag as FiTagIcon } from "react-icons/fi";
 
 import MuiDrawer from "@/components/drawer/MuiDrawer";
@@ -27,24 +26,19 @@ export const links = ["Offers", "Blogs"];
 
 /* ============================================================
    THEME
-   Sidebar compatible blue theme
 ============================================================ */
 
 const THEME = {
   navy: "#0f172a",
   text: "#111827",
   textMuted: "#64748b",
-
   blue: "#2563eb",
   blueDark: "#1d4ed8",
   blueSoft: "#eff6ff",
   blueBorder: "#dbeafe",
-
   white: "#ffffff",
-
   border: "#e5e7eb",
   borderSoft: "#eef2f7",
-
   surface: "#f8fafc",
 };
 
@@ -72,10 +66,7 @@ const IconBox = ({
 };
 
 /* ============================================================
-   INPUT WRAPPER
-   IMPORTANT:
-   No absolute positioning.
-   Icon has its own fixed-width area.
+   INPUT WITH ICON
 ============================================================ */
 
 const InputWithIcon = ({
@@ -95,7 +86,6 @@ const InputWithIcon = ({
         border: `1px solid ${THEME.border}`,
       }}
     >
-      {/* FIXED ICON AREA */}
       <div
         className="flex h-full w-[40px] shrink-0 items-center justify-center"
         style={{
@@ -105,7 +95,6 @@ const InputWithIcon = ({
         {icon}
       </div>
 
-      {/* INPUT */}
       <input
         {...props}
         type={type}
@@ -133,7 +122,7 @@ const InputWithIcon = ({
 };
 
 /* ============================================================
-   TEXTAREA CLASS
+   TEXTAREA
 ============================================================ */
 
 const textareaClass = `
@@ -331,6 +320,7 @@ const AppManagementHeader = ({
   const resetForm = () => {
     setNameValue("");
     setDescriptionValue("");
+
     setOfferStartDate("");
     setOfferEndDate("");
 
@@ -581,9 +571,7 @@ const AppManagementHeader = ({
   }, [editValue, currentLink]);
 
   /* ============================================================
-     IMPORTANT:
-     Do NOT call setCurrentLink inside useEffect.
-     Parent should control currentLink.
+     STATES
   ============================================================ */
 
   const isEditing = Boolean(editValue?._id);
@@ -664,9 +652,11 @@ const AppManagementHeader = ({
             lg:justify-between
           "
         >
+
           {/* LEFT */}
 
           <div className="flex items-center gap-4">
+
             <IconBox
               size="h-14 w-14"
               radius="rounded-[17px]"
@@ -679,7 +669,9 @@ const AppManagementHeader = ({
             </IconBox>
 
             <div>
+
               <div className="mb-1.5 flex items-center gap-2">
+
                 <h1
                   className="
                     text-[21px]
@@ -721,6 +713,7 @@ const AppManagementHeader = ({
 
                   {isBlog ? "Content" : "Promotion"}
                 </span>
+
               </div>
 
               <p
@@ -737,6 +730,7 @@ const AppManagementHeader = ({
                   ? "Publish and manage blog content from one place."
                   : "Create and manage promotional offers and discounts."}
               </p>
+
             </div>
           </div>
 
@@ -755,122 +749,130 @@ const AppManagementHeader = ({
               border: `1px solid ${THEME.border}`,
             }}
           >
-{links.map((link) => {
-  const active = link === currentLink;
+            {links.map((link) => {
+              const active = link === currentLink;
 
-  return (
-    <button
-      key={link}
-      type="button"
-      onClick={() => handleTabChange(link)}
-      className={`
-        group
-        relative
-        flex
-        items-center
-        gap-2
-        overflow-hidden
-        rounded-[10px]
-        px-4
-        py-2.5
-        text-[10px]
-        font-extrabold
-        transition-all
-        duration-300
-        ease-out
-        ${
-          active
-            ? "shadow-[0_4px_12px_rgba(37,99,235,0.10)]"
-            : "hover:-translate-y-[1px] hover:shadow-[0_5px_14px_rgba(37,99,235,0.10)]"
-        }
-      `}
-      style={{
-        color: active ? THEME.blue : THEME.textMuted,
+              return (
+                <button
+                  key={link}
+                  type="button"
+                  onClick={() => handleTabChange(link)}
+                  className={`
+                    group
+                    relative
+                    flex
+                    items-center
+                    gap-2
+                    overflow-hidden
+                    rounded-[10px]
+                    px-4
+                    py-2.5
+                    text-[10px]
+                    font-extrabold
+                    transition-all
+                    duration-300
+                    ease-out
+                    ${
+                      active
+                        ? "shadow-[0_4px_12px_rgba(37,99,235,0.10)]"
+                        : "hover:-translate-y-[1px] hover:shadow-[0_5px_14px_rgba(37,99,235,0.10)]"
+                    }
+                  `}
+                  style={{
+                    color: active
+                      ? THEME.blue
+                      : THEME.textMuted,
 
-        backgroundColor: active
-          ? THEME.blueSoft
-          : THEME.white,
+                    backgroundColor: active
+                      ? THEME.blueSoft
+                      : THEME.white,
 
-        border: active
-          ? `1px solid ${THEME.blueBorder}`
-          : `1px solid ${THEME.border}`,
-      }}
-    >
-      {/* Hover background */}
-      <span
-        className={`
-          pointer-events-none
-          absolute
-          inset-0
-          rounded-[10px]
-          bg-[#eff6ff]
-          transition-all
-          duration-300
-          ${
-            active
-              ? "opacity-0"
-              : "opacity-0 group-hover:opacity-100"
-          }
-        `}
-      />
+                    border: active
+                      ? `1px solid ${THEME.blueBorder}`
+                      : `1px solid ${THEME.border}`,
+                  }}
+                >
 
-      {/* Bottom animated line */}
-      <span
-        className={`
-          pointer-events-none
-          absolute
-          bottom-0
-          left-1/2
-          h-[2px]
-          -translate-x-1/2
-          rounded-full
-          bg-[#2563eb]
-          transition-all
-          duration-300
-          ${
-            active
-              ? "w-5 opacity-100"
-              : "w-0 opacity-0 group-hover:w-5 group-hover:opacity-100"
-          }
-        `}
-      />
+                  {/* Hover background */}
 
-      {/* Icon */}
-      <span
-        className="
-          relative
-          z-10
-          flex
-          items-center
-          justify-center
-          transition-all
-          duration-300
-          group-hover:scale-110
-          group-hover:-translate-y-[1px]
-        "
-      >
-        {link === "Offers" ? (
-          <FaTag size={11} />
-        ) : (
-          <FaRegNewspaper size={11} />
-        )}
-      </span>
+                  <span
+                    className={`
+                      pointer-events-none
+                      absolute
+                      inset-0
+                      rounded-[10px]
+                      bg-[#eff6ff]
+                      transition-all
+                      duration-300
+                      ${
+                        active
+                          ? "opacity-0"
+                          : "opacity-0 group-hover:opacity-100"
+                      }
+                    `}
+                  />
 
-      {/* Text */}
-      <span
-        className="
-          relative
-          z-10
-          transition-all
-          duration-300
-          group-hover:tracking-[0.02em]
-        "
-      >
-        {link}
-      </span>
-    </button>
-  );
-})}
+                  {/* Bottom animated line */}
+
+                  <span
+                    className={`
+                      pointer-events-none
+                      absolute
+                      bottom-0
+                      left-1/2
+                      h-[2px]
+                      -translate-x-1/2
+                      rounded-full
+                      bg-[#2563eb]
+                      transition-all
+                      duration-300
+                      ${
+                        active
+                          ? "w-5 opacity-100"
+                          : "w-0 opacity-0 group-hover:w-5 group-hover:opacity-100"
+                      }
+                    `}
+                  />
+
+                  {/* Icon */}
+
+                  <span
+                    className="
+                      relative
+                      z-10
+                      flex
+                      items-center
+                      justify-center
+                      transition-all
+                      duration-300
+                      group-hover:scale-110
+                      group-hover:-translate-y-[1px]
+                    "
+                  >
+                    {link === "Offers" ? (
+                      <FaTag size={11} />
+                    ) : (
+                      <FaRegNewspaper size={11} />
+                    )}
+                  </span>
+
+                  {/* Text */}
+
+                  <span
+                    className="
+                      relative
+                      z-10
+                      transition-all
+                      duration-300
+                      group-hover:tracking-[0.02em]
+                    "
+                  >
+                    {link}
+                  </span>
+
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -889,7 +891,9 @@ const AppManagementHeader = ({
       >
         <div className="flex h-full flex-col bg-white">
 
-          {/* DRAWER HEADER */}
+          {/* ====================================================
+              DRAWER HEADER
+          ==================================================== */}
 
           <div
             className="
@@ -921,6 +925,7 @@ const AppManagementHeader = ({
             />
 
             <div className="relative z-10 flex items-center gap-3">
+
               <IconBox
                 size="h-11 w-11"
                 radius="rounded-[13px]"
@@ -933,6 +938,7 @@ const AppManagementHeader = ({
               </IconBox>
 
               <div>
+
                 <p
                   className="text-[13px] font-extrabold"
                   style={{
@@ -958,16 +964,21 @@ const AppManagementHeader = ({
                         isBlog ? "blog" : "offer"
                       }`}
                 </p>
+
               </div>
+
             </div>
           </div>
 
-          {/* FORM */}
+          {/* ====================================================
+              FORM
+          ==================================================== */}
 
           <form
             onSubmit={handleSubmit}
             className="flex min-h-0 flex-1 flex-col"
           >
+
             <div
               className="
                 flex-1
@@ -986,9 +997,11 @@ const AppManagementHeader = ({
 
               {isBlog ? (
                 <>
+
                   {/* BLOG TITLE */}
 
                   <div className="mb-5">
+
                     <label
                       className={labelClass}
                       style={{
@@ -1006,11 +1019,13 @@ const AppManagementHeader = ({
                       }
                       placeholder="Enter blog title"
                     />
+
                   </div>
 
                   {/* BLOG DESCRIPTION */}
 
                   <div className="mb-5">
+
                     <label
                       className={labelClass}
                       style={{
@@ -1035,6 +1050,7 @@ const AppManagementHeader = ({
                       placeholder="Enter blog description"
                       rows={5}
                     />
+
                   </div>
 
                   {/* BLOG IMAGE */}
@@ -1046,6 +1062,7 @@ const AppManagementHeader = ({
                     onChange={handleImageChange}
                     alt="Blog"
                   />
+
                 </>
               ) : (
 
@@ -1054,9 +1071,11 @@ const AppManagementHeader = ({
                 ================================================== */
 
                 <>
+
                   {/* OFFER NAME */}
 
                   <div className="mb-5">
+
                     <label
                       className={labelClass}
                       style={{
@@ -1074,11 +1093,13 @@ const AppManagementHeader = ({
                       }
                       placeholder="Enter offer name"
                     />
+
                   </div>
 
                   {/* OFFER DESCRIPTION */}
 
                   <div className="mb-5">
+
                     <label
                       className={labelClass}
                       style={{
@@ -1103,6 +1124,7 @@ const AppManagementHeader = ({
                       placeholder="Enter offer description"
                       rows={4}
                     />
+
                   </div>
 
                   {/* DATES */}
@@ -1110,6 +1132,7 @@ const AppManagementHeader = ({
                   <div className="mb-5 grid grid-cols-2 gap-3">
 
                     <div>
+
                       <label
                         className={labelClass}
                         style={{
@@ -1130,9 +1153,11 @@ const AppManagementHeader = ({
                         type="date"
                         min={today}
                       />
+
                     </div>
 
                     <div>
+
                       <label
                         className={labelClass}
                         style={{
@@ -1153,6 +1178,7 @@ const AppManagementHeader = ({
                         type="date"
                         min={today}
                       />
+
                     </div>
 
                   </div>
@@ -1160,6 +1186,7 @@ const AppManagementHeader = ({
                   {/* SERVICE MODE */}
 
                   <div className="mb-5">
+
                     <label
                       className={labelClass}
                       style={{
@@ -1182,6 +1209,7 @@ const AppManagementHeader = ({
                       ]}
                       disabled={false}
                     />
+
                   </div>
 
                   {/* PRICES */}
@@ -1189,6 +1217,7 @@ const AppManagementHeader = ({
                   <div className="mb-5 grid grid-cols-2 gap-3">
 
                     <div>
+
                       <label
                         className={labelClass}
                         style={{
@@ -1211,9 +1240,11 @@ const AppManagementHeader = ({
                         placeholder="Min price"
                         type="number"
                       />
+
                     </div>
 
                     <div>
+
                       <label
                         className={labelClass}
                         style={{
@@ -1236,6 +1267,7 @@ const AppManagementHeader = ({
                         placeholder="Max price"
                         type="number"
                       />
+
                     </div>
 
                   </div>
@@ -1245,6 +1277,7 @@ const AppManagementHeader = ({
                   <div className="mb-5 grid grid-cols-2 gap-3">
 
                     <div>
+
                       <label
                         className={labelClass}
                         style={{
@@ -1267,10 +1300,12 @@ const AppManagementHeader = ({
                         ]}
                         disabled={false}
                       />
+
                     </div>
 
                     {offerBy && (
                       <div>
+
                         <label
                           className={labelClass}
                           style={{
@@ -1319,6 +1354,7 @@ const AppManagementHeader = ({
                           }
                           type="number"
                         />
+
                       </div>
                     )}
 
@@ -1329,6 +1365,7 @@ const AppManagementHeader = ({
                   {offerBy.toLowerCase() ===
                     "coupon" && (
                     <div className="mb-5">
+
                       <label
                         className={labelClass}
                         style={{
@@ -1354,6 +1391,7 @@ const AppManagementHeader = ({
                           tracking-[0.12em]
                         "
                       />
+
                     </div>
                   )}
 
@@ -1366,8 +1404,10 @@ const AppManagementHeader = ({
                     onChange={handleImageChange}
                     alt="Offer"
                   />
+
                 </>
               )}
+
             </div>
 
             {/* ==================================================
@@ -1387,6 +1427,9 @@ const AppManagementHeader = ({
                 borderColor: THEME.border,
               }}
             >
+
+              {/* CANCEL */}
+
               <button
                 type="button"
                 onClick={() => {
@@ -1411,6 +1454,8 @@ const AppManagementHeader = ({
               >
                 Cancel
               </button>
+
+              {/* SUBMIT */}
 
               <button
                 type="submit"
@@ -1438,7 +1483,9 @@ const AppManagementHeader = ({
                       isBlog ? "Blog" : "Offer"
                     }`}
               </button>
+
             </div>
+
           </form>
         </div>
       </MuiDrawer>

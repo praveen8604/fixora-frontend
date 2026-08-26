@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { FaGoogle } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import Error from "@/components/form/others/Error";
 import logo from "@/assets/img/logo/logo.png";
 import { notifySuccess } from "@/utils/toast";
@@ -33,12 +35,20 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const review = REVIEWS[reviewIndex];
+
+  const handlePhoneChange = (value, country) => {
+    const dialCode = country?.dialCode || "";
+    const nationalNumber = value.startsWith(dialCode) ? value.slice(dialCode.length) : value;
+    setValue("countryCode", `+${dialCode}`);
+    setValue("phoneNumber", nationalNumber);
+  };
 
   const onSubmit = () => {
     setLoading(true);
@@ -113,6 +123,21 @@ const SignUp = () => {
               {...register("name", { required: "Name is required" })}
             />
             <Error errorName={errors.name} />
+
+            <label className="mt-3 block text-sm font-medium text-[#211e27]">
+              Phone Number
+            </label>
+            <PhoneInput
+              country="in"
+              onChange={handlePhoneChange}
+              inputProps={{ name: "phone", required: true }}
+              containerClass="mt-1.5 mb-1"
+              inputClass="!w-full !h-11 !rounded-lg !border-[#E2E8F0] !text-sm"
+              buttonClass="!bg-[#F4F7FE] !border-[#E2E8F0] !rounded-l-lg"
+            />
+            <input type="hidden" {...register("phoneNumber", { required: "Phone number is required" })} />
+            <input type="hidden" {...register("countryCode")} />
+            <Error errorName={errors.phoneNumber} />
 
             <label className="mt-3 block text-sm font-medium text-[#211e27]">
               Email

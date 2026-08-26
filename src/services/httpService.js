@@ -8,7 +8,7 @@ const API_BASE =
   "https://fixora-backend-xi.vercel.app";
 
 const instance = axios.create({
-  baseURL: import.meta.env.DEV ? "" : API_BASE,
+  baseURL: API_BASE,
   timeout: 50000,
   headers: {
     Accept: "application/json",

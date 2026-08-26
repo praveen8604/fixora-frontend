@@ -39,16 +39,16 @@ const ContentLayout = ({ applianceData, appData }) => {
         gridColCountxl={6}
         gridColCountmd={2}
       >
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Name</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Name</div>
           <div>{appData?.model?.modelName}</div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Category</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Category</div>
           <div>{appData?.appliance?.applianceName}</div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Purchase Date</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Purchase Date</div>
           <div>
             {appData?.model?.dateOfPurchase &&
             appData?.model?.isWarrantyApproved === "approved"
@@ -56,20 +56,20 @@ const ContentLayout = ({ applianceData, appData }) => {
               : "--"}
           </div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Manufacturer</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Manufacturer</div>
           <div>{appData?.brand?.brandName}</div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Location</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Location</div>
           <div>{applianceData?.deviceDetails?.location ?? "--"}</div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Device Id</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Device Id</div>
           <div>{appData?.model?.modelId}</div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Condition</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Condition</div>
           <div
             className="capitalize p-2 py-1 w-fit rounded-full"
             style={
@@ -87,8 +87,8 @@ const ContentLayout = ({ applianceData, appData }) => {
         gridColCountxl={6}
         gridColCountmd={2}
       >
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Manufactured Date</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Manufactured Date</div>
           <div>
             {applianceData?.deviceProductionDetails?.manufacturedDate
               ? moment(
@@ -97,8 +97,8 @@ const ContentLayout = ({ applianceData, appData }) => {
               : "--"}
           </div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Purchased Date</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Purchased Date</div>
           <div>
             {appData?.model?.dateOfPurchase &&
             appData?.model?.isWarrantyApproved === "approved"
@@ -106,8 +106,8 @@ const ContentLayout = ({ applianceData, appData }) => {
               : "--"}
           </div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Expiry Date</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Expiry Date</div>
           <div>
             {appData?.model?.extendUpto &&
             appData?.model?.isWarrantyApproved === "approved"
@@ -115,8 +115,8 @@ const ContentLayout = ({ applianceData, appData }) => {
               : "--"}
           </div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Till Expire</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Till Expire</div>
           <div>
             {appData?.model?.extendUpto &&
             appData?.model?.isWarrantyApproved === "approved"
@@ -124,8 +124,8 @@ const ContentLayout = ({ applianceData, appData }) => {
               : "--"}
           </div>
         </div>
-        <div className="text-xs font-bold">
-          <div className="text-[11px] mb-1 opacity-50">Condition</div>
+        <div className="text-xs font-bold text-[#20242B]">
+          <div className="mb-1 text-[11px] uppercase tracking-[0.14em] text-[#9AA2AC]">Condition</div>
           <div
             className="capitalize p-2 py-1 w-fit rounded-full"
             style={
@@ -147,14 +147,18 @@ const ContentLayout = ({ applianceData, appData }) => {
         >
           {appData?.model?.warrantyDocuments?.map((data) => {
             return (
-              <div className="flex items-center gap-2">
-                <div className="text-xs">{data?.fileName}</div>
+              <div
+                key={data?.file || data?.fileName}
+                className="flex items-center gap-3 rounded-2xl border border-[#E4E8ED] bg-[#F8FAFD] px-4 py-3"
+              >
+                <div className="text-xs font-semibold text-[#20242B]">{data?.fileName}</div>
                 <a
                   href={data?.file}
                   download={`${data?.fileName}.pdf`}
                   target="_blank"
+                  rel="noreferrer"
                 >
-                  <div className="h-10 w-10 flex items-center rounded-md justify-center border-2 border-[var(--primary-elite-color)] text-[var(--primary-elite-color)]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#D8E4F5] bg-white text-[#2563EB] transition hover:border-[#2563EB] hover:bg-[#EFF6FF]">
                     <FaDownload size="16" />
                   </div>
                 </a>
