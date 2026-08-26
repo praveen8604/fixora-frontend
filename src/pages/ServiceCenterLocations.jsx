@@ -75,7 +75,8 @@ const ServiceCenterLocation = () => {
         const decryptedData = DecryptData(err?.response?.data);
 
         notifyError(
-          decryptedData?.error?.message || "Failed to create service center."
+          decryptedData?.error?.message ||
+            "Failed to create service center."
         );
       });
   };
@@ -110,24 +111,26 @@ const ServiceCenterLocation = () => {
     {
       name: "SERVICE CENTER",
       cell: (row) => (
-        <div className="flex items-center gap-3 py-2">
+        <div className="flex items-center gap-3 py-2.5">
           <div
             className="
               flex h-10 w-10 shrink-0 items-center justify-center
               rounded-[12px]
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
+              bg-indigo-50
+              text-indigo-600
+              transition-all duration-200
+              group-hover:bg-indigo-100
             "
           >
             <FiMapPin size={18} strokeWidth={2.4} />
           </div>
 
           <div className="min-w-0">
-            <div className="truncate text-[12px] font-extrabold text-[var(--secondary-color)]">
+            <div className="truncate text-[12px] font-extrabold text-slate-800">
               {row?.addressName || "--"}
             </div>
 
-            <div className="mt-0.5 flex items-center gap-1 text-[10px] text-[var(--secondary-color)] opacity-50">
+            <div className="mt-0.5 flex items-center gap-1 text-[10px] text-slate-500">
               <FaLocationDot size={8} />
               Service Center
             </div>
@@ -143,7 +146,7 @@ const ServiceCenterLocation = () => {
         <div className="flex items-start gap-2 py-2">
           <FiMapPin
             size={14}
-            className="mt-0.5 shrink-0 text-[var(--primary-elite-color)]"
+            className="mt-0.5 shrink-0 text-indigo-500"
           />
 
           <div
@@ -152,7 +155,7 @@ const ServiceCenterLocation = () => {
               text-[11px]
               font-medium
               leading-5
-              text-[var(--secondary-color)]
+              text-slate-600
             "
             title={row?.addressLine}
           >
@@ -167,22 +170,36 @@ const ServiceCenterLocation = () => {
       name: "COORDINATES",
       cell: (row) => (
         <div className="flex flex-col gap-1.5">
-          <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--secondary-light-2-color)] px-2.5 py-1">
-            <span className="text-[9px] font-extrabold uppercase text-[var(--primary-elite-color)]">
+          <div
+            className="
+              inline-flex w-fit items-center gap-1.5
+              rounded-full
+              bg-indigo-50
+              px-2.5 py-1
+            "
+          >
+            <span className="text-[9px] font-extrabold uppercase text-indigo-600">
               LAT
             </span>
 
-            <span className="text-[10px] font-semibold text-[var(--secondary-color)]">
+            <span className="text-[10px] font-semibold text-slate-600">
               {row?.latitude ?? "--"}
             </span>
           </div>
 
-          <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--secondary-light-2-color)] px-2.5 py-1">
-            <span className="text-[9px] font-extrabold uppercase text-[var(--primary-elite-color)]">
+          <div
+            className="
+              inline-flex w-fit items-center gap-1.5
+              rounded-full
+              bg-cyan-50
+              px-2.5 py-1
+            "
+          >
+            <span className="text-[9px] font-extrabold uppercase text-cyan-600">
               LNG
             </span>
 
-            <span className="text-[10px] font-semibold text-[var(--secondary-color)]">
+            <span className="text-[10px] font-semibold text-slate-600">
               {row?.longitude ?? "--"}
             </span>
           </div>
@@ -199,19 +216,19 @@ const ServiceCenterLocation = () => {
             className="
               flex h-8 w-8 shrink-0 items-center justify-center
               rounded-full
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
+              bg-indigo-50
+              text-indigo-600
             "
           >
             <FaUser size={12} />
           </div>
 
           <div className="min-w-0">
-            <div className="truncate text-[11px] font-bold text-[var(--secondary-color)]">
+            <div className="truncate text-[11px] font-bold text-slate-700">
               {row?.user?.userName || "--"}
             </div>
 
-            <div className="text-[9px] uppercase tracking-wide opacity-40">
+            <div className="text-[9px] uppercase tracking-wide text-slate-400">
               Admin
             </div>
           </div>
@@ -224,18 +241,25 @@ const ServiceCenterLocation = () => {
       name: "CREATED ON",
       cell: (row) => (
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--secondary-light-2-color)] text-[var(--primary-elite-color)]">
+          <div
+            className="
+              flex h-7 w-7 items-center justify-center
+              rounded-lg
+              bg-indigo-50
+              text-indigo-600
+            "
+          >
             <FiClock size={13} />
           </div>
 
           <div>
-            <div className="text-[10px] font-bold text-[var(--secondary-color)]">
+            <div className="text-[10px] font-bold text-slate-700">
               {row?.createdAt
                 ? moment(row.createdAt).format("DD MMM YYYY")
                 : "--"}
             </div>
 
-            <div className="mt-0.5 text-[9px] opacity-45">
+            <div className="mt-0.5 text-[9px] text-slate-400">
               {row?.createdAt
                 ? moment(row.createdAt).format("hh:mm A")
                 : "--"}
@@ -250,18 +274,25 @@ const ServiceCenterLocation = () => {
       name: "UPDATED ON",
       cell: (row) => (
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--secondary-light-2-color)] text-[var(--primary-elite-color)]">
+          <div
+            className="
+              flex h-7 w-7 items-center justify-center
+              rounded-lg
+              bg-cyan-50
+              text-cyan-600
+            "
+          >
             <FiActivity size={13} />
           </div>
 
           <div>
-            <div className="text-[10px] font-bold text-[var(--secondary-color)]">
+            <div className="text-[10px] font-bold text-slate-700">
               {row?.updatedAt
                 ? moment(row.updatedAt).format("DD MMM YYYY")
                 : "--"}
             </div>
 
-            <div className="mt-0.5 text-[9px] opacity-45">
+            <div className="mt-0.5 text-[9px] text-slate-400">
               {row?.updatedAt
                 ? moment(row.updatedAt).format("hh:mm A")
                 : "--"}
@@ -275,7 +306,8 @@ const ServiceCenterLocation = () => {
 
   return (
     <AnimatedContent>
-      <div className="pb-8 text-[var(--secondary-color)]">
+      <div className="min-h-full bg-slate-50 pb-8 text-slate-800">
+
         {/* =========================================================
             PAGE HEADER
         ========================================================== */}
@@ -284,42 +316,50 @@ const ServiceCenterLocation = () => {
           className="
             relative mb-6 overflow-hidden
             rounded-[24px]
-            border border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
+            border border-slate-200
+            bg-white
             px-5 py-5
-            shadow-[0_8px_30px_rgba(15,23,42,0.04)]
+            shadow-[0_8px_30px_rgba(15,23,42,0.06)]
             sm:px-6
           "
         >
-          {/* Decorative circles */}
+          {/* Background decorations */}
 
           <div
             className="
               pointer-events-none absolute
-              -right-10 -top-16
-              h-40 w-40
+              -right-20 -top-24
+              h-56 w-56
               rounded-full
-              opacity-[0.07]
+              bg-indigo-500/[0.08]
+              blur-2xl
             "
-            style={{
-              backgroundColor: "var(--primary-elite-color)",
-            }}
           />
 
           <div
             className="
               pointer-events-none absolute
-              -bottom-16 right-24
-              h-28 w-28
+              -bottom-24 right-32
+              h-44 w-44
               rounded-full
-              opacity-[0.04]
+              bg-cyan-500/[0.06]
+              blur-2xl
             "
-            style={{
-              backgroundColor: "var(--primary-elite-color)",
-            }}
+          />
+
+          <div
+            className="
+              pointer-events-none absolute
+              right-[30%] top-[-40px]
+              h-20 w-20
+              rounded-full
+              bg-violet-500/[0.04]
+              blur-xl
+            "
           />
 
           <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
             {/* Left */}
 
             <div className="flex items-center gap-4">
@@ -328,46 +368,47 @@ const ServiceCenterLocation = () => {
                   flex h-14 w-14 shrink-0
                   items-center justify-center
                   rounded-[17px]
-                  text-[var(--primary-color)]
-                  shadow-[0_10px_24px_rgba(0,0,0,0.10)]
+                  text-white
+                  shadow-[0_10px_24px_rgba(79,70,229,0.25)]
                 "
                 style={{
-                  backgroundColor: "var(--primary-elite-color)",
+                  background:
+                    "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
                 }}
               >
                 <FaMapLocationDot size={24} />
               </div>
 
               <div>
-                <div className="mb-1 flex items-center gap-2">
-                  <h1 className="text-[20px] font-extrabold tracking-[-0.02em]">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <h1 className="text-[20px] font-extrabold tracking-[-0.02em] text-slate-900">
                     Service Centers
                   </h1>
 
                   <span
                     className="
-                      rounded-full px-2.5 py-1
-                      text-[9px] font-extrabold
-                      uppercase tracking-[0.08em]
+                      rounded-full
+                      bg-indigo-50
+                      px-2.5 py-1
+                      text-[9px]
+                      font-extrabold
+                      uppercase
+                      tracking-[0.08em]
+                      text-indigo-600
                     "
-                    style={{
-                      color: "var(--primary-elite-color)",
-                      backgroundColor:
-                        "var(--secondary-light-2-color)",
-                    }}
                   >
                     Locations
                   </span>
                 </div>
 
-                <p className="max-w-[560px] text-[11px] leading-5 opacity-55">
+                <p className="max-w-[560px] text-[11px] leading-5 text-slate-500">
                   Manage service center locations, addresses and
                   geographical coordinates from one place.
                 </p>
               </div>
             </div>
 
-            {/* Create button */}
+            {/* Create */}
 
             <button
               type="button"
@@ -377,16 +418,18 @@ const ServiceCenterLocation = () => {
                 items-center justify-center gap-2
                 rounded-[12px]
                 px-5 py-2.5
-                text-[12px] font-extrabold
-                text-[var(--primary-color)]
-                shadow-[0_8px_20px_rgba(0,0,0,0.10)]
+                text-[12px]
+                font-extrabold
+                text-white
+                shadow-[0_8px_20px_rgba(79,70,229,0.20)]
                 transition-all duration-200
                 hover:-translate-y-0.5
-                hover:opacity-90
+                hover:shadow-[0_12px_25px_rgba(79,70,229,0.25)]
                 sm:w-auto
               "
               style={{
-                backgroundColor: "var(--primary-elite-color)",
+                background:
+                  "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
               }}
             >
               <FaPlus size={12} />
@@ -410,43 +453,44 @@ const ServiceCenterLocation = () => {
         ========================================================== */}
 
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {/* Total */}
+
+          {/* TOTAL */}
 
           <div
             className="
               group relative overflow-hidden
               rounded-[20px]
-              border border-[var(--secondary-light-2-color)]
-              bg-[var(--primary-color)]
+              border border-slate-200
+              bg-white
               p-4
-              shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+              shadow-[0_5px_20px_rgba(15,23,42,0.04)]
               transition-all duration-300
-              hover:-translate-y-0.5
-              hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+              hover:-translate-y-1
+              hover:border-indigo-100
+              hover:shadow-[0_15px_35px_rgba(15,23,42,0.08)]
             "
           >
             <div
               className="
-                absolute -right-8 -top-8
-                h-24 w-24 rounded-full
-                opacity-[0.06]
+                absolute -right-10 -top-10
+                h-28 w-28 rounded-full
+                bg-indigo-500/[0.06]
+                transition-transform duration-500
+                group-hover:scale-125
               "
-              style={{
-                backgroundColor: "var(--primary-elite-color)",
-              }}
             />
 
             <div className="relative z-10 flex items-center justify-between">
               <div>
-                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
                   Total Centers
                 </p>
 
-                <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                <p className="mt-1.5 text-[25px] font-extrabold leading-none text-slate-900">
                   {totalCenters}
                 </p>
 
-                <p className="mt-2 text-[9px] font-semibold opacity-40">
+                <p className="mt-2 text-[9px] font-semibold text-slate-400">
                   All registered locations
                 </p>
               </div>
@@ -455,55 +499,52 @@ const ServiceCenterLocation = () => {
                 className="
                   flex h-11 w-11 items-center justify-center
                   rounded-[13px]
+                  bg-indigo-50
+                  text-indigo-600
                 "
-                style={{
-                  color: "var(--primary-elite-color)",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
               >
                 <FaMapLocationDot size={19} />
               </div>
             </div>
           </div>
 
-          {/* Coordinates */}
+          {/* MAPPED */}
 
           <div
             className="
               group relative overflow-hidden
               rounded-[20px]
-              border border-[var(--secondary-light-2-color)]
-              bg-[var(--primary-color)]
+              border border-slate-200
+              bg-white
               p-4
-              shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+              shadow-[0_5px_20px_rgba(15,23,42,0.04)]
               transition-all duration-300
-              hover:-translate-y-0.5
-              hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+              hover:-translate-y-1
+              hover:border-cyan-100
+              hover:shadow-[0_15px_35px_rgba(15,23,42,0.08)]
             "
           >
             <div
               className="
-                absolute -right-8 -top-8
-                h-24 w-24 rounded-full
-                opacity-[0.06]
+                absolute -right-10 -top-10
+                h-28 w-28 rounded-full
+                bg-cyan-500/[0.06]
+                transition-transform duration-500
+                group-hover:scale-125
               "
-              style={{
-                backgroundColor: "var(--primary-elite-color)",
-              }}
             />
 
             <div className="relative z-10 flex items-center justify-between">
               <div>
-                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
                   Mapped Centers
                 </p>
 
-                <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                <p className="mt-1.5 text-[25px] font-extrabold leading-none text-slate-900">
                   {coordinateCenters}
                 </p>
 
-                <p className="mt-2 text-[9px] font-semibold opacity-40">
+                <p className="mt-2 text-[9px] font-semibold text-slate-400">
                   Locations with coordinates
                 </p>
               </div>
@@ -512,55 +553,52 @@ const ServiceCenterLocation = () => {
                 className="
                   flex h-11 w-11 items-center justify-center
                   rounded-[13px]
+                  bg-cyan-50
+                  text-cyan-600
                 "
-                style={{
-                  color: "var(--primary-elite-color)",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
               >
                 <FiGlobe size={20} />
               </div>
             </div>
           </div>
 
-          {/* Recent */}
+          {/* RECENT */}
 
           <div
             className="
               group relative overflow-hidden
               rounded-[20px]
-              border border-[var(--secondary-light-2-color)]
-              bg-[var(--primary-color)]
+              border border-slate-200
+              bg-white
               p-4
-              shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+              shadow-[0_5px_20px_rgba(15,23,42,0.04)]
               transition-all duration-300
-              hover:-translate-y-0.5
-              hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+              hover:-translate-y-1
+              hover:border-violet-100
+              hover:shadow-[0_15px_35px_rgba(15,23,42,0.08)]
             "
           >
             <div
               className="
-                absolute -right-8 -top-8
-                h-24 w-24 rounded-full
-                opacity-[0.06]
+                absolute -right-10 -top-10
+                h-28 w-28 rounded-full
+                bg-violet-500/[0.06]
+                transition-transform duration-500
+                group-hover:scale-125
               "
-              style={{
-                backgroundColor: "var(--primary-elite-color)",
-              }}
             />
 
             <div className="relative z-10 flex items-center justify-between">
               <div>
-                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
                   Recently Added
                 </p>
 
-                <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                <p className="mt-1.5 text-[25px] font-extrabold leading-none text-slate-900">
                   {recentCenters}
                 </p>
 
-                <p className="mt-2 text-[9px] font-semibold opacity-40">
+                <p className="mt-2 text-[9px] font-semibold text-slate-400">
                   Added in the last 7 days
                 </p>
               </div>
@@ -569,12 +607,9 @@ const ServiceCenterLocation = () => {
                 className="
                   flex h-11 w-11 items-center justify-center
                   rounded-[13px]
+                  bg-violet-50
+                  text-violet-600
                 "
-                style={{
-                  color: "var(--primary-elite-color)",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
               >
                 <FaCalendarDays size={18} />
               </div>
@@ -590,9 +625,9 @@ const ServiceCenterLocation = () => {
           className="
             overflow-hidden
             rounded-[22px]
-            border border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
-            shadow-[0_8px_30px_rgba(15,23,42,0.045)]
+            border border-slate-200
+            bg-white
+            shadow-[0_8px_30px_rgba(15,23,42,0.05)]
           "
         >
           {/* Table Header */}
@@ -600,7 +635,8 @@ const ServiceCenterLocation = () => {
           <div
             className="
               flex flex-col gap-3
-              border-b border-[var(--secondary-light-2-color)]
+              border-b border-slate-200
+              bg-white
               px-5 py-4
               sm:flex-row sm:items-center sm:justify-between
             "
@@ -610,22 +646,19 @@ const ServiceCenterLocation = () => {
                 className="
                   flex h-9 w-9 items-center justify-center
                   rounded-[11px]
+                  bg-indigo-50
+                  text-indigo-600
                 "
-                style={{
-                  color: "var(--primary-elite-color)",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
               >
                 <FiMapPin size={17} />
               </div>
 
               <div>
-                <h2 className="text-[13px] font-extrabold">
+                <h2 className="text-[13px] font-extrabold text-slate-800">
                   Service Center Locations
                 </h2>
 
-                <p className="mt-0.5 text-[9px] font-medium opacity-45">
+                <p className="mt-0.5 text-[9px] font-medium text-slate-400">
                   Complete list of registered service centers
                 </p>
               </div>
@@ -635,19 +668,13 @@ const ServiceCenterLocation = () => {
               className="
                 flex w-fit items-center gap-2
                 rounded-full
-                bg-[var(--secondary-light-2-color)]
+                bg-indigo-50
                 px-3 py-1.5
               "
             >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{
-                  backgroundColor:
-                    "var(--primary-elite-color)",
-                }}
-              />
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
 
-              <span className="text-[9px] font-extrabold uppercase tracking-wide opacity-60">
+              <span className="text-[9px] font-extrabold uppercase tracking-wide text-indigo-600">
                 {totalCenters} Centers
               </span>
             </div>
@@ -663,21 +690,18 @@ const ServiceCenterLocation = () => {
                     mb-4 flex h-16 w-16
                     items-center justify-center
                     rounded-[18px]
+                    bg-indigo-50
+                    text-indigo-600
                   "
-                  style={{
-                    color: "var(--primary-elite-color)",
-                    backgroundColor:
-                      "var(--secondary-light-2-color)",
-                  }}
                 >
                   <FaMapLocationDot size={25} />
                 </div>
 
-                <div className="text-[14px] font-extrabold">
+                <div className="text-[14px] font-extrabold text-slate-800">
                   No Service Centers Found
                 </div>
 
-                <div className="mt-1 max-w-[300px] text-[10px] leading-5 opacity-45">
+                <div className="mt-1 max-w-[300px] text-[10px] leading-5 text-slate-400">
                   Create your first service center location to
                   start managing your service network.
                 </div>
@@ -689,14 +713,16 @@ const ServiceCenterLocation = () => {
                     mt-5 inline-flex items-center gap-2
                     rounded-[10px]
                     px-4 py-2
-                    text-[10px] font-extrabold
-                    text-[var(--primary-color)]
+                    text-[10px]
+                    font-extrabold
+                    text-white
+                    shadow-[0_6px_15px_rgba(79,70,229,0.18)]
                     transition-all duration-200
-                    hover:opacity-90
+                    hover:-translate-y-0.5
                   "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    background:
+                      "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
                   }}
                 >
                   <FaPlus size={9} />
@@ -711,21 +737,19 @@ const ServiceCenterLocation = () => {
               isSidebarOpen
                 ? "data_table_comp_sidebar_opened"
                 : "data_table_comp_sidebar_closed"
-            } text-[var(--secondary-color)]`}
+            }`}
             customStyles={{
               table: {
                 style: {
-                  backgroundColor: "var(--primary-color)",
+                  backgroundColor: "#ffffff",
                 },
               },
 
               headRow: {
                 style: {
-                  minHeight: "50px",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                  borderBottom:
-                    "1px solid var(--secondary-light-2-color)",
+                  minHeight: "52px",
+                  backgroundColor: "#f8fafc",
+                  borderBottom: "1px solid #e2e8f0",
                 },
               },
 
@@ -733,7 +757,7 @@ const ServiceCenterLocation = () => {
                 style: {
                   fontSize: "9.5px",
                   fontWeight: "800",
-                  color: "var(--secondary-color)",
+                  color: "#475569",
                   letterSpacing: "0.8px",
                   textTransform: "uppercase",
                   paddingLeft: "18px",
@@ -744,17 +768,14 @@ const ServiceCenterLocation = () => {
               rows: {
                 style: {
                   minHeight: "78px",
-                  backgroundColor: "var(--primary-color)",
-                  borderBottom:
-                    "1px solid var(--secondary-light-2-color)",
+                  backgroundColor: "#ffffff",
+                  borderBottom: "1px solid #f1f5f9",
                   transition: "all 0.2s ease",
                 },
 
                 highlightOnHoverStyle: {
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                  borderBottomColor:
-                    "var(--secondary-light-2-color)",
+                  backgroundColor: "#f8faff",
+                  borderBottomColor: "#e2e8f0",
                   outline: "none",
                 },
               },
@@ -770,7 +791,7 @@ const ServiceCenterLocation = () => {
 
               progress: {
                 style: {
-                  backgroundColor: "var(--primary-color)",
+                  backgroundColor: "#ffffff",
                 },
               },
             }}
@@ -786,28 +807,26 @@ const ServiceCenterLocation = () => {
           onClose={() => setZoneDragger(false)}
           drawerWidth="420px"
         >
-          <div className="h-[var(--doc-height)] bg-[var(--primary-color)]">
+          <div className="h-[var(--doc-height)] bg-white">
+
             {/* Drawer Header */}
 
             <div
               className="
                 relative overflow-hidden
-                border-b border-[var(--secondary-light-2-color)]
+                border-b border-slate-200
                 px-5 py-5
               "
             >
               <div
                 className="
                   pointer-events-none absolute
-                  -right-8 -top-10
-                  h-28 w-28
+                  -right-10 -top-12
+                  h-32 w-32
                   rounded-full
-                  opacity-[0.07]
+                  bg-indigo-500/[0.08]
+                  blur-xl
                 "
-                style={{
-                  backgroundColor:
-                    "var(--primary-elite-color)",
-                }}
               />
 
               <div className="relative z-10 flex items-center gap-3">
@@ -816,22 +835,23 @@ const ServiceCenterLocation = () => {
                     flex h-11 w-11 shrink-0
                     items-center justify-center
                     rounded-[13px]
-                    text-[var(--primary-color)]
+                    text-white
+                    shadow-[0_8px_18px_rgba(79,70,229,0.20)]
                   "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    background:
+                      "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
                   }}
                 >
                   <FaMapLocationDot size={19} />
                 </div>
 
                 <div>
-                  <h2 className="text-[15px] font-extrabold">
+                  <h2 className="text-[15px] font-extrabold text-slate-800">
                     Create Service Center
                   </h2>
 
-                  <p className="mt-0.5 text-[10px] opacity-45">
+                  <p className="mt-0.5 text-[10px] text-slate-400">
                     Add a new location to your service network
                   </p>
                 </div>
@@ -847,33 +867,28 @@ const ServiceCenterLocation = () => {
                   height: "calc(var(--doc-height) - 135px)",
                 }}
               >
-                {/* Info Card */}
+
+                {/* Info */}
 
                 <div
                   className="
                     mt-5 flex gap-3
                     rounded-[14px]
-                    border border-[var(--secondary-light-2-color)]
-                    bg-[var(--secondary-light-2-color)]
+                    border border-indigo-100
+                    bg-indigo-50/70
                     p-3
                   "
                 >
-                  <div
-                    className="mt-0.5 shrink-0"
-                    style={{
-                      color:
-                        "var(--primary-elite-color)",
-                    }}
-                  >
+                  <div className="mt-0.5 shrink-0 text-indigo-600">
                     <FiMapPin size={16} />
                   </div>
 
                   <div>
-                    <p className="text-[10px] font-extrabold">
+                    <p className="text-[10px] font-extrabold text-slate-800">
                       Location details
                     </p>
 
-                    <p className="mt-1 text-[9px] leading-4 opacity-50">
+                    <p className="mt-1 text-[9px] leading-4 text-slate-500">
                       Enter a clear center name and complete
                       address so the location can be identified
                       easily.
@@ -881,25 +896,26 @@ const ServiceCenterLocation = () => {
                   </div>
                 </div>
 
-                {/* Service Center Name */}
+                {/* Name */}
 
                 <div className="mt-6">
-                  <label className="mb-2 block text-[11px] font-extrabold">
+                  <label className="mb-2 block text-[11px] font-extrabold text-slate-700">
                     Service Center Name
                   </label>
 
                   <input
                     required
                     value={zoneName}
-                    onChange={(e) =>
-                      setZoneName(e.target.value)
-                    }
+                    onChange={(e) => setZoneName(e.target.value)}
                     className="
                       default-input
                       !h-11
                       !rounded-[10px]
-                      !border-[var(--secondary-light-2-color)]
+                      !border-slate-200
                       !text-[12px]
+                      focus:!border-indigo-400
+                      focus:!ring-1
+                      focus:!ring-indigo-100
                     "
                     placeholder="e.g. Fixora Ranchi Center"
                   />
@@ -908,22 +924,23 @@ const ServiceCenterLocation = () => {
                 {/* Address */}
 
                 <div className="mt-5">
-                  <label className="mb-2 block text-[11px] font-extrabold">
+                  <label className="mb-2 block text-[11px] font-extrabold text-slate-700">
                     Service Center Address
                   </label>
 
                   <textarea
                     required
                     value={zoneAddress}
-                    onChange={(e) =>
-                      setZoneAddress(e.target.value)
-                    }
+                    onChange={(e) => setZoneAddress(e.target.value)}
                     className="
                       default-textarea
                       !rounded-[10px]
-                      !border-[var(--secondary-light-2-color)]
+                      !border-slate-200
                       !text-[12px]
                       !leading-5
+                      focus:!border-indigo-400
+                      focus:!ring-1
+                      focus:!ring-indigo-100
                     "
                     placeholder="Enter the complete service center address"
                     rows={5}
@@ -934,14 +951,15 @@ const ServiceCenterLocation = () => {
 
                 {(zoneName || zoneAddress) && (
                   <div className="mt-5">
-                    <p className="mb-2 text-[9px] font-extrabold uppercase tracking-[0.12em] opacity-45">
+                    <p className="mb-2 text-[9px] font-extrabold uppercase tracking-[0.12em] text-slate-400">
                       Preview
                     </p>
 
                     <div
                       className="
                         rounded-[14px]
-                        border border-[var(--secondary-light-2-color)]
+                        border border-slate-200
+                        bg-slate-50/70
                         p-3
                       "
                     >
@@ -951,26 +969,20 @@ const ServiceCenterLocation = () => {
                             flex h-9 w-9 shrink-0
                             items-center justify-center
                             rounded-[10px]
+                            bg-indigo-50
+                            text-indigo-600
                           "
-                          style={{
-                            color:
-                              "var(--primary-elite-color)",
-                            backgroundColor:
-                              "var(--secondary-light-2-color)",
-                          }}
                         >
                           <FiMapPin size={16} />
                         </div>
 
                         <div className="min-w-0">
-                          <p className="truncate text-[11px] font-extrabold">
-                            {zoneName ||
-                              "Service Center Name"}
+                          <p className="truncate text-[11px] font-extrabold text-slate-800">
+                            {zoneName || "Service Center Name"}
                           </p>
 
-                          <p className="mt-0.5 line-clamp-2 text-[9px] leading-4 opacity-45">
-                            {zoneAddress ||
-                              "Service center address"}
+                          <p className="mt-0.5 line-clamp-2 text-[9px] leading-4 text-slate-400">
+                            {zoneAddress || "Service center address"}
                           </p>
                         </div>
                       </div>
@@ -984,8 +996,8 @@ const ServiceCenterLocation = () => {
               <div
                 className="
                   flex items-center gap-2
-                  border-t border-[var(--secondary-light-2-color)]
-                  bg-[var(--primary-color)]
+                  border-t border-slate-200
+                  bg-white
                   px-5 py-3
                 "
               >
@@ -999,13 +1011,13 @@ const ServiceCenterLocation = () => {
                   className="
                     h-10 w-full
                     rounded-[10px]
-                    border-2
-                    border-[var(--primary-elite-color)]
+                    border border-indigo-200
+                    bg-white
                     text-[11px]
                     font-extrabold
-                    text-[var(--primary-elite-color)]
+                    text-indigo-600
                     transition-all duration-200
-                    hover:bg-[var(--secondary-light-2-color)]
+                    hover:bg-indigo-50
                   "
                 >
                   Cancel
@@ -1019,14 +1031,14 @@ const ServiceCenterLocation = () => {
                     rounded-[10px]
                     text-[11px]
                     font-extrabold
-                    text-[var(--primary-color)]
-                    shadow-[0_6px_16px_rgba(0,0,0,0.10)]
+                    text-white
+                    shadow-[0_6px_16px_rgba(79,70,229,0.20)]
                     transition-all duration-200
-                    hover:opacity-90
+                    hover:-translate-y-0.5
                   "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    background:
+                      "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
                   }}
                 >
                   <FaPlus size={10} />

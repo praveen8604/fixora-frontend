@@ -2,26 +2,20 @@ import { getServiceRequests } from "@/reduxStore/action/serviceRequestAction";
 
 import moment from "moment";
 import DataTable from "react-data-table-component";
-import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
 
 import {
-  FaTicket,
-  FaUserGear,
+  FaTicketAlt,
+  FaUser,
   FaPaperclip,
   FaPlus,
   FaExternalLinkAlt,
-  FaTools,
-  FaCheckCircle,
   FaClock,
-  FaTimesCircle,
+  FaSortAmountUpAlt,
+  FaSortAmountDownAlt,
 } from "react-icons/fa";
 
 import {
@@ -30,15 +24,10 @@ import {
   FiCalendar,
   FiList,
   FiRefreshCw,
-  FiTool,
+  FiChevronRight,
 } from "react-icons/fi";
 
 import { HiSortDescending } from "react-icons/hi";
-import {
-  FaSortAmountUpAlt,
-  FaSortAmountDownAlt,
-} from "react-icons/fa";
-
 import { MdOutlineTune } from "react-icons/md";
 
 import TableHeader from "@/components/common/TableHeader";
@@ -52,17 +41,138 @@ import {
   TICKET_STATUS,
 } from "@/utils/appConstatnts";
 
-import { statusTheme } from "@/utils/getStatusTheme";
 import { Popover } from "react-tiny-popover";
 
-/*
-  IMPORTANT:
-  Agar SidebarContext tumhare project mein kisi specific file se
-  import hota hai, to uska existing import yahan add kar dena.
+/* ============================================================
+   THEME
+   ============================================================ */
 
-  Example:
-  import { SidebarContext } from "@/context/SidebarContext";
-*/
+const THEME = {
+  primary: "#2563eb",
+  primaryDark: "#1d4ed8",
+  primarySoft: "#eff6ff",
+  primarySoft2: "#f5f8ff",
+  primaryBorder: "#dbeafe",
+
+  text: "#111827",
+  textSoft: "#475569",
+  textMuted: "#64748b",
+  textLight: "#94a3b8",
+
+  white: "#ffffff",
+  surface: "#f8fafc",
+  surface2: "#f1f5f9",
+
+  border: "#e2e8f0",
+  borderSoft: "#edf2f7",
+
+  success: "#16a34a",
+  successSoft: "#f0fdf4",
+  successBorder: "#dcfce7",
+
+  warning: "#d97706",
+  warningSoft: "#fffbeb",
+  warningBorder: "#fef3c7",
+
+  danger: "#dc2626",
+  dangerSoft: "#fef2f2",
+  dangerBorder: "#fee2e2",
+};
+
+/* ============================================================
+   STATUS / BADGE THEME
+   ============================================================ */
+
+const getBadgeTheme = (value) => {
+  const normalized = String(value || "")
+    .toLowerCase()
+    .trim();
+
+  if (
+    normalized.includes("open") ||
+    normalized.includes("new") ||
+    normalized.includes("created")
+  ) {
+    return {
+      color: THEME.primary,
+      backgroundColor: THEME.primarySoft,
+      border: `1px solid ${THEME.primaryBorder}`,
+    };
+  }
+
+  if (
+    normalized.includes("pending") ||
+    normalized.includes("progress") ||
+    normalized.includes("assign")
+  ) {
+    return {
+      color: THEME.warning,
+      backgroundColor: THEME.warningSoft,
+      border: `1px solid ${THEME.warningBorder}`,
+    };
+  }
+
+  if (
+    normalized.includes("complete") ||
+    normalized.includes("resolve") ||
+    normalized.includes("close")
+  ) {
+    return {
+      color: THEME.success,
+      backgroundColor: THEME.successSoft,
+      border: `1px solid ${THEME.successBorder}`,
+    };
+  }
+
+  if (
+    normalized.includes("cancel") ||
+    normalized.includes("reject")
+  ) {
+    return {
+      color: THEME.danger,
+      backgroundColor: THEME.dangerSoft,
+      border: `1px solid ${THEME.dangerBorder}`,
+    };
+  }
+
+  return {
+    color: THEME.textSoft,
+    backgroundColor: THEME.surface,
+    border: `1px solid ${THEME.border}`,
+  };
+};
+
+/* ============================================================
+   ICON BOX
+   ============================================================ */
+
+const IconBox = ({
+  children,
+  size = "h-10 w-10",
+  radius = "rounded-[12px]",
+}) => (
+  <div
+    className={`
+      ${size}
+      ${radius}
+      flex
+      shrink-0
+      items-center
+      justify-center
+    `}
+    style={{
+      color: THEME.primary,
+      backgroundColor: THEME.primarySoft,
+      border: `1px solid ${THEME.primaryBorder}`,
+    }}
+  >
+    {children}
+  </div>
+);
+
+/* ============================================================
+   PAGE
+   ============================================================ */
 
 const TicketManagement = () => {
   const history = useHistory();
@@ -77,6 +187,10 @@ const TicketManagement = () => {
   const userList = Array.isArray(rawUserList)
     ? rawUserList
     : [];
+
+  /* ==========================================================
+     STATES
+     ========================================================== */
 
   const [filterValues, setFilterValues] = useState({});
 
@@ -133,11 +247,9 @@ const TicketManagement = () => {
     setRiderSelectedId,
   ] = useState("");
 
-  /*
-  ============================================================
-  FETCH DATA
-  ============================================================
-  */
+  /* ==========================================================
+     FETCH
+     ========================================================== */
 
   const fetchData = (params) => {
     dispatch(getServiceRequests(params));
@@ -156,11 +268,9 @@ const TicketManagement = () => {
     });
   }, [dispatch]);
 
-  /*
-  ============================================================
-  PAGINATION
-  ============================================================
-  */
+  /* ==========================================================
+     PAGINATION
+     ========================================================== */
 
   const handlePagination = (currentPage) => {
     setActivePage(currentPage);
@@ -183,21 +293,17 @@ const TicketManagement = () => {
     });
   };
 
-  /*
-  ============================================================
-  TABLE HEADER FILTER
-  ============================================================
-  */
+  /* ==========================================================
+     TABLE HEADER
+     ========================================================== */
 
   const handleFilterValues = (values) => {
     setFilterValues(values);
   };
 
-  /*
-  ============================================================
-  FILTER
-  ============================================================
-  */
+  /* ==========================================================
+     FILTER
+     ========================================================== */
 
   const handleFilter = () => {
     const params = {
@@ -228,11 +334,9 @@ const TicketManagement = () => {
     setFilterDragger(false);
   };
 
-  /*
-  ============================================================
-  CLEAR FILTER
-  ============================================================
-  */
+  /* ==========================================================
+     CLEAR FILTER
+     ========================================================== */
 
   const handleClearFilter = () => {
     setTicketStatusSelectedOption("");
@@ -268,11 +372,9 @@ const TicketManagement = () => {
     setFilterDragger(false);
   };
 
-  /*
-  ============================================================
-  SORT
-  ============================================================
-  */
+  /* ==========================================================
+     SORT
+     ========================================================== */
 
   const handleSortBy = (value) => {
     setSortBy(value);
@@ -291,11 +393,9 @@ const TicketManagement = () => {
     setSortablePopover(false);
   };
 
-  /*
-  ============================================================
-  OPEN REQUEST
-  ============================================================
-  */
+  /* ==========================================================
+     OPEN REQUEST
+     ========================================================== */
 
   const openRequest = (id) => {
     if (!id) return;
@@ -305,11 +405,9 @@ const TicketManagement = () => {
     );
   };
 
-  /*
-  ============================================================
-  KPI DATA
-  ============================================================
-  */
+  /* ==========================================================
+     KPI
+     ========================================================== */
 
   const requestStats = useMemo(() => {
     const requests = Array.isArray(serviceRequests)
@@ -352,74 +450,84 @@ const TicketManagement = () => {
     };
   }, [serviceRequests]);
 
-  /*
-  ============================================================
-  TABLE COLUMNS
-  ============================================================
-  */
+  /* ==========================================================
+     TABLE COLUMNS
+     ========================================================== */
 
   const columns = [
     {
       name: "TICKET",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
-          className="flex cursor-pointer items-center gap-3 py-2"
+          className="
+            flex
+            cursor-pointer
+            items-center
+            gap-3
+            py-2
+          "
         >
-          <div
-            className="
-              flex h-10 w-10 shrink-0
-              items-center justify-center
-              rounded-[12px]
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
-            "
+          <IconBox
+            size="h-10 w-10"
+            radius="rounded-[11px]"
           >
-            <FaTicket size={15} />
-          </div>
+            <FaTicketAlt size={14} />
+          </IconBox>
 
           <div className="min-w-0">
             <div
               className="
                 text-[11px]
                 font-extrabold
-                text-[var(--primary-elite-color)]
-                transition-all
+                transition-colors
                 hover:underline
               "
+              style={{
+                color: THEME.text,
+              }}
             >
               #{row?._id?.slice(-8) || "--"}
             </div>
 
-            <div className="mt-1 flex items-center gap-1 text-[9px] opacity-40">
-              <FaClock size={9} />
+            <div
+              className="
+                mt-1
+                flex
+                items-center
+                gap-1.5
+                text-[9px]
+                font-medium
+              "
+              style={{
+                color: THEME.textMuted,
+              }}
+            >
+              <FaClock size={8} />
 
               {row?.createdAt
                 ? moment(row.createdAt).fromNow()
                 : "--"}
             </div>
           </div>
+
+          <FiChevronRight
+            className="ml-auto opacity-30"
+            size={13}
+          />
         </div>
       ),
-
-      width: "190px",
+      width: "205px",
     },
-
-    /*
-    ============================================================
-    CUSTOMER
-    ============================================================
-    */
 
     {
       name: "CUSTOMER",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
           className="
-            flex min-w-0
+            flex
+            min-w-0
             cursor-pointer
             items-center
             gap-2.5
@@ -428,14 +536,21 @@ const TicketManagement = () => {
         >
           <div
             className="
-              flex h-9 w-9 shrink-0
-              items-center justify-center
+              flex
+              h-9
+              w-9
+              shrink-0
+              items-center
+              justify-center
               rounded-full
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
               text-[11px]
               font-extrabold
             "
+            style={{
+              color: THEME.primary,
+              backgroundColor: THEME.primarySoft,
+              border: `1px solid ${THEME.primaryBorder}`,
+            }}
           >
             {row?.customer?.userName?.[0]?.toUpperCase() ||
               "—"}
@@ -449,8 +564,10 @@ const TicketManagement = () => {
                   truncate
                   text-[11px]
                   font-bold
-                  text-[var(--secondary-color)]
                 "
+                style={{
+                  color: THEME.text,
+                }}
               >
                 {row?.customer?.userName || "--"}
               </div>
@@ -460,14 +577,15 @@ const TicketManagement = () => {
                   to={`/users/customer/details?userId=${row?.customer?._id}`}
                   onClick={(e) => e.stopPropagation()}
                   className="
-                    text-[var(--secondary-color)]
                     opacity-40
                     transition-all
-                    hover:text-[var(--primary-elite-color)]
                     hover:opacity-100
                   "
+                  style={{
+                    color: THEME.primary,
+                  }}
                 >
-                  <FaExternalLinkAlt size={9} />
+                  <FaExternalLinkAlt size={8} />
                 </Link>
               )}
             </div>
@@ -479,8 +597,10 @@ const TicketManagement = () => {
                   max-w-[150px]
                   truncate
                   text-[9px]
-                  opacity-45
                 "
+                style={{
+                  color: THEME.textMuted,
+                }}
               >
                 {row.customer.email}
               </div>
@@ -488,19 +608,11 @@ const TicketManagement = () => {
           </div>
         </div>
       ),
-
       width: "235px",
     },
 
-    /*
-    ============================================================
-    PROBLEM
-    ============================================================
-    */
-
     {
       name: "PROBLEM",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -517,31 +629,38 @@ const TicketManagement = () => {
               text-[11px]
               font-semibold
               leading-5
-              text-[var(--secondary-color)]
             "
+            style={{
+              color: THEME.text,
+            }}
           >
             {row?.problemDescription || "--"}
           </div>
 
-          <div className="mt-1 flex items-center gap-1 text-[9px] opacity-40">
+          <div
+            className="
+              mt-1
+              flex
+              items-center
+              gap-1
+              text-[9px]
+              font-medium
+            "
+            style={{
+              color: THEME.primary,
+            }}
+          >
             <FiArrowUpRight size={9} />
+
             View request details
           </div>
         </div>
       ),
-
       width: "280px",
     },
 
-    /*
-    ============================================================
-    TYPE
-    ============================================================
-    */
-
     {
       name: "TYPE",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -558,25 +677,19 @@ const TicketManagement = () => {
               font-extrabold
               capitalize
             "
-            style={statusTheme(row?.serviceRequestType)}
+            style={getBadgeTheme(
+              row?.serviceRequestType
+            )}
           >
             {row?.serviceRequestType || "--"}
           </span>
         </div>
       ),
-
       width: "155px",
     },
 
-    /*
-    ============================================================
-    MODE
-    ============================================================
-    */
-
     {
       name: "MODE",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -593,25 +706,17 @@ const TicketManagement = () => {
               font-extrabold
               capitalize
             "
-            style={statusTheme(row?.serviceMode)}
+            style={getBadgeTheme(row?.serviceMode)}
           >
             {row?.serviceMode || "--"}
           </span>
         </div>
       ),
-
       width: "135px",
     },
 
-    /*
-    ============================================================
-    STATUS
-    ============================================================
-    */
-
     {
       name: "STATUS",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -620,7 +725,7 @@ const TicketManagement = () => {
           <span
             className="
               inline-flex
-              min-w-[75px]
+              min-w-[78px]
               items-center
               justify-center
               rounded-full
@@ -630,25 +735,17 @@ const TicketManagement = () => {
               font-extrabold
               capitalize
             "
-            style={statusTheme(row?.ticketStatus)}
+            style={getBadgeTheme(row?.ticketStatus)}
           >
             {row?.ticketStatus || "--"}
           </span>
         </div>
       ),
-
       width: "145px",
     },
 
-    /*
-    ============================================================
-    ATTACHMENTS
-    ============================================================
-    */
-
     {
       name: "ATTACHMENTS",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -662,11 +759,12 @@ const TicketManagement = () => {
                   h-11
                   w-11
                   overflow-hidden
-                  rounded-[10px]
-                  border
-                  border-[var(--secondary-light-2-color)]
-                  bg-[var(--secondary-light-2-color)]
+                  rounded-[11px]
+                  bg-slate-50
                 "
+                style={{
+                  border: `1px solid ${THEME.border}`,
+                }}
               >
                 <img
                   src={row.attachments[0]}
@@ -697,11 +795,10 @@ const TicketManagement = () => {
                     px-1
                     text-[8px]
                     font-extrabold
-                    text-[var(--primary-color)]
+                    text-white
                   "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    backgroundColor: THEME.primary,
                   }}
                 >
                   +{row.attachments.length - 1}
@@ -709,29 +806,30 @@ const TicketManagement = () => {
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-2 opacity-35">
-              <FaPaperclip size={11} />
+            <div
+              className="
+                flex
+                items-center
+                gap-2
+                text-[9px]
+                font-semibold
+              "
+              style={{
+                color: THEME.textMuted,
+              }}
+            >
+              <FaPaperclip size={10} />
 
-              <span className="text-[9px] font-semibold">
-                No files
-              </span>
+              <span>No files</span>
             </div>
           )}
         </div>
       ),
-
       width: "140px",
     },
 
-    /*
-    ============================================================
-    TECHNICIAN
-    ============================================================
-    */
-
     {
       name: "TECHNICIAN",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -745,14 +843,21 @@ const TicketManagement = () => {
         >
           <div
             className="
-              flex h-8 w-8 shrink-0
-              items-center justify-center
+              flex
+              h-8
+              w-8
+              shrink-0
+              items-center
+              justify-center
               rounded-full
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
             "
+            style={{
+              color: THEME.primary,
+              backgroundColor: THEME.primarySoft,
+              border: `1px solid ${THEME.primaryBorder}`,
+            }}
           >
-            <FaUserGear size={12} />
+            <FaUser size={11} />
           </div>
 
           <div className="min-w-0">
@@ -764,6 +869,9 @@ const TicketManagement = () => {
                   text-[10px]
                   font-bold
                 "
+                style={{
+                  color: THEME.text,
+                }}
               >
                 {row?.technician?.userName ||
                   "Unassigned"}
@@ -778,16 +886,28 @@ const TicketManagement = () => {
                   className="
                     opacity-40
                     transition-all
-                    hover:text-[var(--primary-elite-color)]
                     hover:opacity-100
                   "
+                  style={{
+                    color: THEME.primary,
+                  }}
                 >
                   <FaExternalLinkAlt size={8} />
                 </Link>
               )}
             </div>
 
-            <div className="mt-0.5 text-[8px] uppercase tracking-wide opacity-40">
+            <div
+              className="
+                mt-0.5
+                text-[8px]
+                uppercase
+                tracking-wide
+              "
+              style={{
+                color: THEME.textMuted,
+              }}
+            >
               {row?.technician?.userName
                 ? "Assigned"
                 : "Waiting for assignment"}
@@ -795,19 +915,11 @@ const TicketManagement = () => {
           </div>
         </div>
       ),
-
       width: "205px",
     },
 
-    /*
-    ============================================================
-    RAISED ON
-    ============================================================
-    */
-
     {
       name: "RAISED ON",
-
       cell: (row) => (
         <div
           onClick={() => openRequest(row?._id)}
@@ -818,20 +930,23 @@ const TicketManagement = () => {
             gap-2
           "
         >
-          <div
-            className="
-              flex h-8 w-8 shrink-0
-              items-center justify-center
-              rounded-[9px]
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
-            "
+          <IconBox
+            size="h-8 w-8"
+            radius="rounded-[9px]"
           >
-            <FiCalendar size={13} />
-          </div>
+            <FiCalendar size={12} />
+          </IconBox>
 
           <div>
-            <div className="text-[10px] font-bold">
+            <div
+              className="
+                text-[10px]
+                font-bold
+              "
+              style={{
+                color: THEME.text,
+              }}
+            >
               {row?.createdAt
                 ? moment(row.createdAt).format(
                     "DD MMM YYYY"
@@ -839,7 +954,15 @@ const TicketManagement = () => {
                 : "--"}
             </div>
 
-            <div className="mt-0.5 text-[9px] opacity-40">
+            <div
+              className="
+                mt-0.5
+                text-[9px]
+              "
+              style={{
+                color: THEME.textMuted,
+              }}
+            >
               {row?.createdAt
                 ? moment(row.createdAt).format(
                     "hh:mm A"
@@ -849,53 +972,76 @@ const TicketManagement = () => {
           </div>
         </div>
       ),
-
       width: "170px",
     },
   ];
 
-  /*
-  ============================================================
-  RETURN
-  ============================================================
-  */
+  /* ==========================================================
+     RETURN
+     ========================================================== */
 
   return (
     <AnimatedContent>
-      <div className="pb-8 text-[var(--secondary-color)]">
-        {/* =====================================================
+      <div
+        className="
+          min-h-screen
+          bg-[#f8fafc]
+          px-0
+          pb-8
+          text-[#111827]
+        "
+      >
+        {/* ====================================================
             PAGE HEADER
-        ====================================================== */}
+        ===================================================== */}
 
         <div
           className="
             relative
-            mb-6
+            mb-5
             overflow-hidden
-            rounded-[24px]
-            border
-            border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
+            rounded-[20px]
+            bg-white
             px-5
             py-5
-            shadow-[0_8px_30px_rgba(15,23,42,0.04)]
+            shadow-[0_4px_18px_rgba(37,99,235,0.06)]
             sm:px-6
           "
+          style={{
+            border: `1px solid ${THEME.borderSoft}`,
+          }}
         >
+          {/* BLUE DECORATION */}
+
           <div
             className="
               pointer-events-none
               absolute
               -right-12
-              -top-16
-              h-40
-              w-40
+              -top-14
+              h-36
+              w-36
               rounded-full
               opacity-[0.07]
             "
             style={{
-              backgroundColor:
-                "var(--primary-elite-color)",
+              backgroundColor: THEME.primary,
+            }}
+          />
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -bottom-16
+              -left-10
+              h-32
+              w-32
+              rounded-full
+              opacity-[0.045]
+            "
+            style={{
+              backgroundColor: THEME.primary,
             }}
           />
 
@@ -911,6 +1057,8 @@ const TicketManagement = () => {
               lg:justify-between
             "
           >
+            {/* HEADER LEFT */}
+
             <div className="flex items-center gap-4">
               <div
                 className="
@@ -920,21 +1068,29 @@ const TicketManagement = () => {
                   shrink-0
                   items-center
                   justify-center
-                  rounded-[17px]
-                  text-[var(--primary-color)]
-                  shadow-[0_10px_24px_rgba(0,0,0,0.10)]
+                  rounded-[16px]
                 "
                 style={{
-                  backgroundColor:
-                    "var(--primary-elite-color)",
+                  color: THEME.primary,
+                  backgroundColor: THEME.primarySoft,
+                  border: `1px solid ${THEME.primaryBorder}`,
                 }}
               >
-                <FaTicket size={23} />
+                <FaTicketAlt size={22} />
               </div>
 
               <div>
-                <div className="mb-1 flex flex-wrap items-center gap-2">
-                  <h1 className="text-[20px] font-extrabold tracking-[-0.02em]">
+                <div className="mb-1.5 flex flex-wrap items-center gap-2.5">
+                  <h1
+                    className="
+                      text-[20px]
+                      font-extrabold
+                      tracking-[-0.025em]
+                    "
+                    style={{
+                      color: THEME.text,
+                    }}
+                  >
                     Service Requests
                   </h1>
 
@@ -946,23 +1102,26 @@ const TicketManagement = () => {
                       rounded-full
                       px-2.5
                       py-1
-                      text-[9px]
+                      text-[8px]
                       font-extrabold
                       uppercase
-                      tracking-[0.08em]
+                      tracking-[0.1em]
                     "
                     style={{
-                      color:
-                        "var(--primary-elite-color)",
+                      color: THEME.primary,
                       backgroundColor:
-                        "var(--secondary-light-2-color)",
+                        THEME.primarySoft,
+                      border: `1px solid ${THEME.primaryBorder}`,
                     }}
                   >
                     <span
-                      className="h-1.5 w-1.5 rounded-full"
+                      className="
+                        h-1.5
+                        w-1.5
+                        rounded-full
+                      "
                       style={{
-                        backgroundColor:
-                          "var(--primary-elite-color)",
+                        backgroundColor: THEME.primary,
                       }}
                     />
 
@@ -970,13 +1129,24 @@ const TicketManagement = () => {
                   </span>
                 </div>
 
-                <p className="max-w-[580px] text-[11px] leading-5 opacity-55">
+                <p
+                  className="
+                    max-w-[600px]
+                    text-[11px]
+                    leading-5
+                  "
+                  style={{
+                    color: THEME.textMuted,
+                  }}
+                >
                   Manage, monitor and track customer
                   service requests, technicians, status
                   and attachments from one place.
                 </p>
               </div>
             </div>
+
+            {/* HEADER ACTIONS */}
 
             <div className="flex items-center gap-2">
               {/* SORT */}
@@ -992,14 +1162,15 @@ const TicketManagement = () => {
                   <div
                     className="
                       mt-2
-                      min-w-[175px]
-                      rounded-xl
-                      border
-                      border-[var(--secondary-light-2-color)]
-                      bg-[var(--primary-color)]
+                      min-w-[190px]
+                      rounded-[14px]
+                      bg-white
                       p-2
-                      shadow-xl
+                      shadow-[0_15px_40px_rgba(15,23,42,0.12)]
                     "
+                    style={{
+                      border: `1px solid ${THEME.border}`,
+                    }}
                   >
                     {[
                       {
@@ -1023,23 +1194,40 @@ const TicketManagement = () => {
                           onClick={() =>
                             handleSortBy(val)
                           }
-                          className={`
+                          className="
                             flex
                             cursor-pointer
                             items-center
                             gap-3
-                            rounded-lg
+                            rounded-[10px]
                             px-3
-                            py-2
+                            py-2.5
                             text-[11px]
                             font-semibold
-                            transition
-                            ${
+                            transition-all
+                          "
+                          style={{
+                            color:
                               sortBy === val
-                                ? "bg-[var(--secondary-light-2-color)] text-[var(--primary-elite-color)]"
-                                : "hover:bg-[var(--secondary-light-2-color)]"
+                                ? THEME.primary
+                                : THEME.text,
+                            backgroundColor:
+                              sortBy === val
+                                ? THEME.primarySoft
+                                : "transparent",
+                          }}
+                          onMouseEnter={(e) => {
+                            if (sortBy !== val) {
+                              e.currentTarget.style.backgroundColor =
+                                THEME.surface;
                             }
-                          `}
+                          }}
+                          onMouseLeave={(e) => {
+                            if (sortBy !== val) {
+                              e.currentTarget.style.backgroundColor =
+                                "transparent";
+                            }
+                          }}
                         >
                           <Icon size={13} />
                           {label}
@@ -1059,20 +1247,27 @@ const TicketManagement = () => {
                     flex
                     items-center
                     gap-2
-                    rounded-xl
-                    border
-                    border-[var(--secondary-light-2-color)]
-                    bg-[var(--primary-color)]
-                    px-4
+                    rounded-[11px]
+                    bg-white
+                    px-3.5
                     py-2.5
-                    text-[11px]
-                    font-semibold
-                    shadow-sm
-                    transition
-                    hover:border-[var(--primary-elite-color)]
+                    text-[10px]
+                    font-bold
+                    transition-all
+                    hover:-translate-y-0.5
                   "
+                  style={{
+                    color: THEME.text,
+                    border: `1px solid ${THEME.border}`,
+                  }}
                 >
-                  <HiSortDescending size={15} />
+                  <HiSortDescending
+                    size={14}
+                    style={{
+                      color: THEME.primary,
+                    }}
+                  />
+
                   Sort
                 </button>
               </Popover>
@@ -1088,20 +1283,26 @@ const TicketManagement = () => {
                   flex
                   items-center
                   gap-2
-                  rounded-xl
-                  border
-                  border-[var(--secondary-light-2-color)]
-                  bg-[var(--primary-color)]
-                  px-4
+                  rounded-[11px]
+                  bg-white
+                  px-3.5
                   py-2.5
-                  text-[11px]
-                  font-semibold
-                  shadow-sm
-                  transition
-                  hover:border-[var(--primary-elite-color)]
+                  text-[10px]
+                  font-bold
+                  transition-all
+                  hover:-translate-y-0.5
                 "
+                style={{
+                  color: THEME.text,
+                  border: `1px solid ${THEME.border}`,
+                }}
               >
-                <MdOutlineTune size={15} />
+                <MdOutlineTune
+                  size={14}
+                  style={{
+                    color: THEME.primary,
+                  }}
+                />
 
                 Filter
 
@@ -1117,13 +1318,12 @@ const TicketManagement = () => {
                       items-center
                       justify-center
                       rounded-full
-                      text-[9px]
+                      text-[8px]
                       font-bold
-                      text-[var(--primary-color)]
+                      text-white
                     "
                     style={{
-                      backgroundColor:
-                        "var(--primary-elite-color)",
+                      backgroundColor: THEME.primary,
                     }}
                   >
                     {filterCount}
@@ -1143,40 +1343,48 @@ const TicketManagement = () => {
                   flex
                   items-center
                   gap-2
-                  rounded-xl
+                  rounded-[11px]
                   px-4
                   py-2.5
-                  text-[11px]
+                  text-[10px]
                   font-extrabold
-                  text-[var(--primary-color)]
-                  shadow-sm
-                  transition
+                  text-white
+                  shadow-[0_7px_18px_rgba(37,99,235,0.18)]
+                  transition-all
                   hover:-translate-y-0.5
-                  hover:opacity-90
                 "
                 style={{
-                  backgroundColor:
-                    "var(--primary-elite-color)",
+                  backgroundColor: THEME.primary,
                 }}
               >
-                <FaPlus size={9} />
+                <FaPlus size={8} />
+
                 Create Request
               </button>
             </div>
           </div>
         </div>
 
-        {/* =====================================================
+        {/* ====================================================
             KPI CARDS
-        ====================================================== */}
+        ===================================================== */}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div
+          className="
+            mb-5
+            grid
+            grid-cols-1
+            gap-3
+            sm:grid-cols-2
+            xl:grid-cols-4
+          "
+        >
           {[
             {
               title: "Total Requests",
               value: requestStats.total,
               desc: "Requests on this page",
-              Icon: FaTicket,
+              Icon: FaTicketAlt,
             },
             {
               title: "Open Requests",
@@ -1188,7 +1396,7 @@ const TicketManagement = () => {
               title: "Assigned",
               value: requestStats.assigned,
               desc: "With technician",
-              Icon: FaUserGear,
+              Icon: FaUser,
             },
             {
               title: "Pending",
@@ -1196,7 +1404,7 @@ const TicketManagement = () => {
               desc: "In progress",
               Icon: FaClock,
             },
-          ].map((item) => {
+          ].map((item, index) => {
             const Icon = item.Icon;
 
             return (
@@ -1206,114 +1414,158 @@ const TicketManagement = () => {
                   group
                   relative
                   overflow-hidden
-                  rounded-[20px]
-                  border
-                  border-[var(--secondary-light-2-color)]
-                  bg-[var(--primary-color)]
+                  rounded-[17px]
+                  bg-white
                   p-4
-                  shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+                  shadow-[0_4px_18px_rgba(15,23,42,0.035)]
                   transition-all
                   duration-300
-                  hover:-translate-y-0.5
-                  hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
+                  hover:-translate-y-1
+                  hover:shadow-[0_12px_30px_rgba(37,99,235,0.08)]
                 "
+                style={{
+                  border: `1px solid ${THEME.borderSoft}`,
+                }}
               >
                 <div
                   className="
                     absolute
-                    -right-8
-                    -top-8
+                    left-0
+                    top-0
+                    h-[3px]
+                    w-full
+                  "
+                  style={{
+                    backgroundColor: THEME.primary,
+                  }}
+                />
+
+                <div
+                  className="
+                    absolute
+                    -right-10
+                    -top-10
                     h-24
                     w-24
                     rounded-full
-                    opacity-[0.06]
+                    opacity-[0.055]
                   "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    backgroundColor: THEME.primary,
                   }}
                 />
 
                 <div className="relative z-10 flex items-center justify-between">
                   <div>
-                    <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
+                    <p
+                      className="
+                        text-[8px]
+                        font-extrabold
+                        uppercase
+                        tracking-[0.14em]
+                      "
+                      style={{
+                        color: THEME.textMuted,
+                      }}
+                    >
                       {item.title}
                     </p>
 
-                    <p className="mt-1.5 text-[24px] font-extrabold leading-none">
+                    <p
+                      className="
+                        mt-2
+                        text-[25px]
+                        font-extrabold
+                        leading-none
+                      "
+                      style={{
+                        color: THEME.text,
+                      }}
+                    >
                       {item.value}
                     </p>
 
-                    <p className="mt-2 text-[9px] font-semibold opacity-40">
+                    <p
+                      className="
+                        mt-2
+                        text-[9px]
+                        font-medium
+                      "
+                      style={{
+                        color: THEME.textLight,
+                      }}
+                    >
                       {item.desc}
                     </p>
                   </div>
 
-                  <div
-                    className="
-                      flex
-                      h-11
-                      w-11
-                      items-center
-                      justify-center
-                      rounded-[13px]
-                    "
-                    style={{
-                      color:
-                        "var(--primary-elite-color)",
-                      backgroundColor:
-                        "var(--secondary-light-2-color)",
-                    }}
+                  <IconBox
+                    size="h-11 w-11"
+                    radius="rounded-[12px]"
                   >
-                    <Icon size={18} />
-                  </div>
+                    <Icon size={17} />
+                  </IconBox>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* =====================================================
+        {/* ====================================================
             FILTER HEADER
-        ====================================================== */}
+        ===================================================== */}
 
         <div
           className="
             mb-4
             overflow-hidden
-            rounded-[20px]
-            border
-            border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
-            shadow-[0_5px_20px_rgba(15,23,42,0.035)]
+            rounded-[17px]
+            bg-white
+            shadow-[0_4px_18px_rgba(15,23,42,0.035)]
           "
+          style={{
+            border: `1px solid ${THEME.borderSoft}`,
+          }}
         >
-          <div className="flex items-center gap-3 border-b border-[var(--secondary-light-2-color)] px-4 py-3">
-            <div
-              className="
-                flex
-                h-8
-                w-8
-                items-center
-                justify-center
-                rounded-[9px]
-              "
-              style={{
-                color:
-                  "var(--primary-elite-color)",
-                backgroundColor:
-                  "var(--secondary-light-2-color)",
-              }}
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+              border-b
+              px-4
+              py-3
+            "
+            style={{
+              borderColor: THEME.borderSoft,
+            }}
+          >
+            <IconBox
+              size="h-8 w-8"
+              radius="rounded-[9px]"
             >
-              <FiList size={15} />
-            </div>
+              <FiList size={14} />
+            </IconBox>
 
             <div>
-              <h2 className="text-[12px] font-extrabold">
+              <h2
+                className="
+                  text-[12px]
+                  font-extrabold
+                "
+                style={{
+                  color: THEME.text,
+                }}
+              >
                 Request Filters
               </h2>
 
-              <p className="text-[9px] opacity-40">
+              <p
+                className="text-[9px]"
+                style={{
+                  color: THEME.textMuted,
+                }}
+              >
                 Search and filter service requests
               </p>
             </div>
@@ -1330,60 +1582,70 @@ const TicketManagement = () => {
           </div>
         </div>
 
-        {/* =====================================================
+        {/* ====================================================
             REQUEST TABLE
-        ====================================================== */}
+        ===================================================== */}
 
         <div
           className="
             overflow-hidden
-            rounded-[22px]
-            border
-            border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
-            shadow-[0_8px_30px_rgba(15,23,42,0.045)]
+            rounded-[19px]
+            bg-white
+            shadow-[0_5px_22px_rgba(15,23,42,0.04)]
           "
+          style={{
+            border: `1px solid ${THEME.borderSoft}`,
+          }}
         >
+          {/* TABLE HEADER */}
+
           <div
             className="
               flex
               flex-col
               gap-3
               border-b
-              border-[var(--secondary-light-2-color)]
               px-5
               py-4
               sm:flex-row
               sm:items-center
               sm:justify-between
             "
+            style={{
+              borderColor: THEME.borderSoft,
+            }}
           >
             <div className="flex items-center gap-3">
-              <div
-                className="
-                  flex
-                  h-9
-                  w-9
-                  items-center
-                  justify-center
-                  rounded-[11px]
-                "
-                style={{
-                  color:
-                    "var(--primary-elite-color)",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
+              <IconBox
+                size="h-9 w-9"
+                radius="rounded-[10px]"
               >
-                <FaTicket size={14} />
-              </div>
+                <FaTicketAlt size={13} />
+              </IconBox>
 
               <div>
-                <h2 className="text-[13px] font-extrabold">
+                <h2
+                  className="
+                    text-[13px]
+                    font-extrabold
+                  "
+                  style={{
+                    color: THEME.text,
+                  }}
+                >
                   Recent Service Requests
                 </h2>
 
-                <p className="mt-0.5 text-[9px] font-medium opacity-45">
+                <p
+                  className="
+                    mt-0.5
+                    text-[9px]
+                    font-medium
+                  "
+                  style={{
+                    color: THEME.textMuted,
+                  }}
+                >
                   Customer requests and service activity
                 </p>
               </div>
@@ -1400,19 +1662,32 @@ const TicketManagement = () => {
                   py-1.5
                 "
                 style={{
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
+                  backgroundColor: THEME.primarySoft,
+                  border: `1px solid ${THEME.primaryBorder}`,
                 }}
               >
                 <span
-                  className="h-1.5 w-1.5 rounded-full"
+                  className="
+                    h-1.5
+                    w-1.5
+                    rounded-full
+                  "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    backgroundColor: THEME.primary,
                   }}
                 />
 
-                <span className="text-[9px] font-extrabold uppercase tracking-wide opacity-60">
+                <span
+                  className="
+                    text-[8px]
+                    font-extrabold
+                    uppercase
+                    tracking-wide
+                  "
+                  style={{
+                    color: THEME.primary,
+                  }}
+                >
                   {serviceRequests?.length || 0}{" "}
                   Showing
                 </span>
@@ -1433,18 +1708,22 @@ const TicketManagement = () => {
                   items-center
                   justify-center
                   rounded-[9px]
-                  bg-[var(--secondary-light-2-color)]
-                  opacity-60
                   transition-all
-                  duration-200
-                  hover:opacity-100
+                  hover:-translate-y-0.5
                 "
+                style={{
+                  color: THEME.primary,
+                  backgroundColor: THEME.surface,
+                  border: `1px solid ${THEME.border}`,
+                }}
                 title="Refresh"
               >
-                <FiRefreshCw size={13} />
+                <FiRefreshCw size={12} />
               </button>
             </div>
           </div>
+
+          {/* DATA TABLE */}
 
           <DataTable
             columns={columns}
@@ -1466,31 +1745,37 @@ const TicketManagement = () => {
                   text-center
                 "
               >
+                <IconBox
+                  size="h-16 w-16"
+                  radius="rounded-[18px]"
+                >
+                  <FaTicketAlt size={23} />
+                </IconBox>
+
                 <div
                   className="
-                    mb-4
-                    flex
-                    h-16
-                    w-16
-                    items-center
-                    justify-center
-                    rounded-[18px]
+                    mt-4
+                    text-[14px]
+                    font-extrabold
                   "
                   style={{
-                    color:
-                      "var(--primary-elite-color)",
-                    backgroundColor:
-                      "var(--secondary-light-2-color)",
+                    color: THEME.text,
                   }}
                 >
-                  <FaTicket size={24} />
-                </div>
-
-                <div className="text-[14px] font-extrabold">
                   No Service Requests Found
                 </div>
 
-                <div className="mt-1 max-w-[330px] text-[10px] leading-5 opacity-45">
+                <div
+                  className="
+                    mt-1
+                    max-w-[330px]
+                    text-[10px]
+                    leading-5
+                  "
+                  style={{
+                    color: THEME.textMuted,
+                  }}
+                >
                   There are no service requests
                   matching the current filters. Try
                   changing the filters or create a new
@@ -1513,16 +1798,16 @@ const TicketManagement = () => {
                     py-2
                     text-[10px]
                     font-extrabold
-                    text-[var(--primary-color)]
+                    text-white
                     transition-all
-                    hover:opacity-90
+                    hover:-translate-y-0.5
                   "
                   style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
+                    backgroundColor: THEME.primary,
                   }}
                 >
-                  <FaPlus size={9} />
+                  <FaPlus size={8} />
+
                   Create Request
                 </button>
               </div>
@@ -1533,30 +1818,26 @@ const TicketManagement = () => {
             customStyles={{
               table: {
                 style: {
-                  backgroundColor:
-                    "var(--primary-color)",
+                  backgroundColor: THEME.white,
                 },
               },
 
               headRow: {
                 style: {
-                  minHeight: "50px",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                  borderBottom:
-                    "1px solid var(--secondary-light-2-color)",
+                  minHeight: "48px",
+                  backgroundColor: THEME.surface,
+                  borderBottom: `1px solid ${THEME.border}`,
                 },
               },
 
               headCells: {
                 style: {
-                  fontSize: "9.5px",
+                  fontSize: "9px",
                   fontWeight: "800",
-                  color:
-                    "var(--secondary-color)",
+                  color: THEME.textSoft,
                   overflow: "hidden",
                   textTransform: "uppercase",
-                  letterSpacing: "0.8px",
+                  letterSpacing: "0.75px",
                   paddingLeft: "18px",
                   paddingRight: "18px",
                 },
@@ -1564,22 +1845,21 @@ const TicketManagement = () => {
 
               rows: {
                 style: {
-                  minHeight: "78px",
-                  backgroundColor:
-                    "var(--primary-color)",
-                  borderBottom:
-                    "1px solid var(--secondary-light-2-color)",
+                  minHeight: "76px",
+                  backgroundColor: THEME.white,
+                  borderBottom: `1px solid ${THEME.borderSoft}`,
                   cursor: "pointer",
                   transition:
-                    "all 0.2s ease",
+                    "background-color 0.2s ease, box-shadow 0.2s ease",
                 },
 
                 highlightOnHoverStyle: {
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
+                  backgroundColor: THEME.primarySoft2,
                   borderBottomColor:
-                    "var(--secondary-light-2-color)",
+                    THEME.primaryBorder,
                   outline: "none",
+                  boxShadow:
+                    `inset 3px 0 0 ${THEME.primary}`,
                 },
               },
 
@@ -1595,27 +1875,25 @@ const TicketManagement = () => {
               pagination: {
                 style: {
                   minHeight: "58px",
-                  borderTop:
-                    "1px solid var(--secondary-light-2-color)",
-                  backgroundColor:
-                    "var(--primary-color)",
+                  borderTop: `1px solid ${THEME.border}`,
+                  backgroundColor: THEME.white,
                 },
               },
             }}
           />
 
-          {/* =================================================
-              PAGINATION
-          ================================================== */}
+          {/* PAGINATION */}
 
           <div
             className="
               mt-0
               overflow-hidden
               border-t
-              border-[var(--secondary-light-2-color)]
               px-3
             "
+            style={{
+              borderColor: THEME.border,
+            }}
           >
             <Pagination
               totalPages={totalPages}
@@ -1628,9 +1906,9 @@ const TicketManagement = () => {
         </div>
       </div>
 
-      {/* =====================================================
+      {/* ====================================================
           FILTER DRAWER
-      ====================================================== */}
+      ===================================================== */}
 
       <MuiDrawer
         open={filterDragger}
@@ -1642,7 +1920,7 @@ const TicketManagement = () => {
             flex
             h-full
             flex-col
-            bg-[var(--primary-color)]
+            bg-white
             p-5
           "
         >
@@ -1654,35 +1932,46 @@ const TicketManagement = () => {
               items-center
               gap-3
               border-b
-              border-[var(--secondary-light-2-color)]
               pb-4
             "
+            style={{
+              borderColor: THEME.border,
+            }}
           >
             <div
               className="
                 flex
-                h-9
-                w-9
+                h-10
+                w-10
                 items-center
                 justify-center
-                rounded-xl
+                rounded-[12px]
               "
               style={{
-                backgroundColor:
-                  "var(--primary-elite-color)",
-                color:
-                  "var(--primary-color)",
+                color: THEME.primary,
+                backgroundColor: THEME.primarySoft,
+                border: `1px solid ${THEME.primaryBorder}`,
               }}
             >
               <MdOutlineTune size={18} />
             </div>
 
             <div>
-              <p className="font-bold">
+              <p
+                className="font-extrabold"
+                style={{
+                  color: THEME.text,
+                }}
+              >
                 Filter Requests
               </p>
 
-              <p className="text-[10px] opacity-50">
+              <p
+                className="text-[10px]"
+                style={{
+                  color: THEME.textMuted,
+                }}
+              >
                 Narrow down service requests
               </p>
             </div>
@@ -1720,9 +2009,7 @@ const TicketManagement = () => {
                   customerSelectedOption,
 
                 onSelect: (value, id) => {
-                  setCustomerSelectedOption(
-                    value
-                  );
+                  setCustomerSelectedOption(value);
                   setCustomerSelectedId(id);
                 },
 
@@ -1747,9 +2034,7 @@ const TicketManagement = () => {
                   riderSelectedOption,
 
                 onSelect: (value, id) => {
-                  setRiderSelectedOption(
-                    value
-                  );
+                  setRiderSelectedOption(value);
                   setRiderSelectedId(id);
                 },
 
@@ -1774,17 +2059,14 @@ const TicketManagement = () => {
                   technicianSelectedOption,
 
                 onSelect: (value, id) => {
-                  setTechnicianSelectedOption(
-                    value
-                  );
+                  setTechnicianSelectedOption(value);
                   setTechnicianSelectedId(id);
                 },
 
                 options: userList
                   .filter(
                     (user) =>
-                      user.role ===
-                      "technician"
+                      user.role === "technician"
                   )
                   .map(
                     (user) => user.userName
@@ -1792,8 +2074,7 @@ const TicketManagement = () => {
 
                 optionsObject: userList.filter(
                   (user) =>
-                    user.role ===
-                    "technician"
+                    user.role === "technician"
                 ),
               },
             ].map(
@@ -1806,7 +2087,11 @@ const TicketManagement = () => {
               }) => (
                 <div
                   key={label}
-                  className="flex flex-col gap-1"
+                  className="
+                    flex
+                    flex-col
+                    gap-1.5
+                  "
                 >
                   <label
                     className="
@@ -1814,8 +2099,10 @@ const TicketManagement = () => {
                       font-bold
                       uppercase
                       tracking-wide
-                      opacity-60
                     "
+                    style={{
+                      color: THEME.textMuted,
+                    }}
                   >
                     {label}
                   </label>
@@ -1825,9 +2112,7 @@ const TicketManagement = () => {
                     placeholder={`Select ${label}`}
                     onSelect={onSelect}
                     options={options || []}
-                    optionsObject={
-                      optionsObject
-                    }
+                    optionsObject={optionsObject}
                     disabled={false}
                     containerClassname="w-full"
                     className="cursor-pointer capitalize"
@@ -1845,23 +2130,28 @@ const TicketManagement = () => {
               items-center
               gap-3
               border-t
-              border-[var(--secondary-light-2-color)]
               pt-4
             "
+            style={{
+              borderColor: THEME.border,
+            }}
           >
             <button
               onClick={handleClearFilter}
               className="
-                flex-1
                 h-11
+                flex-1
                 rounded-xl
-                border
-                border-[var(--secondary-light-2-color)]
                 text-[11px]
                 font-bold
-                transition
-                hover:bg-[var(--secondary-light-2-color)]
+                transition-all
+                hover:bg-slate-50
               "
+              style={{
+                color: THEME.text,
+                border: `1px solid ${THEME.border}`,
+                backgroundColor: THEME.white,
+              }}
             >
               Clear
             </button>
@@ -1869,18 +2159,18 @@ const TicketManagement = () => {
             <button
               onClick={handleFilter}
               className="
-                flex-1
                 h-11
+                flex-1
                 rounded-xl
                 text-[11px]
                 font-bold
-                text-[var(--primary-color)]
-                transition
-                hover:opacity-90
+                text-white
+                shadow-[0_6px_16px_rgba(37,99,235,0.16)]
+                transition-all
+                hover:-translate-y-0.5
               "
               style={{
-                backgroundColor:
-                  "var(--primary-elite-color)",
+                backgroundColor: THEME.primary,
               }}
             >
               Apply Filters
