@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
 
 import {
-  FaTicket,
-  FaUserGear,
+  FaTicketAlt,
+  FaUserCog,
   FaPaperclip,
   FaPlus,
   FaExternalLinkAlt,
@@ -372,11 +372,11 @@ const TicketManagement = () => {
               flex h-10 w-10 shrink-0
               items-center justify-center
               rounded-[12px]
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
+              bg-[#E8F0FF]
+              text-[#2563EB]
             "
           >
-            <FaTicket size={15} />
+            <FaTicketAlt size={15} />
           </div>
 
           <div className="min-w-0">
@@ -384,7 +384,7 @@ const TicketManagement = () => {
               className="
                 text-[11px]
                 font-extrabold
-                text-[var(--primary-elite-color)]
+                text-[#2563EB]
                 transition-all
                 hover:underline
               "
@@ -431,8 +431,8 @@ const TicketManagement = () => {
               flex h-9 w-9 shrink-0
               items-center justify-center
               rounded-full
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
+              bg-[#E8F0FF]
+              text-[#2563EB]
               text-[11px]
               font-extrabold
             "
@@ -449,7 +449,7 @@ const TicketManagement = () => {
                   truncate
                   text-[11px]
                   font-bold
-                  text-[var(--secondary-color)]
+                  text-[#343B45]
                 "
               >
                 {row?.customer?.userName || "--"}
@@ -460,11 +460,9 @@ const TicketManagement = () => {
                   to={`/users/customer/details?userId=${row?.customer?._id}`}
                   onClick={(e) => e.stopPropagation()}
                   className="
-                    text-[var(--secondary-color)]
-                    opacity-40
+                    text-[#8993A5]
                     transition-all
-                    hover:text-[var(--primary-elite-color)]
-                    hover:opacity-100
+                    hover:text-[#2563EB]
                   "
                 >
                   <FaExternalLinkAlt size={9} />
@@ -517,7 +515,7 @@ const TicketManagement = () => {
               text-[11px]
               font-semibold
               leading-5
-              text-[var(--secondary-color)]
+              text-[#59626E]
             "
           >
             {row?.problemDescription || "--"}
@@ -664,8 +662,8 @@ const TicketManagement = () => {
                   overflow-hidden
                   rounded-[10px]
                   border
-                  border-[var(--secondary-light-2-color)]
-                  bg-[var(--secondary-light-2-color)]
+                  border-[#E8ECF5]
+                  bg-[#F4F6FA]
                 "
               >
                 <img
@@ -697,12 +695,8 @@ const TicketManagement = () => {
                     px-1
                     text-[8px]
                     font-extrabold
-                    text-[var(--primary-color)]
+                    text-white bg-[#2563EB]
                   "
-                  style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
-                  }}
                 >
                   +{row.attachments.length - 1}
                 </span>
@@ -748,11 +742,11 @@ const TicketManagement = () => {
               flex h-8 w-8 shrink-0
               items-center justify-center
               rounded-full
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
+              bg-[#E8F0FF]
+              text-[#2563EB]
             "
           >
-            <FaUserGear size={12} />
+            <FaUserCog size={12} />
           </div>
 
           <div className="min-w-0">
@@ -776,10 +770,9 @@ const TicketManagement = () => {
                     e.stopPropagation()
                   }
                   className="
-                    opacity-40
+                    text-[#8993A5]
                     transition-all
-                    hover:text-[var(--primary-elite-color)]
-                    hover:opacity-100
+                    hover:text-[#2563EB]
                   "
                 >
                   <FaExternalLinkAlt size={8} />
@@ -823,8 +816,8 @@ const TicketManagement = () => {
               flex h-8 w-8 shrink-0
               items-center justify-center
               rounded-[9px]
-              bg-[var(--secondary-light-2-color)]
-              text-[var(--primary-elite-color)]
+              bg-[#E8F0FF]
+              text-[#2563EB]
             "
           >
             <FiCalendar size={13} />
@@ -862,463 +855,136 @@ const TicketManagement = () => {
 
   return (
     <AnimatedContent>
-      <div className="pb-8 text-[var(--secondary-color)]">
+      <div className="min-h-screen bg-[#F4F7FB] pb-8">
         {/* =====================================================
             PAGE HEADER
         ====================================================== */}
 
-        <div
-          className="
-            relative
-            mb-6
-            overflow-hidden
-            rounded-[24px]
-            border
-            border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
-            px-5
-            py-5
-            shadow-[0_8px_30px_rgba(15,23,42,0.04)]
-            sm:px-6
-          "
-        >
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -right-12
-              -top-16
-              h-40
-              w-40
-              rounded-full
-              opacity-[0.07]
-            "
-            style={{
-              backgroundColor:
-                "var(--primary-elite-color)",
-            }}
-          />
-
-          <div
-            className="
-              relative
-              z-10
-              flex
-              flex-col
-              gap-5
-              lg:flex-row
-              lg:items-center
-              lg:justify-between
-            "
-          >
-            <div className="flex items-center gap-4">
-              <div
-                className="
-                  flex
-                  h-14
-                  w-14
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-[17px]
-                  text-[var(--primary-color)]
-                  shadow-[0_10px_24px_rgba(0,0,0,0.10)]
-                "
-                style={{
-                  backgroundColor:
-                    "var(--primary-elite-color)",
-                }}
-              >
-                <FaTicket size={23} />
-              </div>
-
+        <section className="mb-8">
+          <div className="relative overflow-hidden rounded-[30px] bg-[#0B1220] px-6 py-7 shadow-[0_20px_55px_rgba(15,23,42,0.15)] sm:px-8 sm:py-9">
+            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#2563EB]/20 blur-[2px]" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
+            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <div className="mb-1 flex flex-wrap items-center gap-2">
-                  <h1 className="text-[20px] font-extrabold tracking-[-0.02em]">
-                    Service Requests
-                  </h1>
-
-                  <span
-                    className="
-                      inline-flex
-                      items-center
-                      gap-1.5
-                      rounded-full
-                      px-2.5
-                      py-1
-                      text-[9px]
-                      font-extrabold
-                      uppercase
-                      tracking-[0.08em]
-                    "
-                    style={{
-                      color:
-                        "var(--primary-elite-color)",
-                      backgroundColor:
-                        "var(--secondary-light-2-color)",
-                    }}
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{
-                        backgroundColor:
-                          "var(--primary-elite-color)",
-                      }}
-                    />
-
-                    Live
-                  </span>
+                <div className="mb-3 flex items-center gap-2.5">
+                  <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38BDF8]/50" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38BDF8]" /></span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">Services</span>
                 </div>
-
-                <p className="max-w-[580px] text-[11px] leading-5 opacity-55">
-                  Manage, monitor and track customer
-                  service requests, technicians, status
-                  and attachments from one place.
-                </p>
+                <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-[34px]">Service Requests</h1>
+                <p className="mt-2 max-w-[520px] text-[13px] leading-6 text-white/50">Manage, monitor and track customer service requests, technicians, status and attachments from one place.</p>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* SORT */}
-
-              <Popover
-                isOpen={sortablePopover}
-                positions={["bottom", "left"]}
-                containerClassName="z-50"
-                onClickOutside={() =>
-                  setSortablePopover(false)
-                }
-                content={
-                  <div
-                    className="
-                      mt-2
-                      min-w-[175px]
-                      rounded-xl
-                      border
-                      border-[var(--secondary-light-2-color)]
-                      bg-[var(--primary-color)]
-                      p-2
-                      shadow-xl
-                    "
-                  >
-                    {[
-                      {
-                        label: "Newest First",
-                        val: -1,
-                        Icon: FaSortAmountUpAlt,
-                      },
-                      {
-                        label: "Oldest First",
-                        val: 1,
-                        Icon: FaSortAmountDownAlt,
-                      },
-                    ].map(
-                      ({
-                        label,
-                        val,
-                        Icon,
-                      }) => (
+              <div className="flex flex-wrap items-center gap-3">
+                <Popover
+                  isOpen={sortablePopover}
+                  positions={["bottom", "left"]}
+                  containerClassName="z-50"
+                  onClickOutside={() => setSortablePopover(false)}
+                  content={
+                    <div className="mt-2 min-w-[175px] rounded-xl border border-[#E5EAF1] bg-white p-2 shadow-xl">
+                      {[
+                        { label: "Newest First", val: -1, Icon: FaSortAmountUpAlt },
+                        { label: "Oldest First", val: 1, Icon: FaSortAmountDownAlt },
+                      ].map(({ label, val, Icon }) => (
                         <div
                           key={val}
-                          onClick={() =>
-                            handleSortBy(val)
-                          }
-                          className={`
-                            flex
-                            cursor-pointer
-                            items-center
-                            gap-3
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-[11px]
-                            font-semibold
-                            transition
-                            ${
-                              sortBy === val
-                                ? "bg-[var(--secondary-light-2-color)] text-[var(--primary-elite-color)]"
-                                : "hover:bg-[var(--secondary-light-2-color)]"
-                            }
-                          `}
+                          onClick={() => handleSortBy(val)}
+                          className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-[11px] font-semibold transition ${
+                            sortBy === val ? "bg-[#EFF6FF] text-[#2563EB]" : "hover:bg-[#F4F7FB]"
+                          }`}
                         >
                           <Icon size={13} />
                           {label}
                         </div>
-                      )
-                    )}
-                  </div>
-                }
-              >
-                <button
-                  onClick={() =>
-                    setSortablePopover(
-                      !sortablePopover
-                    )
+                      ))}
+                    </div>
                   }
-                  className="
-                    flex
-                    items-center
-                    gap-2
-                    rounded-xl
-                    border
-                    border-[var(--secondary-light-2-color)]
-                    bg-[var(--primary-color)]
-                    px-4
-                    py-2.5
-                    text-[11px]
-                    font-semibold
-                    shadow-sm
-                    transition
-                    hover:border-[var(--primary-elite-color)]
-                  "
                 >
-                  <HiSortDescending size={15} />
-                  Sort
-                </button>
-              </Popover>
-
-              {/* FILTER */}
-
-              <button
-                onClick={() =>
-                  setFilterDragger(true)
-                }
-                className="
-                  relative
-                  flex
-                  items-center
-                  gap-2
-                  rounded-xl
-                  border
-                  border-[var(--secondary-light-2-color)]
-                  bg-[var(--primary-color)]
-                  px-4
-                  py-2.5
-                  text-[11px]
-                  font-semibold
-                  shadow-sm
-                  transition
-                  hover:border-[var(--primary-elite-color)]
-                "
-              >
-                <MdOutlineTune size={15} />
-
-                Filter
-
-                {filterCount > 0 && (
-                  <span
-                    className="
-                      absolute
-                      -right-1.5
-                      -top-1.5
-                      flex
-                      h-4
-                      w-4
-                      items-center
-                      justify-center
-                      rounded-full
-                      text-[9px]
-                      font-bold
-                      text-[var(--primary-color)]
-                    "
-                    style={{
-                      backgroundColor:
-                        "var(--primary-elite-color)",
-                    }}
+                  <button
+                    onClick={() => setSortablePopover(!sortablePopover)}
+                    className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 text-[12px] font-semibold text-white/85 backdrop-blur-xl transition hover:bg-white/[0.10]"
                   >
-                    {filterCount}
-                  </span>
-                )}
-              </button>
+                    <HiSortDescending size={15} />
+                    Sort
+                  </button>
+                </Popover>
 
-              {/* CREATE */}
+                <button
+                  onClick={() => setFilterDragger(true)}
+                  className="relative flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 text-[12px] font-semibold text-white/85 backdrop-blur-xl transition hover:bg-white/[0.10]"
+                >
+                  <MdOutlineTune size={15} />
+                  Filter
+                  {filterCount > 0 && (
+                    <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#38BDF8] text-[9px] font-bold text-[#0B1220]">
+                      {filterCount}
+                    </span>
+                  )}
+                </button>
 
-              <button
-                onClick={() =>
-                  history.push(
-                    "/services/servicerequests/request"
-                  )
-                }
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  rounded-xl
-                  px-4
-                  py-2.5
-                  text-[11px]
-                  font-extrabold
-                  text-[var(--primary-color)]
-                  shadow-sm
-                  transition
-                  hover:-translate-y-0.5
-                  hover:opacity-90
-                "
-                style={{
-                  backgroundColor:
-                    "var(--primary-elite-color)",
-                }}
-              >
-                <FaPlus size={9} />
-                Create Request
-              </button>
+                <button
+                  onClick={() => history.push("/services/servicerequests/request")}
+                  className="flex items-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-[12px] font-extrabold text-white shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+                >
+                  <FaPlus size={9} />
+                  Create Request
+                </button>
+              </div>
             </div>
+            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent" />
           </div>
-        </div>
+        </section>
 
         {/* =====================================================
             KPI CARDS
         ====================================================== */}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            {
-              title: "Total Requests",
-              value: requestStats.total,
-              desc: "Requests on this page",
-              Icon: FaTicket,
-            },
-            {
-              title: "Open Requests",
-              value: requestStats.open,
-              desc: "Awaiting resolution",
-              Icon: FiActivity,
-            },
-            {
-              title: "Assigned",
-              value: requestStats.assigned,
-              desc: "With technician",
-              Icon: FaUserGear,
-            },
-            {
-              title: "Pending",
-              value: requestStats.pending,
-              desc: "In progress",
-              Icon: FaClock,
-            },
-          ].map((item) => {
-            const Icon = item.Icon;
-
-            return (
-              <div
-                key={item.title}
-                className="
-                  group
-                  relative
-                  overflow-hidden
-                  rounded-[20px]
-                  border
-                  border-[var(--secondary-light-2-color)]
-                  bg-[var(--primary-color)]
-                  p-4
-                  shadow-[0_5px_20px_rgba(15,23,42,0.035)]
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:shadow-[0_12px_28px_rgba(15,23,42,0.07)]
-                "
-              >
-                <div
-                  className="
-                    absolute
-                    -right-8
-                    -top-8
-                    h-24
-                    w-24
-                    rounded-full
-                    opacity-[0.06]
-                  "
-                  style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
-                  }}
-                />
-
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-45">
-                      {item.title}
-                    </p>
-
-                    <p className="mt-1.5 text-[24px] font-extrabold leading-none">
-                      {item.value}
-                    </p>
-
-                    <p className="mt-2 text-[9px] font-semibold opacity-40">
-                      {item.desc}
-                    </p>
+        <section className="mb-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              { title: "Total Requests", value: requestStats.total, desc: "Requests on this page", Icon: FaTicketAlt, soft: "from-[#EEF0FF] to-[#F4FDFF]", line: "from-[#5E63D9] to-[#35C7F3]" },
+              { title: "Open Requests", value: requestStats.open, desc: "Awaiting resolution", Icon: FiActivity, soft: "from-[#ECFDF5] to-[#F0FDFA]", line: "from-[#10B981] to-[#59D6BF]" },
+              { title: "Assigned", value: requestStats.assigned, desc: "With technician", Icon: FaUserCog, soft: "from-[#F4F0FF] to-[#F5F3FF]", line: "from-[#8B5CF6] to-[#4CC9F0]" },
+              { title: "Pending", value: requestStats.pending, desc: "In progress", Icon: FaClock, soft: "from-[#FFF1F3] to-[#FFF5F7]", line: "from-[#F43F5E] to-[#FB7185]" },
+            ].map((item) => (
+              <div key={item.title} className="group relative overflow-hidden rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.035)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#C9D7EF] hover:shadow-[0_22px_45px_rgba(15,23,42,0.09)]">
+                <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${item.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`} />
+                <div className="relative z-10 flex items-start justify-between">
+                  <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${item.soft} text-[#2563EB] transition-all duration-300 group-hover:scale-110`}>
+                    <item.Icon size={18} />
                   </div>
-
-                  <div
-                    className="
-                      flex
-                      h-11
-                      w-11
-                      items-center
-                      justify-center
-                      rounded-[13px]
-                    "
-                    style={{
-                      color:
-                        "var(--primary-elite-color)",
-                      backgroundColor:
-                        "var(--secondary-light-2-color)",
-                    }}
-                  >
-                    <Icon size={18} />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F6FA] text-[#98A2B3] transition-all duration-300 group-hover:bg-[#111827] group-hover:text-white">
+                    <FiArrowUpRight size={14} />
                   </div>
                 </div>
+                <div className="relative z-10 mt-5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8B95A7]">{item.title}</p>
+                  <div className="mt-2.5 flex items-end justify-between gap-2">
+                    <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#111827]">{item.value}</h3>
+                    <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#A0A8B8]">{item.desc}</span>
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#EDF0F5]">
+                  <div className={`h-full w-0 rounded-full bg-gradient-to-r ${item.line} transition-all duration-500 group-hover:w-full`} />
+                </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        </section>
 
         {/* =====================================================
             FILTER HEADER
         ====================================================== */}
 
-        <div
-          className="
-            mb-4
-            overflow-hidden
-            rounded-[20px]
-            border
-            border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
-            shadow-[0_5px_20px_rgba(15,23,42,0.035)]
-          "
-        >
-          <div className="flex items-center gap-3 border-b border-[var(--secondary-light-2-color)] px-4 py-3">
-            <div
-              className="
-                flex
-                h-8
-                w-8
-                items-center
-                justify-center
-                rounded-[9px]
-              "
-              style={{
-                color:
-                  "var(--primary-elite-color)",
-                backgroundColor:
-                  "var(--secondary-light-2-color)",
-              }}
-            >
+        <div className="mb-4 overflow-hidden rounded-[20px] border border-[#E5EAF1] bg-white shadow-[0_5px_20px_rgba(15,23,42,0.035)]">
+          <div className="flex items-center gap-3 border-b border-[#F0F2F7] px-4 py-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#E8F0FF] text-[#2563EB]">
               <FiList size={15} />
             </div>
-
             <div>
-              <h2 className="text-[12px] font-extrabold">
-                Request Filters
-              </h2>
-
-              <p className="text-[9px] opacity-40">
-                Search and filter service requests
-              </p>
+              <h2 className="text-[12px] font-extrabold text-[#111827]">Request Filters</h2>
+              <p className="text-[9px] text-[#8993A5]">Search and filter service requests</p>
             </div>
           </div>
-
           <div className="p-3">
             <TableHeader
               title="Service Requests"
@@ -1334,111 +1000,27 @@ const TicketManagement = () => {
             REQUEST TABLE
         ====================================================== */}
 
-        <div
-          className="
-            overflow-hidden
-            rounded-[22px]
-            border
-            border-[var(--secondary-light-2-color)]
-            bg-[var(--primary-color)]
-            shadow-[0_8px_30px_rgba(15,23,42,0.045)]
-          "
-        >
-          <div
-            className="
-              flex
-              flex-col
-              gap-3
-              border-b
-              border-[var(--secondary-light-2-color)]
-              px-5
-              py-4
-              sm:flex-row
-              sm:items-center
-              sm:justify-between
-            "
-          >
+        <div className="overflow-hidden rounded-[22px] border border-[#E8ECF5] bg-white shadow-[0_18px_42px_rgba(84,98,130,0.10)]">
+          <div className="flex flex-col gap-3 border-b border-[#F0F2F7] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div
-                className="
-                  flex
-                  h-9
-                  w-9
-                  items-center
-                  justify-center
-                  rounded-[11px]
-                "
-                style={{
-                  color:
-                    "var(--primary-elite-color)",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
-              >
-                <FaTicket size={14} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-[#E8F0FF] text-[#2563EB]">
+                <FaTicketAlt size={14} />
               </div>
-
               <div>
-                <h2 className="text-[13px] font-extrabold">
-                  Recent Service Requests
-                </h2>
-
-                <p className="mt-0.5 text-[9px] font-medium opacity-45">
-                  Customer requests and service activity
-                </p>
+                <h2 className="text-[13px] font-extrabold text-[#111827]">Recent Service Requests</h2>
+                <p className="mt-0.5 text-[9px] font-medium text-[#8993A5]">Customer requests and service activity</p>
               </div>
             </div>
-
             <div className="flex items-center gap-2">
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-1.5
-                  rounded-full
-                  px-3
-                  py-1.5
-                "
-                style={{
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                }}
-              >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
-                  }}
-                />
-
-                <span className="text-[9px] font-extrabold uppercase tracking-wide opacity-60">
-                  {serviceRequests?.length || 0}{" "}
-                  Showing
+              <div className="flex items-center gap-1.5 rounded-full bg-[#F5F7FC] px-3 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2563EB]" />
+                <span className="text-[9px] font-extrabold uppercase tracking-wide text-[#7F8897]">
+                  {serviceRequests?.length || 0} Showing
                 </span>
               </div>
-
               <button
-                onClick={() =>
-                  fetchData({
-                    ...filterValues,
-                    page: activePage,
-                    limit,
-                  })
-                }
-                className="
-                  flex
-                  h-8
-                  w-8
-                  items-center
-                  justify-center
-                  rounded-[9px]
-                  bg-[var(--secondary-light-2-color)]
-                  opacity-60
-                  transition-all
-                  duration-200
-                  hover:opacity-100
-                "
+                onClick={() => fetchData({ ...filterValues, page: activePage, limit })}
+                className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#F4F6FA] text-[#98A2B3] transition-all duration-200 hover:bg-[#111827] hover:text-white"
                 title="Refresh"
               >
                 <FiRefreshCw size={13} />
@@ -1454,73 +1036,17 @@ const TicketManagement = () => {
             }
             pointerOnHover
             noDataComponent={
-              <div
-                className="
-                  flex
-                  min-h-[330px]
-                  w-full
-                  flex-col
-                  items-center
-                  justify-center
-                  px-5
-                  text-center
-                "
-              >
-                <div
-                  className="
-                    mb-4
-                    flex
-                    h-16
-                    w-16
-                    items-center
-                    justify-center
-                    rounded-[18px]
-                  "
-                  style={{
-                    color:
-                      "var(--primary-elite-color)",
-                    backgroundColor:
-                      "var(--secondary-light-2-color)",
-                  }}
-                >
-                  <FaTicket size={24} />
+              <div className="flex min-h-[330px] w-full flex-col items-center justify-center px-5 text-center">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#E8F0FF] text-[#2563EB]">
+                  <FaTicketAlt size={24} />
                 </div>
-
-                <div className="text-[14px] font-extrabold">
-                  No Service Requests Found
+                <div className="text-[14px] font-extrabold text-[#111827]">No Service Requests Found</div>
+                <div className="mt-1 max-w-[330px] text-[10px] leading-5 text-[#8993A5]">
+                  There are no service requests matching the current filters.
                 </div>
-
-                <div className="mt-1 max-w-[330px] text-[10px] leading-5 opacity-45">
-                  There are no service requests
-                  matching the current filters. Try
-                  changing the filters or create a new
-                  request.
-                </div>
-
                 <button
-                  onClick={() =>
-                    history.push(
-                      "/services/servicerequests/request"
-                    )
-                  }
-                  className="
-                    mt-5
-                    flex
-                    items-center
-                    gap-2
-                    rounded-[10px]
-                    px-4
-                    py-2
-                    text-[10px]
-                    font-extrabold
-                    text-[var(--primary-color)]
-                    transition-all
-                    hover:opacity-90
-                  "
-                  style={{
-                    backgroundColor:
-                      "var(--primary-elite-color)",
-                  }}
+                  onClick={() => history.push("/services/servicerequests/request")}
+                  className="mt-5 flex items-center gap-2 rounded-[10px] bg-[#2563EB] px-4 py-2 text-[10px] font-extrabold text-white transition-all hover:opacity-90"
                 >
                   <FaPlus size={9} />
                   Create Request
@@ -1531,58 +1057,39 @@ const TicketManagement = () => {
             fixedHeaderScrollHeight="62vh"
             className="data_table_comp"
             customStyles={{
-              table: {
-                style: {
-                  backgroundColor:
-                    "var(--primary-color)",
-                },
-              },
-
+              table: { style: { backgroundColor: "#ffffff" } },
               headRow: {
                 style: {
                   minHeight: "50px",
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                  borderBottom:
-                    "1px solid var(--secondary-light-2-color)",
+                  backgroundColor: "#F8FAFD",
+                  borderBottom: "1px solid #F0F2F7",
                 },
               },
-
               headCells: {
                 style: {
                   fontSize: "9.5px",
                   fontWeight: "800",
-                  color:
-                    "var(--secondary-color)",
-                  overflow: "hidden",
+                  color: "#99A3B3",
                   textTransform: "uppercase",
                   letterSpacing: "0.8px",
                   paddingLeft: "18px",
                   paddingRight: "18px",
                 },
               },
-
               rows: {
                 style: {
                   minHeight: "78px",
-                  backgroundColor:
-                    "var(--primary-color)",
-                  borderBottom:
-                    "1px solid var(--secondary-light-2-color)",
+                  backgroundColor: "#ffffff",
+                  borderBottom: "1px solid #F2F4F8",
                   cursor: "pointer",
-                  transition:
-                    "all 0.2s ease",
+                  transition: "all 0.2s ease",
                 },
-
                 highlightOnHoverStyle: {
-                  backgroundColor:
-                    "var(--secondary-light-2-color)",
-                  borderBottomColor:
-                    "var(--secondary-light-2-color)",
+                  backgroundColor: "#FAFBFF",
+                  borderBottomColor: "#F2F4F8",
                   outline: "none",
                 },
               },
-
               cells: {
                 style: {
                   fontWeight: "600",
@@ -1591,14 +1098,11 @@ const TicketManagement = () => {
                   paddingRight: "18px",
                 },
               },
-
               pagination: {
                 style: {
                   minHeight: "58px",
-                  borderTop:
-                    "1px solid var(--secondary-light-2-color)",
-                  backgroundColor:
-                    "var(--primary-color)",
+                  borderTop: "1px solid #F0F2F7",
+                  backgroundColor: "#ffffff",
                 },
               },
             }}
@@ -1608,15 +1112,7 @@ const TicketManagement = () => {
               PAGINATION
           ================================================== */}
 
-          <div
-            className="
-              mt-0
-              overflow-hidden
-              border-t
-              border-[var(--secondary-light-2-color)]
-              px-3
-            "
-          >
+          <div className="overflow-hidden border-t border-[#F0F2F7] px-3">
             <Pagination
               totalPages={totalPages}
               activePage={activePage}
@@ -1637,54 +1133,16 @@ const TicketManagement = () => {
         onClose={() => setFilterDragger(false)}
         drawerWidth="400px"
       >
-        <div
-          className="
-            flex
-            h-full
-            flex-col
-            bg-[var(--primary-color)]
-            p-5
-          "
-        >
+        <div className="flex h-full flex-col bg-white p-5">
           {/* DRAWER HEADER */}
 
-          <div
-            className="
-              flex
-              items-center
-              gap-3
-              border-b
-              border-[var(--secondary-light-2-color)]
-              pb-4
-            "
-          >
-            <div
-              className="
-                flex
-                h-9
-                w-9
-                items-center
-                justify-center
-                rounded-xl
-              "
-              style={{
-                backgroundColor:
-                  "var(--primary-elite-color)",
-                color:
-                  "var(--primary-color)",
-              }}
-            >
+          <div className="flex items-center gap-3 border-b border-[#F0F2F7] pb-4">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2563EB] text-white">
               <MdOutlineTune size={18} />
             </div>
-
             <div>
-              <p className="font-bold">
-                Filter Requests
-              </p>
-
-              <p className="text-[10px] opacity-50">
-                Narrow down service requests
-              </p>
+              <p className="font-bold text-[#111827]">Filter Requests</p>
+              <p className="text-[10px] text-[#8993A5]">Narrow down service requests</p>
             </div>
           </div>
 
@@ -1845,43 +1303,19 @@ const TicketManagement = () => {
               items-center
               gap-3
               border-t
-              border-[var(--secondary-light-2-color)]
+              border-[#F0F2F7]
               pt-4
             "
           >
             <button
               onClick={handleClearFilter}
-              className="
-                flex-1
-                h-11
-                rounded-xl
-                border
-                border-[var(--secondary-light-2-color)]
-                text-[11px]
-                font-bold
-                transition
-                hover:bg-[var(--secondary-light-2-color)]
-              "
+              className="flex-1 h-11 rounded-xl border border-[#E5EAF1] text-[11px] font-bold text-[#111827] transition hover:bg-[#F4F7FB]"
             >
               Clear
             </button>
-
             <button
               onClick={handleFilter}
-              className="
-                flex-1
-                h-11
-                rounded-xl
-                text-[11px]
-                font-bold
-                text-[var(--primary-color)]
-                transition
-                hover:opacity-90
-              "
-              style={{
-                backgroundColor:
-                  "var(--primary-elite-color)",
-              }}
+              className="flex-1 h-11 rounded-xl bg-[#2563EB] text-[11px] font-bold text-white transition hover:opacity-90"
             >
               Apply Filters
             </button>

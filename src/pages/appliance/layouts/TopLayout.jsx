@@ -31,50 +31,49 @@ const TopLayout = ({ applianceData, appData }) => {
   };
 
   return (
-    <div>
-      <div className="flex items-center gap-3 text-sm font-bold opacity-65">
+    <div className="overflow-hidden rounded-[28px] border border-[#E4E8ED] bg-white p-6 shadow-[0_3px_12px_rgba(30,40,55,0.035)]">
+      <div className="flex flex-wrap items-center gap-3 text-sm font-bold text-[#7C8592]">
         <div
-          className="cursor-pointer hover:underline"
+          className="cursor-pointer transition hover:text-[#20242B]"
           onClick={() => history.push("/Appliance")}
         >
           Appliances
         </div>
-        <div>
+        <div className="text-[#A0A7B1]">
           <IoIosArrowForward />
         </div>
-        <div className="text-xs bg-[#ebebef] p-2 rounded-full">
-          {applianceData?._id}
+        <div className="rounded-full bg-[#F4F6F8] px-3 py-1.5 text-xs text-[#59626E]">
+          {applianceData?._id || "Device"}
         </div>
       </div>
-      <div className="mt-6 flex items-center gap-4">
-        <div className="h-36 w-36 flex items-center justify-center rounded-full overflow-hidden bg-[#eeeef0] border- border-[var(--primary-color)]">
+      <div className="mt-6 flex flex-col gap-5 lg:flex-row lg:items-center">
+        <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-[28px] border border-[#E4E8ED] bg-[#F4F6F8] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
           <img
             src={appData?.model?.attachment || getDeviceImage(appData)}
             alt={applianceData?.modelId}
-            className="h-[100px] w-[100px] object-contain"
+            className="h-[90px] w-[90px] object-contain"
           />
         </div>
         <div>
-          <div className="font-bold text-lg">
+          <div className="text-lg font-extrabold tracking-[-0.02em] text-[#20242B]">
             {appData?.model?.modelName} - {appData?.model?.modelId}
           </div>
-          <div className="font-bold text-sm opacity-40">
+          <div className="mt-1 text-sm font-semibold text-[#7C8592]">
             {appData?.appliance?.applianceName}
           </div>
         </div>
 
-        <div className="ml-auto">
-          {/* Added ml-auto to push the button to the right */}
+        <div className="lg:ml-auto">
           <button
             type="button"
-            className="text-white bg-[#2b318c] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+            className="inline-flex items-center rounded-xl bg-[#20242B] px-5 py-3 text-sm font-bold text-white transition-all duration-300 hover:bg-[#111827] focus:outline-none focus:ring-4 focus:ring-[#D7DCE5]"
             onClick={handleNotifyUser}
-            disabled={isButtonDisabled} // Disable the button during the countdown
+            disabled={isButtonDisabled}
           >
             {isButtonDisabled ? `Sent (${timer}s)` : "Notify User"}
             {!isButtonDisabled && (
               <svg
-                className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
+                className="ms-2 h-3.5 w-3.5 rtl:rotate-180"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

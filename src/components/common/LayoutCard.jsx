@@ -9,8 +9,22 @@ const LayoutCard = ({
   children,
 }) => {
   return (
-    <div className={`bg-[var(--primary-color)] rounded-3xl p-6 mt-2 mb-2`}>
-      <div className="mb-2 font-bold">{heading}</div>
+    <div
+      className="
+        mt-2
+        mb-2
+        overflow-hidden
+        rounded-[24px]
+        border
+        border-[#E4E8ED]
+        bg-white
+        p-6
+        shadow-[0_3px_12px_rgba(30,40,55,0.035)]
+      "
+    >
+      <div className="mb-4 text-sm font-extrabold tracking-[-0.02em] text-[#20242B]">
+        {heading}
+      </div>
       <div
         className={`${
           useFlex
