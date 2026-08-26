@@ -5,7 +5,7 @@ const AdminServices = {
     return requests.post("/admin/register", body);
   },
   loginOTPAdmin: async (body) => {
-    return requests.post(`/eserve/v1/otp/send`, body);
+    return requests.post(`/eserve/v1/otp/send`, { ...body, isAuthServiceFor: "login" });
   },
   verifyOTP: async (body) => {
     return requests.post(`/eserve/v1/otp/verify`, body);
