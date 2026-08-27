@@ -8,11 +8,14 @@ import {
   FiClock,
 } from "react-icons/fi";
 
-const CARD_COLOR = "#6C63FF";
+const PRIMARY = "#AD8B73";
+const SECONDARY = "#CEAB93";
+const SOFT = "#E3CAA5";
+const CREAM = "#FFFBE9";
 
 const ChartCard2 = ({ children, title, loading, mode, data }) => {
-  const skeletonBase = mode === "dark" ? "#1f2937" : "#EEF0F5";
-  const skeletonHighlight = mode === "dark" ? "#374151" : "#FFFFFF";
+  const skeletonBase = mode === "dark" ? "#E3CAA5" : "#F1E7DC";
+  const skeletonHighlight = mode === "dark" ? "#FFFBE9" : "#FFFFFF";
 
   const totalRequests = Array.isArray(data) ? data.length : 0;
 
@@ -25,22 +28,20 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
         min-w-0
         w-full
         overflow-hidden
-        rounded-[26px]
+        rounded-[24px]
         border
-        border-[#E7E9EF]
+        border-[#E8DED3]
         bg-white
         p-5
-        shadow-[0_8px_30px_rgba(30,35,55,0.045)]
+        shadow-[0_6px_24px_rgba(90,65,45,0.05)]
         transition-all
         duration-300
         hover:-translate-y-[2px]
-        hover:border-indigo-100
-        hover:shadow-[0_20px_45px_rgba(79,70,229,0.09)]
+        hover:border-[#CEAB93]
+        hover:shadow-[0_18px_40px_rgba(90,65,45,0.10)]
       "
     >
-      {/* =====================================================
-          DECORATION
-      ====================================================== */}
+      {/* BACKGROUND DECORATION */}
 
       <div
         aria-hidden="true"
@@ -52,13 +53,13 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
           h-44
           w-44
           rounded-full
-          opacity-[0.055]
+          opacity-30
           transition-transform
           duration-700
           group-hover:scale-125
         "
         style={{
-          backgroundColor: CARD_COLOR,
+          backgroundColor: CREAM,
         }}
       />
 
@@ -72,14 +73,14 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
           h-32
           w-32
           rounded-full
-          bg-violet-50
-          opacity-70
+          opacity-20
         "
+        style={{
+          backgroundColor: SOFT,
+        }}
       />
 
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
+      {/* HEADER */}
 
       <div
         className="
@@ -127,8 +128,6 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
             {/* LEFT */}
 
             <div className="relative z-[60] flex min-w-0 items-center gap-3">
-              {/* ICON */}
-
               <div
                 className="
                   relative
@@ -139,16 +138,15 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
                   items-center
                   justify-center
                   overflow-hidden
-                  rounded-[15px]
+                  rounded-[14px]
                   text-white
-                  shadow-[0_10px_22px_rgba(108,99,255,0.22)]
+                  shadow-[0_8px_18px_rgba(173,139,115,0.25)]
                   transition-transform
                   duration-300
                   group-hover:scale-105
                 "
                 style={{
-                  background:
-                    "linear-gradient(135deg, #6C63FF 0%, #7C5CFC 100%)",
+                  backgroundColor: PRIMARY,
                 }}
               >
                 <div
@@ -160,18 +158,16 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
                     h-8
                     w-8
                     rounded-full
-                    bg-white/[0.15]
+                    bg-white/15
                   "
                 />
 
                 <FiList
                   size={20}
-                  strokeWidth={2.4}
+                  strokeWidth={2.3}
                   className="relative z-10"
                 />
               </div>
-
-              {/* TITLE */}
 
               <div className="min-w-0">
                 <h3
@@ -180,22 +176,15 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
                     text-[15px]
                     font-extrabold
                     tracking-[-0.02em]
-                    text-[#202437]
+                    text-[#463B34]
                   "
                 >
                   {title}
                 </h3>
 
-                <div className="mt-1 flex items-center gap-1.5">
-                  <span
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{ backgroundColor: CARD_COLOR }}
-                  />
-
-                  <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#9AA1B0]">
-                    Recent activity
-                  </p>
-                </div>
+                <p className="mt-1 text-[10px] font-medium text-[#9B897B]">
+                  Latest requests
+                </p>
               </div>
             </div>
 
@@ -215,19 +204,19 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
                   whitespace-nowrap
                   rounded-full
                   border
-                  border-indigo-100
-                  bg-indigo-50/70
+                  border-[#E3CAA5]
+                  bg-[#FFFBE9]
                   px-3.5
                   py-1.5
                   text-[10px]
-                  font-extrabold
-                  tracking-wide
+                  font-bold
                   no-underline
-                  text-indigo-600
+                  text-[#8F6D55]
                   transition-all
                   duration-200
-                  hover:border-indigo-200
-                  hover:bg-indigo-100
+                  hover:border-[#CEAB93]
+                  hover:bg-[#E3CAA5]
+                  hover:text-[#5F4A3B]
                   focus:outline-none
                 "
               >
@@ -249,9 +238,7 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
         )}
       </div>
 
-      {/* =====================================================
-          REQUEST SUMMARY
-      ====================================================== */}
+      {/* REQUEST SUMMARY */}
 
       {!loading && (
         <div
@@ -262,8 +249,8 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
             overflow-hidden
             rounded-[16px]
             border
-            border-[#ECEEF3]
-            bg-[#F9FAFC]
+            border-[#EFE5DB]
+            bg-[#FFFBE9]
           "
         >
           <div className="flex items-center justify-between px-4 py-3">
@@ -277,7 +264,7 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
                   justify-center
                   rounded-[10px]
                   bg-white
-                  text-indigo-500
+                  text-[#AD8B73]
                   shadow-sm
                 "
               >
@@ -285,43 +272,37 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
               </div>
 
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#9AA1B0]">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#9B897B]">
                   Total Requests
                 </p>
 
-                <p className="mt-0.5 text-[19px] font-extrabold leading-none tracking-[-0.03em] text-[#202437]">
+                <p className="mt-0.5 text-[19px] font-extrabold leading-none tracking-[-0.03em] text-[#463B34]">
                   {totalRequests}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span
-                  className="
-                    absolute
-                    inline-flex
-                    h-full
-                    w-full
-                    animate-ping
-                    rounded-full
-                    opacity-50
-                  "
-                  style={{
-                    backgroundColor: CARD_COLOR,
-                  }}
-                />
+            <div
+              className="
+                flex
+                items-center
+                gap-2
+                rounded-full
+                bg-white
+                px-2.5
+                py-1.5
+                shadow-sm
+              "
+            >
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{
+                  backgroundColor: PRIMARY,
+                }}
+              />
 
-                <span
-                  className="relative h-2 w-2 rounded-full"
-                  style={{
-                    backgroundColor: CARD_COLOR,
-                  }}
-                />
-              </span>
-
-              <span className="text-[9px] font-bold uppercase tracking-wider text-[#7F8792]">
-                Live activity
+              <span className="text-[9px] font-semibold text-[#806F62]">
+                Recent
               </span>
             </div>
           </div>
@@ -331,9 +312,13 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
           <div
             className="h-[2px] w-full"
             style={{
-              background:
-                "linear-gradient(90deg, transparent 0%, #6C63FF 50%, transparent 100%)",
-              opacity: 0.35,
+              background: `linear-gradient(
+                90deg,
+                transparent 0%,
+                ${SECONDARY} 50%,
+                transparent 100%
+              )`,
+              opacity: 0.7,
             }}
           />
         </div>
@@ -341,11 +326,9 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
 
       {/* DIVIDER */}
 
-      <div className="relative z-[20] mb-3 h-px w-full bg-[#EEF0F4]" />
+      <div className="relative z-[20] mb-3 h-px w-full bg-[#EFE9E3]" />
 
-      {/* =====================================================
-          CONTENT
-      ====================================================== */}
+      {/* CONTENT */}
 
       <div className="relative z-[20] min-h-[300px] w-full overflow-hidden">
         {loading ? (
@@ -358,8 +341,6 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
                   items-center
                   gap-3
                   rounded-[14px]
-                  border
-                  border-transparent
                   px-2
                   py-1
                 "
@@ -405,21 +386,22 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
         )}
       </div>
 
-      {/* =====================================================
-          FOOTER STATUS
-      ====================================================== */}
+      {/* FOOTER */}
 
       {!loading && (
-        <div className="relative z-[20] mt-3 flex items-center gap-2 border-t border-[#F0F1F4] pt-3">
-          <FiClock size={11} className="text-[#A0A6B2]" />
+        <div className="relative z-[20] mt-3 flex items-center gap-2 border-t border-[#F0EAE4] pt-3">
+          <FiClock size={11} className="text-[#AD8B73]" />
 
-          <span className="text-[9px] font-medium text-[#9AA1B0]">
-            Showing latest service activity
+          <span className="text-[9px] font-medium text-[#9B897B]">
+            Recent service requests
           </span>
 
           <FiActivity
             size={11}
-            className="ml-auto text-indigo-400"
+            className="ml-auto"
+            style={{
+              color: SECONDARY,
+            }}
           />
         </div>
       )}
@@ -442,8 +424,7 @@ const ChartCard2 = ({ children, title, loading, mode, data }) => {
           group-hover:scale-x-100
         "
         style={{
-          background:
-            "linear-gradient(90deg, #6C63FF 0%, #8B5CF6 100%)",
+          background: `linear-gradient(90deg, ${PRIMARY} 0%, ${SECONDARY} 100%)`,
         }}
       />
     </div>

@@ -10,13 +10,20 @@ import {
   FaMoneyBillWave,
 } from "react-icons/fa";
 
-import { FiFileText, FiImage, FiTag as FiTagIcon } from "react-icons/fi";
+import {
+  FiFileText,
+  FiImage,
+  FiTag as FiTagIcon,
+} from "react-icons/fi";
 
 import MuiDrawer from "@/components/drawer/MuiDrawer";
 import Dropdown from "@/components/common/DropDown";
 import AdminServices from "@/services/AdminServices";
 import { DecryptData } from "@/utils/DecryptData";
-import { notifyError, notifySuccess } from "@/utils/toast";
+import {
+  notifyError,
+  notifySuccess,
+} from "@/utils/toast";
 
 /* ============================================================
    LINKS
@@ -29,17 +36,16 @@ export const links = ["Offers", "Blogs"];
 ============================================================ */
 
 const THEME = {
-  navy: "#0f172a",
-  text: "#111827",
-  textMuted: "#64748b",
-  blue: "#2563eb",
-  blueDark: "#1d4ed8",
-  blueSoft: "#eff6ff",
-  blueBorder: "#dbeafe",
-  white: "#ffffff",
-  border: "#e5e7eb",
-  borderSoft: "#eef2f7",
-  surface: "#f8fafc",
+  primary: "#AD8B73",
+  secondary: "#CEAB93",
+  soft: "#E3CAA5",
+  cream: "#FFFBE9",
+
+  text: "#59483D",
+  textDark: "#4F4037",
+  textMuted: "#75665C",
+
+  white: "#FFFFFF",
 };
 
 /* ============================================================
@@ -55,9 +61,9 @@ const IconBox = ({
     <div
       className={`${size} ${radius} flex shrink-0 items-center justify-center`}
       style={{
-        color: THEME.blue,
-        backgroundColor: THEME.blueSoft,
-        border: `1px solid ${THEME.blueBorder}`,
+        color: THEME.primary,
+        backgroundColor: `${THEME.soft}55`,
+        border: `1px solid ${THEME.soft}`,
       }}
     >
       {children}
@@ -81,15 +87,35 @@ const InputWithIcon = ({
 }) => {
   return (
     <div
-      className={`flex h-11 w-full items-center overflow-hidden rounded-[12px] bg-white transition-all duration-200 ${className}`}
+      className={`
+        flex
+        h-11
+        w-full
+        items-center
+        overflow-hidden
+        rounded-[12px]
+        bg-white
+        transition-all
+        duration-200
+        focus-within:shadow-[0_0_0_3px_rgba(173,139,115,0.10)]
+        ${className}
+      `}
       style={{
-        border: `1px solid ${THEME.border}`,
+        border: `1px solid ${THEME.soft}`,
       }}
     >
       <div
-        className="flex h-full w-[40px] shrink-0 items-center justify-center"
+        className="
+          flex
+          h-full
+          w-[40px]
+          shrink-0
+          items-center
+          justify-center
+        "
         style={{
-          color: THEME.textMuted,
+          color: THEME.primary,
+          backgroundColor: `${THEME.cream}`,
         }}
       >
         {icon}
@@ -106,11 +132,11 @@ const InputWithIcon = ({
           min-w-0
           flex-1
           bg-transparent
-          pr-3
+          px-3
           text-[11px]
           font-semibold
           outline-none
-          placeholder:text-slate-400
+          placeholder:text-[#A99A90]
           ${inputClassName}
         `}
         style={{
@@ -136,7 +162,10 @@ const textareaClass = `
   leading-5
   outline-none
   resize-none
-  placeholder:text-slate-400
+  placeholder:text-[#A99A90]
+  transition-all
+  duration-200
+  focus:shadow-[0_0_0_3px_rgba(173,139,115,0.10)]
 `;
 
 /* ============================================================
@@ -197,9 +226,10 @@ const ImageUploader = ({
           bg-white
           transition-all
           duration-300
+          hover:bg-[#FFFBE9]
         "
         style={{
-          border: `1px dashed ${THEME.blueBorder}`,
+          border: `1px dashed ${THEME.secondary}`,
         }}
       >
         {imageValue.image ? (
@@ -230,11 +260,12 @@ const ImageUploader = ({
                 py-1.5
                 text-[8px]
                 font-bold
+                shadow-sm
               "
               style={{
-                color: THEME.navy,
-                backgroundColor: THEME.white,
-                border: `1px solid ${THEME.border}`,
+                color: THEME.text,
+                backgroundColor: THEME.cream,
+                border: `1px solid ${THEME.soft}`,
               }}
             >
               <FiImage size={10} />
@@ -262,7 +293,7 @@ const ImageUploader = ({
             <span
               className="mt-1 text-[8px]"
               style={{
-                color: "#94a3b8",
+                color: THEME.secondary,
               }}
             >
               JPG, PNG or WEBP
@@ -287,15 +318,22 @@ const AppManagementHeader = ({
   editValue,
 }) => {
   const [nameValue, setNameValue] = useState("");
-  const [descriptionValue, setDescriptionValue] = useState("");
-
-  const [offerStartDate, setOfferStartDate] = useState("");
-  const [offerEndDate, setOfferEndDate] = useState("");
-
-  const [restrictedMinimumPrice, setRestrictedMinimumPrice] =
+  const [descriptionValue, setDescriptionValue] =
     useState("");
 
-  const [maxOfferPrice, setMaxOfferPrice] = useState("");
+  const [offerStartDate, setOfferStartDate] =
+    useState("");
+
+  const [offerEndDate, setOfferEndDate] =
+    useState("");
+
+  const [
+    restrictedMinimumPrice,
+    setRestrictedMinimumPrice,
+  ] = useState("");
+
+  const [maxOfferPrice, setMaxOfferPrice] =
+    useState("");
 
   const [imageValue, setImageValue] = useState({
     fileName: "",
@@ -303,15 +341,21 @@ const AppManagementHeader = ({
   });
 
   const [flatPrice, setFlatPrice] = useState("");
-  const [offerPercentage, setOfferPercentage] = useState("");
-  const [couponCode, setCouponCode] = useState("");
+  const [offerPercentage, setOfferPercentage] =
+    useState("");
+
+  const [couponCode, setCouponCode] =
+    useState("");
 
   const [
     restrictedServiceMode,
     setRestrictedServiceModeSelectedOption,
   ] = useState("");
 
-  const [offerBy, setOfferBySelectedOption] = useState("");
+  const [
+    offerBy,
+    setOfferBySelectedOption,
+  ] = useState("");
 
   /* ============================================================
      RESET FORM
@@ -394,7 +438,8 @@ const AppManagementHeader = ({
       couponCode,
 
       offerBy: {
-        ...(offerBy?.toLowerCase() === "percentage"
+        ...(offerBy?.toLowerCase() ===
+        "percentage"
           ? {
               percentage: offerPercentage,
             }
@@ -419,7 +464,9 @@ const AppManagementHeader = ({
     const onSuccess = (message) => {
       notifySuccess(message);
 
-      if (typeof getManagementList === "function") {
+      if (
+        typeof getManagementList === "function"
+      ) {
         getManagementList();
       }
 
@@ -428,10 +475,13 @@ const AppManagementHeader = ({
     };
 
     const onError = (err) => {
-      const d = DecryptData(err?.response?.data);
+      const d = DecryptData(
+        err?.response?.data
+      );
 
       notifyError(
-        d?.error?.message || "Something went wrong"
+        d?.error?.message ||
+          "Something went wrong"
       );
     };
 
@@ -445,7 +495,9 @@ const AppManagementHeader = ({
             ...offerPayload,
             offerId: editValue._id,
           })
-        : AdminServices.createOffer(offerPayload);
+        : AdminServices.createOffer(
+            offerPayload
+          );
 
       call
         .then(() =>
@@ -470,7 +522,9 @@ const AppManagementHeader = ({
             ...blogPayload,
             blogId: editValue._id,
           })
-        : AdminServices.createBlog(blogPayload);
+        : AdminServices.createBlog(
+            blogPayload
+          );
 
       call
         .then(() =>
@@ -492,7 +546,9 @@ const AppManagementHeader = ({
     if (!editValue?._id) return;
 
     if (currentLink === "Blogs") {
-      setNameValue(editValue?.blogTitle || "");
+      setNameValue(
+        editValue?.blogTitle || ""
+      );
 
       setDescriptionValue(
         editValue?.blogDescription || ""
@@ -507,7 +563,9 @@ const AppManagementHeader = ({
     }
 
     if (currentLink === "Offers") {
-      setNameValue(editValue?.offerName || "");
+      setNameValue(
+        editValue?.offerName || ""
+      );
 
       setDescriptionValue(
         editValue?.offerDescription || ""
@@ -515,7 +573,9 @@ const AppManagementHeader = ({
 
       setOfferStartDate(
         editValue?.offerStartDate
-          ? new Date(editValue.offerStartDate)
+          ? new Date(
+              editValue.offerStartDate
+            )
               .toISOString()
               .split("T")[0]
           : ""
@@ -523,14 +583,17 @@ const AppManagementHeader = ({
 
       setOfferEndDate(
         editValue?.offerEndDate
-          ? new Date(editValue.offerEndDate)
+          ? new Date(
+              editValue.offerEndDate
+            )
               .toISOString()
               .split("T")[0]
           : ""
       );
 
       setRestrictedMinimumPrice(
-        editValue?.restrictedMinimumPrice || ""
+        editValue?.restrictedMinimumPrice ||
+          ""
       );
 
       setMaxOfferPrice(
@@ -574,7 +637,10 @@ const AppManagementHeader = ({
      STATES
   ============================================================ */
 
-  const isEditing = Boolean(editValue?._id);
+  const isEditing = Boolean(
+    editValue?._id
+  );
+
   const isBlog = currentLink === "Blogs";
 
   const today = new Date()
@@ -601,13 +667,15 @@ const AppManagementHeader = ({
           bg-white
           px-5
           py-5
-          shadow-[0_8px_30px_rgba(15,23,42,0.05)]
+          shadow-[0_8px_30px_rgba(89,72,61,0.07)]
           sm:px-6
         "
         style={{
-          border: `1px solid ${THEME.border}`,
+          border: `1px solid ${THEME.soft}`,
         }}
       >
+        {/* Decorative circle */}
+
         <div
           className="
             pointer-events-none
@@ -617,10 +685,10 @@ const AppManagementHeader = ({
             h-48
             w-48
             rounded-full
-            opacity-[0.045]
+            opacity-[0.13]
           "
           style={{
-            backgroundColor: THEME.blue,
+            backgroundColor: THEME.secondary,
           }}
         />
 
@@ -633,10 +701,10 @@ const AppManagementHeader = ({
             h-40
             w-40
             rounded-full
-            opacity-[0.035]
+            opacity-[0.10]
           "
           style={{
-            backgroundColor: THEME.blue,
+            backgroundColor: THEME.primary,
           }}
         />
 
@@ -679,10 +747,12 @@ const AppManagementHeader = ({
                     tracking-[-0.02em]
                   "
                   style={{
-                    color: THEME.navy,
+                    color: THEME.text,
                   }}
                 >
-                  {isBlog ? "Blogs" : "Offers"}
+                  {isBlog
+                    ? "Blogs"
+                    : "Offers"}
                 </h1>
 
                 <span
@@ -699,19 +769,27 @@ const AppManagementHeader = ({
                     tracking-[0.1em]
                   "
                   style={{
-                    color: THEME.navy,
-                    backgroundColor: THEME.blueSoft,
-                    border: `1px solid ${THEME.blueBorder}`,
+                    color: THEME.primary,
+                    backgroundColor:
+                      THEME.cream,
+                    border: `1px solid ${THEME.soft}`,
                   }}
                 >
                   <span
-                    className="h-1.5 w-1.5 rounded-full"
+                    className="
+                      h-1.5
+                      w-1.5
+                      rounded-full
+                    "
                     style={{
-                      backgroundColor: THEME.blue,
+                      backgroundColor:
+                        THEME.primary,
                     }}
                   />
 
-                  {isBlog ? "Content" : "Promotion"}
+                  {isBlog
+                    ? "Content"
+                    : "Promotion"}
                 </span>
 
               </div>
@@ -746,18 +824,21 @@ const AppManagementHeader = ({
               p-1
             "
             style={{
-              border: `1px solid ${THEME.border}`,
+              border: `1px solid ${THEME.soft}`,
             }}
           >
             {links.map((link) => {
-              const active = link === currentLink;
+              const active =
+                link === currentLink;
 
               return (
                 <button
                   key={link}
                   type="button"
-                  onClick={() => handleTabChange(link)}
-                  className={`
+                  onClick={() =>
+                    handleTabChange(link)
+                  }
+                  className="
                     group
                     relative
                     flex
@@ -772,50 +853,50 @@ const AppManagementHeader = ({
                     transition-all
                     duration-300
                     ease-out
-                    ${
-                      active
-                        ? "shadow-[0_4px_12px_rgba(37,99,235,0.10)]"
-                        : "hover:-translate-y-[1px] hover:shadow-[0_5px_14px_rgba(37,99,235,0.10)]"
-                    }
-                  `}
+                    hover:-translate-y-[1px]
+                  "
                   style={{
                     color: active
-                      ? THEME.blue
+                      ? THEME.text
                       : THEME.textMuted,
 
                     backgroundColor: active
-                      ? THEME.blueSoft
+                      ? THEME.cream
                       : THEME.white,
 
                     border: active
-                      ? `1px solid ${THEME.blueBorder}`
-                      : `1px solid ${THEME.border}`,
+                      ? `1px solid ${THEME.secondary}`
+                      : `1px solid ${THEME.soft}`,
+
+                    boxShadow: active
+                      ? `0 4px 12px rgba(173,139,115,0.12)`
+                      : "none",
                   }}
                 >
 
                   {/* Hover background */}
 
                   <span
-                    className={`
+                    className="
                       pointer-events-none
                       absolute
                       inset-0
                       rounded-[10px]
-                      bg-[#eff6ff]
+                      opacity-0
                       transition-all
                       duration-300
-                      ${
-                        active
-                          ? "opacity-0"
-                          : "opacity-0 group-hover:opacity-100"
-                      }
-                    `}
+                      group-hover:opacity-100
+                    "
+                    style={{
+                      backgroundColor:
+                        THEME.cream,
+                    }}
                   />
 
-                  {/* Bottom animated line */}
+                  {/* Bottom line */}
 
                   <span
-                    className={`
+                    className="
                       pointer-events-none
                       absolute
                       bottom-0
@@ -823,15 +904,20 @@ const AppManagementHeader = ({
                       h-[2px]
                       -translate-x-1/2
                       rounded-full
-                      bg-[#2563eb]
                       transition-all
                       duration-300
-                      ${
-                        active
-                          ? "w-5 opacity-100"
-                          : "w-0 opacity-0 group-hover:w-5 group-hover:opacity-100"
-                      }
-                    `}
+                      group-hover:w-5
+                    "
+                    style={{
+                      width: active
+                        ? "20px"
+                        : "0px",
+                      opacity: active
+                        ? 1
+                        : 0,
+                      backgroundColor:
+                        THEME.primary,
+                    }}
                   />
 
                   {/* Icon */}
@@ -848,11 +934,18 @@ const AppManagementHeader = ({
                       group-hover:scale-110
                       group-hover:-translate-y-[1px]
                     "
+                    style={{
+                      color: active
+                        ? THEME.primary
+                        : THEME.textMuted,
+                    }}
                   >
                     {link === "Offers" ? (
                       <FaTag size={11} />
                     ) : (
-                      <FaRegNewspaper size={11} />
+                      <FaRegNewspaper
+                        size={11}
+                      />
                     )}
                   </span>
 
@@ -889,7 +982,16 @@ const AppManagementHeader = ({
         }}
         drawerWidth="420px"
       >
-        <div className="flex h-full flex-col bg-white">
+        <div
+          className="
+            flex
+            h-full
+            flex-col
+          "
+          style={{
+            backgroundColor: THEME.cream,
+          }}
+        >
 
           {/* ====================================================
               DRAWER HEADER
@@ -904,7 +1006,7 @@ const AppManagementHeader = ({
               py-4
             "
             style={{
-              borderColor: THEME.border,
+              borderColor: THEME.soft,
               backgroundColor: THEME.white,
             }}
           >
@@ -917,21 +1019,32 @@ const AppManagementHeader = ({
                 h-40
                 w-40
                 rounded-full
-                opacity-[0.06]
+                opacity-[0.14]
               "
               style={{
-                backgroundColor: THEME.blue,
+                backgroundColor:
+                  THEME.secondary,
               }}
             />
 
-            <div className="relative z-10 flex items-center gap-3">
+            <div
+              className="
+                relative
+                z-10
+                flex
+                items-center
+                gap-3
+              "
+            >
 
               <IconBox
                 size="h-11 w-11"
                 radius="rounded-[13px]"
               >
                 {isBlog ? (
-                  <FaRegNewspaper size={17} />
+                  <FaRegNewspaper
+                    size={17}
+                  />
                 ) : (
                   <MdAddchart size={19} />
                 )}
@@ -940,28 +1053,46 @@ const AppManagementHeader = ({
               <div>
 
                 <p
-                  className="text-[13px] font-extrabold"
+                  className="
+                    text-[13px]
+                    font-extrabold
+                  "
                   style={{
-                    color: THEME.navy,
+                    color: THEME.text,
                   }}
                 >
                   {isEditing
-                    ? `Update ${isBlog ? "Blog" : "Offer"}`
-                    : `Create ${isBlog ? "Blog" : "Offer"}`}
+                    ? `Update ${
+                        isBlog
+                          ? "Blog"
+                          : "Offer"
+                      }`
+                    : `Create ${
+                        isBlog
+                          ? "Blog"
+                          : "Offer"
+                      }`}
                 </p>
 
                 <p
-                  className="mt-0.5 text-[9px]"
+                  className="
+                    mt-0.5
+                    text-[9px]
+                  "
                   style={{
                     color: THEME.textMuted,
                   }}
                 >
                   {isEditing
                     ? `Edit existing ${
-                        isBlog ? "blog" : "offer"
+                        isBlog
+                          ? "blog"
+                          : "offer"
                       }`
                     : `Add a new ${
-                        isBlog ? "blog" : "offer"
+                        isBlog
+                          ? "blog"
+                          : "offer"
                       }`}
                 </p>
 
@@ -976,7 +1107,12 @@ const AppManagementHeader = ({
 
           <form
             onSubmit={handleSubmit}
-            className="flex min-h-0 flex-1 flex-col"
+            className="
+              flex
+              min-h-0
+              flex-1
+              flex-col
+            "
           >
 
             <div
@@ -988,6 +1124,7 @@ const AppManagementHeader = ({
               "
               style={{
                 scrollbarWidth: "thin",
+                scrollbarColor: `${THEME.secondary} transparent`,
               }}
             >
 
@@ -1005,17 +1142,24 @@ const AppManagementHeader = ({
                     <label
                       className={labelClass}
                       style={{
-                        color: THEME.textMuted,
+                        color:
+                          THEME.textMuted,
                       }}
                     >
                       Blog Title
                     </label>
 
                     <InputWithIcon
-                      icon={<FiFileText size={13} />}
+                      icon={
+                        <FiFileText
+                          size={13}
+                        />
+                      }
                       value={nameValue}
                       onChange={(e) =>
-                        setNameValue(e.target.value)
+                        setNameValue(
+                          e.target.value
+                        )
                       }
                       placeholder="Enter blog title"
                     />
@@ -1029,7 +1173,8 @@ const AppManagementHeader = ({
                     <label
                       className={labelClass}
                       style={{
-                        color: THEME.textMuted,
+                        color:
+                          THEME.textMuted,
                       }}
                     >
                       Blog Description
@@ -1042,10 +1187,13 @@ const AppManagementHeader = ({
                           e.target.value
                         )
                       }
-                      className={textareaClass}
+                      className={
+                        textareaClass
+                      }
                       style={{
-                        color: THEME.text,
-                        border: `1px solid ${THEME.border}`,
+                        color:
+                          THEME.text,
+                        border: `1px solid ${THEME.soft}`,
                       }}
                       placeholder="Enter blog description"
                       rows={5}
@@ -1059,7 +1207,9 @@ const AppManagementHeader = ({
                     id="blog-img"
                     label="Blog Image"
                     imageValue={imageValue}
-                    onChange={handleImageChange}
+                    onChange={
+                      handleImageChange
+                    }
                     alt="Blog"
                   />
 
@@ -1079,17 +1229,24 @@ const AppManagementHeader = ({
                     <label
                       className={labelClass}
                       style={{
-                        color: THEME.textMuted,
+                        color:
+                          THEME.textMuted,
                       }}
                     >
                       Offer Name
                     </label>
 
                     <InputWithIcon
-                      icon={<FiTagIcon size={13} />}
+                      icon={
+                        <FiTagIcon
+                          size={13}
+                        />
+                      }
                       value={nameValue}
                       onChange={(e) =>
-                        setNameValue(e.target.value)
+                        setNameValue(
+                          e.target.value
+                        )
                       }
                       placeholder="Enter offer name"
                     />
@@ -1103,7 +1260,8 @@ const AppManagementHeader = ({
                     <label
                       className={labelClass}
                       style={{
-                        color: THEME.textMuted,
+                        color:
+                          THEME.textMuted,
                       }}
                     >
                       Offer Description
@@ -1116,10 +1274,13 @@ const AppManagementHeader = ({
                           e.target.value
                         )
                       }
-                      className={textareaClass}
+                      className={
+                        textareaClass
+                      }
                       style={{
-                        color: THEME.text,
-                        border: `1px solid ${THEME.border}`,
+                        color:
+                          THEME.text,
+                        border: `1px solid ${THEME.soft}`,
                       }}
                       placeholder="Enter offer description"
                       rows={4}
@@ -1129,22 +1290,38 @@ const AppManagementHeader = ({
 
                   {/* DATES */}
 
-                  <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div
+                    className="
+                      mb-5
+                      grid
+                      grid-cols-2
+                      gap-3
+                    "
+                  >
 
                     <div>
 
                       <label
-                        className={labelClass}
+                        className={
+                          labelClass
+                        }
                         style={{
-                          color: THEME.textMuted,
+                          color:
+                            THEME.textMuted,
                         }}
                       >
                         Start Date
                       </label>
 
                       <InputWithIcon
-                        icon={<FaCalendarAlt size={11} />}
-                        value={offerStartDate}
+                        icon={
+                          <FaCalendarAlt
+                            size={11}
+                          />
+                        }
+                        value={
+                          offerStartDate
+                        }
                         onChange={(e) =>
                           setOfferStartDate(
                             e.target.value
@@ -1159,17 +1336,26 @@ const AppManagementHeader = ({
                     <div>
 
                       <label
-                        className={labelClass}
+                        className={
+                          labelClass
+                        }
                         style={{
-                          color: THEME.textMuted,
+                          color:
+                            THEME.textMuted,
                         }}
                       >
                         End Date
                       </label>
 
                       <InputWithIcon
-                        icon={<FaCalendarAlt size={11} />}
-                        value={offerEndDate}
+                        icon={
+                          <FaCalendarAlt
+                            size={11}
+                          />
+                        }
+                        value={
+                          offerEndDate
+                        }
                         onChange={(e) =>
                           setOfferEndDate(
                             e.target.value
@@ -1188,16 +1374,21 @@ const AppManagementHeader = ({
                   <div className="mb-5">
 
                     <label
-                      className={labelClass}
+                      className={
+                        labelClass
+                      }
                       style={{
-                        color: THEME.textMuted,
+                        color:
+                          THEME.textMuted,
                       }}
                     >
                       Restricted Service Mode
                     </label>
 
                     <Dropdown
-                      value={restrictedServiceMode}
+                      value={
+                        restrictedServiceMode
+                      }
                       placeholder="Select service mode"
                       onSelect={
                         setRestrictedServiceModeSelectedOption
@@ -1214,14 +1405,24 @@ const AppManagementHeader = ({
 
                   {/* PRICES */}
 
-                  <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div
+                    className="
+                      mb-5
+                      grid
+                      grid-cols-2
+                      gap-3
+                    "
+                  >
 
                     <div>
 
                       <label
-                        className={labelClass}
+                        className={
+                          labelClass
+                        }
                         style={{
-                          color: THEME.textMuted,
+                          color:
+                            THEME.textMuted,
                         }}
                       >
                         Minimum Price
@@ -1229,9 +1430,13 @@ const AppManagementHeader = ({
 
                       <InputWithIcon
                         icon={
-                          <FaMoneyBillWave size={11} />
+                          <FaMoneyBillWave
+                            size={11}
+                          />
                         }
-                        value={restrictedMinimumPrice}
+                        value={
+                          restrictedMinimumPrice
+                        }
                         onChange={(e) =>
                           setRestrictedMinimumPrice(
                             e.target.value
@@ -1246,9 +1451,12 @@ const AppManagementHeader = ({
                     <div>
 
                       <label
-                        className={labelClass}
+                        className={
+                          labelClass
+                        }
                         style={{
-                          color: THEME.textMuted,
+                          color:
+                            THEME.textMuted,
                         }}
                       >
                         Max Offer Price
@@ -1256,9 +1464,13 @@ const AppManagementHeader = ({
 
                       <InputWithIcon
                         icon={
-                          <FaMoneyBillWave size={11} />
+                          <FaMoneyBillWave
+                            size={11}
+                          />
                         }
-                        value={maxOfferPrice}
+                        value={
+                          maxOfferPrice
+                        }
                         onChange={(e) =>
                           setMaxOfferPrice(
                             e.target.value
@@ -1274,14 +1486,24 @@ const AppManagementHeader = ({
 
                   {/* OFFER TYPE */}
 
-                  <div className="mb-5 grid grid-cols-2 gap-3">
+                  <div
+                    className="
+                      mb-5
+                      grid
+                      grid-cols-2
+                      gap-3
+                    "
+                  >
 
                     <div>
 
                       <label
-                        className={labelClass}
+                        className={
+                          labelClass
+                        }
                         style={{
-                          color: THEME.textMuted,
+                          color:
+                            THEME.textMuted,
                         }}
                       >
                         Offer Type
@@ -1307,9 +1529,12 @@ const AppManagementHeader = ({
                       <div>
 
                         <label
-                          className={labelClass}
+                          className={
+                            labelClass
+                          }
                           style={{
-                            color: THEME.textMuted,
+                            color:
+                              THEME.textMuted,
                           }}
                         >
                           {offerBy.toLowerCase() ===
@@ -1325,9 +1550,13 @@ const AppManagementHeader = ({
                           icon={
                             offerBy.toLowerCase() ===
                             "flat price" ? (
-                              <FaMoneyBillWave size={11} />
+                              <FaMoneyBillWave
+                                size={11}
+                              />
                             ) : (
-                              <FaPercent size={10} />
+                              <FaPercent
+                                size={10}
+                              />
                             )
                           }
                           value={
@@ -1340,10 +1569,12 @@ const AppManagementHeader = ({
                             offerBy.toLowerCase() ===
                             "flat price"
                               ? setFlatPrice(
-                                  e.target.value
+                                  e.target
+                                    .value
                                 )
                               : setOfferPercentage(
-                                  e.target.value
+                                  e.target
+                                    .value
                                 )
                           }
                           placeholder={
@@ -1367,16 +1598,21 @@ const AppManagementHeader = ({
                     <div className="mb-5">
 
                       <label
-                        className={labelClass}
+                        className={
+                          labelClass
+                        }
                         style={{
-                          color: THEME.textMuted,
+                          color:
+                            THEME.textMuted,
                         }}
                       >
                         Coupon Code
                       </label>
 
                       <InputWithIcon
-                        icon={<FaTag size={11} />}
+                        icon={
+                          <FaTag size={11} />
+                        }
                         value={couponCode}
                         onChange={(e) =>
                           setCouponCode(
@@ -1401,7 +1637,9 @@ const AppManagementHeader = ({
                     id="offer-img"
                     label="Offer Image"
                     imageValue={imageValue}
-                    onChange={handleImageChange}
+                    onChange={
+                      handleImageChange
+                    }
                     alt="Offer"
                   />
 
@@ -1424,7 +1662,7 @@ const AppManagementHeader = ({
                 py-4
               "
               style={{
-                borderColor: THEME.border,
+                borderColor: THEME.soft,
               }}
             >
 
@@ -1445,11 +1683,11 @@ const AppManagementHeader = ({
                   font-extrabold
                   transition-all
                   duration-200
-                  hover:bg-slate-50
+                  hover:-translate-y-0.5
                 "
                 style={{
-                  color: THEME.navy,
-                  border: `1px solid ${THEME.border}`,
+                  color: THEME.textMuted,
+                  border: `1px solid ${THEME.soft}`,
                 }}
               >
                 Cancel
@@ -1466,21 +1704,28 @@ const AppManagementHeader = ({
                   text-[10px]
                   font-extrabold
                   text-white
-                  shadow-[0_6px_18px_rgba(37,99,235,0.16)]
                   transition-all
                   duration-200
                   hover:-translate-y-0.5
+                  hover:shadow-[0_8px_20px_rgba(173,139,115,0.25)]
                 "
                 style={{
-                  backgroundColor: THEME.blue,
+                  backgroundColor:
+                    THEME.primary,
+                  boxShadow:
+                    "0 6px 18px rgba(173,139,115,0.16)",
                 }}
               >
                 {isEditing
                   ? `Update ${
-                      isBlog ? "Blog" : "Offer"
+                      isBlog
+                        ? "Blog"
+                        : "Offer"
                     }`
                   : `Create ${
-                      isBlog ? "Blog" : "Offer"
+                      isBlog
+                        ? "Blog"
+                        : "Offer"
                     }`}
               </button>
 

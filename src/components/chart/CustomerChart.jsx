@@ -1,12 +1,23 @@
-import React from 'react';
+import React from "react";
 
-const CustomerChart = ({ legends }) => {
+const CustomerChart = ({ legends = [] }) => {
   return (
-    <div className="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400">
+    <div className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-[#6F6258]">
       {legends.map((legend) => (
-        <div className="flex items-center" key={legend.title}>
-          <span className={`inline-block w-3 h-3 mr-1 ${legend.color} rounded-full`}></span>
-          <span>{legend.title}</span>
+        <div
+          className="flex items-center gap-2"
+          key={legend.title}
+        >
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full"
+            style={{
+              backgroundColor: "#AD8B73",
+            }}
+          />
+
+          <span className="font-medium">
+            {legend.title}
+          </span>
         </div>
       ))}
     </div>

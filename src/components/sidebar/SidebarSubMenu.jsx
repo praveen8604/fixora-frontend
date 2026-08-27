@@ -55,9 +55,6 @@
 // export default SidebarSubMenu;
 
 
-
-
-
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -79,39 +76,24 @@ const SidebarSubMenu = ({
   }
 
   return (
-    <div
-      className="
-        relative
-        ml-3
-        mt-1
-        overflow-hidden
-        border-l
-        border-white/[0.07]
-        pl-2
-      "
-    >
-      {/* Vertical active glow */}
+    <div className="relative ml-3 mt-1 pl-3">
+
+      {/* SUB MENU CONNECTOR */}
       <div
         className="
-          pointer-events-none
           absolute
-          left-[-1px]
-          top-1
-          h-[calc(100%-8px)]
-          w-px
-          bg-gradient-to-b
-          from-indigo-400/20
-          via-cyan-400/10
-          to-transparent
+          left-0
+          top-2
+          bottom-2
+          w-[1px]
+          rounded-full
+          bg-[#E3CAA5]
         "
       />
 
       <ul className="space-y-1">
-
         {route?.map((subRoute) => {
-
-          const subPath =
-            subRoute?.path || "";
+          const subPath = subRoute?.path || "";
 
           const fullPath = subPath.startsWith("/")
             ? subPath
@@ -128,7 +110,6 @@ const SidebarSubMenu = ({
                 subRoute?.path
               }
             >
-
               <NavLink
                 exact
                 to={fullPath}
@@ -137,84 +118,63 @@ const SidebarSubMenu = ({
                   group
                   relative
                   flex
-                  min-h-[43px]
+                  min-h-[42px]
                   w-full
                   items-center
-                  overflow-hidden
                   rounded-xl
+                  border
                   px-3
                   py-2
-                  pl-4
+                  pl-3
                   no-underline
                   transition-all
-                  duration-300
+                  duration-200
                   ease-out
 
                   ${
                     isActive
                       ? `
-                        translate-x-[2px]
-                        border
-                        border-cyan-400/[0.08]
-                        bg-cyan-400/[0.08]
-                        text-cyan-300
-                        shadow-[inset_3px_0_0_#67e8f9]
+                        border-[#CEAB93]
+                        bg-[#604637]
+                        text-[#FFFBE9]
+                        shadow-[0_4px_12px_rgba(89,72,61,0.16)]
                       `
                       : `
-                        border
                         border-transparent
-                        text-slate-400
-                        hover:translate-x-[3px]
-                        hover:border-white/[0.05]
-                        hover:bg-white/[0.05]
-                        hover:text-white
+                        bg-transparent
+                        text-[#806B5D]
+                        hover:border-[#E3CAA5]
+                        hover:bg-[#FFFBE9]
+                        hover:text-[#5F4637]
+                        hover:shadow-[0_3px_10px_rgba(173,139,115,0.08)]
                       `
                   }
                 `}
               >
 
-                {/* Hover shine */}
+                {/* ACTIVE SIDE INDICATOR */}
+                <span
+                  className={`
+                    absolute
+                    left-0
+                    top-1/2
+                    h-0
+                    w-[3px]
+                    -translate-y-1/2
+                    rounded-r-full
+                    bg-[#CEAB93]
+                    transition-all
+                    duration-200
 
-                {!isActive && (
-                  <span
-                    className="
-                      pointer-events-none
-                      absolute
-                      inset-y-0
-                      left-[-100%]
-                      w-[60%]
-                      rotate-12
-                      bg-gradient-to-r
-                      from-transparent
-                      via-white/[0.06]
-                      to-transparent
-                      transition-all
-                      duration-700
-                      group-hover:left-[130%]
-                    "
-                  />
-                )}
+                    ${
+                      isActive
+                        ? "h-6"
+                        : "group-hover:h-5"
+                    }
+                  `}
+                />
 
-                {/* Active indicator */}
-
-                {isActive && (
-                  <span
-                    className="
-                      absolute
-                      left-0
-                      top-1/2
-                      h-5
-                      w-[3px]
-                      -translate-y-1/2
-                      rounded-r-full
-                      bg-cyan-300
-                      shadow-[0_0_10px_rgba(103,232,249,0.8)]
-                    "
-                  />
-                )}
-
-                {/* Icon */}
-
+                {/* ICON */}
                 {subRoute?.icon && (
                   <div
                     className={`
@@ -228,34 +188,43 @@ const SidebarSubMenu = ({
                       items-center
                       justify-center
                       rounded-lg
+                      border
                       transition-all
-                      duration-300
+                      duration-200
 
                       ${
                         isActive
                           ? `
-                            bg-cyan-400/[0.10]
-                            text-cyan-300
+                            border-[#CEAB93]
+                            bg-[#AD8B73]
+                            text-[#FFFBE9]
                           `
                           : `
-                            bg-white/[0.025]
-                            text-slate-500
-                            group-hover:scale-110
-                            group-hover:bg-indigo-400/[0.10]
-                            group-hover:text-cyan-300
+                            border-transparent
+                            bg-[#E3CAA5]/20
+                            text-[#9A806D]
+                            group-hover:translate-x-0.5
+                            group-hover:border-[#E3CAA5]
+                            group-hover:bg-[#CEAB93]/25
+                            group-hover:text-[#AD8B73]
                           `
                       }
                     `}
                   >
                     <subRoute.icon
-                      className="h-[14px] w-[14px]"
+                      className="
+                        h-[14px]
+                        w-[14px]
+                        transition-transform
+                        duration-200
+                        group-hover:scale-105
+                      "
                       aria-hidden="true"
                     />
                   </div>
                 )}
 
-                {/* Text */}
-
+                {/* TEXT */}
                 <span
                   className={`
                     relative
@@ -263,40 +232,58 @@ const SidebarSubMenu = ({
                     overflow-hidden
                     text-nowrap
                     text-[11px]
-                    font-medium
+                    leading-5
                     transition-all
-                    duration-300
+                    duration-200
 
                     ${
                       isActive
-                        ? "font-semibold text-cyan-300"
-                        : "text-slate-400 group-hover:text-white"
+                        ? `
+                          font-semibold
+                          text-[#FFFBE9]
+                        `
+                        : `
+                          font-medium
+                          text-[#806B5D]
+                          group-hover:font-semibold
+                          group-hover:text-[#5F4637]
+                        `
                     }
                   `}
                 >
                   {t(`${subRoute?.name}`)}
                 </span>
 
-                {/* Active dot */}
+                {/* ACTIVE ARROW */}
+                <span
+                  className={`
+                    ml-auto
+                    text-[12px]
+                    transition-all
+                    duration-200
 
-                {isActive && (
-                  <span
-                    className="
-                      absolute
-                      right-3
-                      h-1.5
-                      w-1.5
-                      rounded-full
-                      bg-cyan-300
-                      shadow-[0_0_8px_rgba(103,232,249,0.8)]
-                    "
-                  />
-                )}
-
+                    ${
+                      isActive
+                        ? `
+                          translate-x-0
+                          opacity-100
+                          text-[#CEAB93]
+                        `
+                        : `
+                          -translate-x-1
+                          opacity-0
+                          group-hover:translate-x-0
+                          group-hover:opacity-100
+                          group-hover:text-[#CEAB93]
+                        `
+                    }
+                  `}
+                >
+                  ›
+                </span>
               </NavLink>
 
-              {/* Nested submenu */}
-
+              {/* NESTED SUBMENU */}
               {subRoute?.subMenu?.length > 0 && (
                 <SidebarSubMenu
                   route={subRoute.subMenu}
@@ -305,11 +292,9 @@ const SidebarSubMenu = ({
                   pathname={pathname}
                 />
               )}
-
             </li>
           );
         })}
-
       </ul>
     </div>
   );

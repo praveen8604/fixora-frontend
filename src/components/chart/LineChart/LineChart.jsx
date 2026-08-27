@@ -3,6 +3,11 @@ import "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 
+const PRIMARY = "#AD8B73";
+const SECONDARY = "#CEAB93";
+const SOFT = "#E3CAA5";
+const CREAM = "#FFFBE9";
+
 const LineChart = ({ salesReport }) => {
   const { t } = useTranslation();
 
@@ -37,27 +42,22 @@ const LineChart = ({ salesReport }) => {
     {
       title: "Orders",
       label: t("Pending"),
-      color: "#F59E0B",
-      softColor: "#FFF7E6",
       key: "inprogress",
     },
     {
       title: "Sales",
       label: t("Completed"),
-      color: "#10B981",
-      softColor: "#ECFDF5",
       key: "completed",
     },
     {
       title: "Cancelled",
       label: t("Cancelled"),
-      color: "#EF4444",
-      softColor: "#FEF2F2",
       key: "cancelled",
     },
   ];
 
-  const activeTab = tabs.find((tab) => tab.title === activeButton) || tabs[0];
+  const activeTab =
+    tabs.find((tab) => tab.title === activeButton) || tabs[0];
 
   /* =========================================================
      CHART DATA
@@ -70,10 +70,12 @@ const LineChart = ({ salesReport }) => {
       {
         label: activeTab.label,
 
-        data: sortedReport.map((item) => Number(item?.[activeTab.key]) || 0),
+        data: sortedReport.map(
+          (item) => Number(item?.[activeTab.key]) || 0
+        ),
 
-        borderColor: activeTab.color,
-        backgroundColor: activeTab.color,
+        borderColor: PRIMARY,
+        backgroundColor: PRIMARY,
 
         borderWidth: 3,
 
@@ -87,7 +89,7 @@ const LineChart = ({ salesReport }) => {
 
         pointBackgroundColor: "#FFFFFF",
 
-        pointBorderColor: activeTab.color,
+        pointBorderColor: PRIMARY,
 
         fill: false,
       },
@@ -118,11 +120,11 @@ const LineChart = ({ salesReport }) => {
       },
 
       tooltip: {
-        backgroundColor: "#20242C",
+        backgroundColor: "#6D5A4D",
 
-        titleColor: "#FFFFFF",
+        titleColor: "#FFFBE9",
 
-        bodyColor: "#E7EAF0",
+        bodyColor: "#FFFBE9",
 
         padding: 12,
 
@@ -155,7 +157,7 @@ const LineChart = ({ salesReport }) => {
         },
 
         ticks: {
-          color: "#929AA7",
+          color: "#9B897B",
 
           font: {
             size: 10,
@@ -180,13 +182,13 @@ const LineChart = ({ salesReport }) => {
         grace: "8%",
 
         grid: {
-          color: "#EEF1F5",
+          color: "#EFE5DB",
 
           drawTicks: false,
         },
 
         ticks: {
-          color: "#929AA7",
+          color: "#9B897B",
 
           padding: 8,
 
@@ -219,36 +221,32 @@ const LineChart = ({ salesReport }) => {
 
   return (
     <div className="w-full">
-      {/* =====================================================
-          CHART HEADER
-      ====================================================== */}
+      {/* CHART HEADER */}
 
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* LEFT INFO */}
+        {/* LEFT */}
 
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#A0A7B0]">
-            Service Status
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9B897B]">
+            Service Requests
           </p>
 
-          <div className="mt-1 flex items-center gap-2">
+          <div className="mt-1.5 flex items-center gap-2">
             <span
               className="h-2 w-2 rounded-full"
               style={{
-                backgroundColor: activeTab.color,
-                boxShadow: `0 0 0 4px ${activeTab.color}18`,
+                backgroundColor: PRIMARY,
+                boxShadow: `0 0 0 4px ${SOFT}55`,
               }}
             />
 
-            <span className="text-sm font-bold text-[#282D35]">
+            <span className="text-sm font-bold text-[#463B34]">
               {activeTab.label}
             </span>
           </div>
         </div>
 
-        {/* ===================================================
-            SEGMENTED CONTROL
-        ==================================================== */}
+        {/* TABS */}
 
         <div
           className="
@@ -256,8 +254,8 @@ const LineChart = ({ salesReport }) => {
             w-fit
             rounded-xl
             border
-            border-[#E7EAF0]
-            bg-[#F7F8FA]
+            border-[#E8DED3]
+            bg-[#FFFBE9]
             p-1
           "
         >
@@ -287,17 +285,19 @@ const LineChart = ({ salesReport }) => {
                   sm:min-w-[96px]
                   ${
                     active
-                      ? "bg-white text-[#282D35] shadow-[0_2px_7px_rgba(30,40,55,0.08)]"
-                      : "text-[#929AA7] hover:bg-white/70 hover:text-[#5F6877]"
+                      ? "bg-white text-[#5F4A3B] shadow-[0_2px_7px_rgba(90,65,45,0.10)]"
+                      : "text-[#9B897B] hover:bg-white/80 hover:text-[#6D5544]"
                   }
                 `}
               >
                 <span
                   className="h-1.5 w-1.5 shrink-0 rounded-full transition-all duration-200"
                   style={{
-                    backgroundColor: active ? tab.color : "#C8CDD5",
+                    backgroundColor: active ? PRIMARY : SOFT,
 
-                    boxShadow: active ? `0 0 0 3px ${tab.color}18` : "none",
+                    boxShadow: active
+                      ? `0 0 0 3px ${SOFT}66`
+                      : "none",
                   }}
                 />
 
@@ -308,9 +308,7 @@ const LineChart = ({ salesReport }) => {
         </div>
       </div>
 
-      {/* =====================================================
-          CHART
-      ====================================================== */}
+      {/* CHART */}
 
       {sortedReport.length > 0 ? (
         <div className="h-[290px] w-full">
@@ -328,8 +326,8 @@ const LineChart = ({ salesReport }) => {
             rounded-2xl
             border
             border-dashed
-            border-[#E5E8ED]
-            bg-[#FAFBFC]
+            border-[#E3CAA5]
+            bg-[#FFFBE9]
           "
         >
           <div
@@ -340,19 +338,19 @@ const LineChart = ({ salesReport }) => {
               items-center
               justify-center
               rounded-full
-              bg-[#F1F3F6]
-              text-[#9AA2AC]
+              bg-[#E3CAA5]
+              text-[#80634E]
             "
           >
             <span className="text-lg">—</span>
           </div>
 
-          <p className="mt-3 text-xs font-bold text-[#6F7783]">
-            No service data available
+          <p className="mt-3 text-xs font-bold text-[#6D5544]">
+            No service data
           </p>
 
-          <p className="mt-1 text-[10px] text-[#A0A7B0]">
-            Data will appear here when service activity is available
+          <p className="mt-1 text-[10px] text-[#9B897B]">
+            Service activity will appear here
           </p>
         </div>
       )}

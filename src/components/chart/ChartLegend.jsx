@@ -1,16 +1,35 @@
-import React from 'react'
+import React from "react";
 
-const ChartLegend = ({ legends }) => {
+const ChartLegend = ({ legends = [] }) => {
+  const themeColors = [
+    "#AD8B73",
+    "#CEAB93",
+    "#E3CAA5",
+    "#AD8B73",
+  ];
+
   return (
-    <div className="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400">
-      {legends.map((legend) => (
-        <div className="flex items-center" key={legend.title}>
-          <span className={`inline-block w-3 h-3 mr-1 ${legend.color} rounded-full`}></span>
-          <span>{legend.title}</span>
+    <div className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-[#6F6258]">
+      {legends.map((legend, index) => (
+        <div
+          className="flex items-center gap-2"
+          key={legend.title}
+        >
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full"
+            style={{
+              backgroundColor:
+                themeColors[index % themeColors.length],
+            }}
+          />
+
+          <span className="font-medium">
+            {legend.title}
+          </span>
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default ChartLegend
+export default ChartLegend;

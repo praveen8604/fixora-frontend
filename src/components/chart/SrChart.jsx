@@ -10,6 +10,16 @@ import {
   FiInbox,
 } from "react-icons/fi";
 
+const THEME = {
+  primary: "#AD8B73",
+  secondary: "#CEAB93",
+  accent: "#E3CAA5",
+  light: "#FFFBE9",
+  text: "#5F5147",
+  muted: "#8C7B6D",
+  border: "#E9DED1",
+};
+
 const SrChart = ({ recentSr = [] }) => {
   const history = useHistory();
 
@@ -19,10 +29,54 @@ const SrChart = ({ recentSr = [] }) => {
     history.push(`/services/servicerequests/request?sr_id=${id}`);
   };
 
+  const getStatusStyle = (status) => {
+    const value = String(status || "").toLowerCase();
+
+    if (
+      value.includes("complete") ||
+      value.includes("closed") ||
+      value.includes("deliver")
+    ) {
+      return {
+        backgroundColor: "#E3CAA5",
+        color: "#6F5B4B",
+      };
+    }
+
+    if (
+      value.includes("pending") ||
+      value.includes("progress") ||
+      value.includes("assign")
+    ) {
+      return {
+        backgroundColor: "#FFFBE9",
+        color: "#8A705D",
+        border: `1px solid ${THEME.accent}`,
+      };
+    }
+
+    if (
+      value.includes("cancel") ||
+      value.includes("reject")
+    ) {
+      return {
+        backgroundColor: "#F1E4D8",
+        color: "#80604D",
+      };
+    }
+
+    return {
+      backgroundColor: "#F5EFE8",
+      color: "#766457",
+    };
+  };
+
   const serviceRequestsColumns = [
     {
       name: "SR ID",
+
       selector: (row) => row?._id,
+
       cell: (row) => (
         <div
           onClick={() => goToRequest(row?._id)}
@@ -32,11 +86,11 @@ const SrChart = ({ recentSr = [] }) => {
             cursor-pointer
             items-center
             gap-2
-            font-bold
-            text-[#59616D]
+            font-semibold
+            text-[#75665C]
             transition-colors
             duration-200
-            hover:text-[var(--primary-color)]
+            hover:text-[#AD8B73]
           "
         >
           <span
@@ -47,29 +101,34 @@ const SrChart = ({ recentSr = [] }) => {
               items-center
               justify-center
               rounded-lg
-              bg-[var(--primary-color)]/[0.08]
+              bg-[#FFFBE9]
               px-1.5
               text-[10px]
-              font-extrabold
-              text-[var(--primary-color)]
+              font-bold
+              text-[#AD8B73]
               transition-all
               duration-200
-              group-hover/id:bg-[var(--primary-color)]
+              group-hover/id:bg-[#AD8B73]
               group-hover/id:text-white
             "
           >
             #
           </span>
 
-          <span className="max-w-[70px] truncate text-[11px]">{row?._id}</span>
+          <span className="max-w-[70px] truncate text-[11px]">
+            {row?._id}
+          </span>
         </div>
       ),
+
       width: "120px",
     },
 
     {
       name: "PROBLEM DESCRIPTION",
+
       selector: (row) => row?.problemDescription,
+
       cell: (row) => (
         <div
           onClick={() => goToRequest(row?._id)}
@@ -79,13 +138,15 @@ const SrChart = ({ recentSr = [] }) => {
             cursor-pointer
             items-center
             gap-2
-            text-[#4D5662]
+            text-[#65584F]
             transition-colors
             duration-200
-            hover:text-[#22272F]
+            hover:text-[#4F433B]
           "
         >
-          <FiFileText className="shrink-0 text-[14px] text-[#A3AAB4]" />
+          <FiFileText
+            className="shrink-0 text-[14px] text-[#CEAB93]"
+          />
 
           <span
             className="
@@ -93,7 +154,7 @@ const SrChart = ({ recentSr = [] }) => {
               max-w-[190px]
               truncate
               text-[11px]
-              font-semibold
+              font-medium
             "
             title={row?.problemDescription}
           >
@@ -101,42 +162,48 @@ const SrChart = ({ recentSr = [] }) => {
           </span>
         </div>
       ),
+
       width: "235px",
     },
 
     {
       name: "STATUS",
+
       selector: (row) => row?.ticketStatus,
+
       cell: (row) => {
-        const theme = statusTheme(row?.ticketStatus, true);
+        const statusStyle = getStatusStyle(row?.ticketStatus);
 
         return (
           <div
             onClick={() => goToRequest(row?._id)}
-            className={`
+            className="
               cursor-pointer
               rounded-full
               px-3
               py-1.5
               text-[10px]
-              font-bold
+              font-semibold
               capitalize
               transition-transform
               duration-200
               hover:scale-105
-              ${theme}
-            `}
+            "
+            style={statusStyle}
           >
             {row?.ticketStatus || "Unknown"}
           </div>
         );
       },
+
       width: "135px",
     },
 
     {
       name: "RAISED ON",
+
       selector: (row) => row?.createdAt,
+
       cell: (row) => (
         <div
           onClick={() => goToRequest(row?._id)}
@@ -145,29 +212,33 @@ const SrChart = ({ recentSr = [] }) => {
             cursor-pointer
             items-center
             gap-2
-            text-[#858D98]
+            text-[#8C7B6D]
           "
         >
-          <FiCalendar className="text-[13px]" />
+          <FiCalendar className="text-[13px] text-[#CEAB93]" />
 
           <div>
-            <p className="text-[10px] font-semibold text-[#59616D]">
+            <p className="text-[10px] font-semibold text-[#65584F]">
               {row?.createdAt
                 ? moment(row.createdAt).format("DD MMM YYYY")
                 : "-"}
             </p>
 
-            <p className="mt-0.5 text-[9px] text-[#A2A9B2]">
-              {row?.createdAt ? moment(row.createdAt).format("hh:mm A") : "-"}
+            <p className="mt-0.5 text-[9px] text-[#A08F82]">
+              {row?.createdAt
+                ? moment(row.createdAt).format("hh:mm A")
+                : "-"}
             </p>
           </div>
         </div>
       ),
+
       width: "150px",
     },
 
     {
       name: "",
+
       cell: (row) => (
         <button
           type="button"
@@ -180,13 +251,13 @@ const SrChart = ({ recentSr = [] }) => {
             justify-center
             rounded-xl
             border
-            border-[#E8EBEF]
-            bg-white
-            text-[#929AA5]
+            border-[#E9DED1]
+            bg-[#FFFBE9]
+            text-[#9A8575]
             transition-all
             duration-200
-            hover:border-[var(--primary-color)]
-            hover:bg-[var(--primary-color)]
+            hover:border-[#AD8B73]
+            hover:bg-[#AD8B73]
             hover:text-white
           "
           title="Open request"
@@ -194,7 +265,9 @@ const SrChart = ({ recentSr = [] }) => {
           <FiArrowUpRight className="text-[13px]" />
         </button>
       ),
+
       width: "55px",
+
       right: true,
     },
   ];
@@ -209,8 +282,8 @@ const SrChart = ({ recentSr = [] }) => {
     headRow: {
       style: {
         minHeight: "42px",
-        borderBottom: "1px solid #EEF1F4",
-        backgroundColor: "#FAFBFC",
+        borderBottom: `1px solid ${THEME.border}`,
+        backgroundColor: THEME.light,
         borderRadius: "12px",
       },
     },
@@ -219,10 +292,10 @@ const SrChart = ({ recentSr = [] }) => {
       style: {
         paddingLeft: "12px",
         paddingRight: "12px",
-        color: "#9AA2AC",
+        color: "#927F70",
         fontSize: "9px",
-        fontWeight: "800",
-        letterSpacing: "0.08em",
+        fontWeight: "700",
+        letterSpacing: "0.07em",
         textTransform: "uppercase",
       },
     },
@@ -230,14 +303,14 @@ const SrChart = ({ recentSr = [] }) => {
     rows: {
       style: {
         minHeight: "66px",
-        borderBottom: "1px solid #F1F3F5",
+        borderBottom: "1px solid #F1E9E1",
         backgroundColor: "#FFFFFF",
         transition: "all 0.2s ease",
       },
 
       highlightOnHoverStyle: {
-        backgroundColor: "#FAFBFC",
-        borderBottomColor: "#E9EDF1",
+        backgroundColor: "#FFFBE9",
+        borderBottomColor: "#E3CAA5",
         cursor: "pointer",
         transform: "translateY(-1px)",
       },
@@ -262,7 +335,7 @@ const SrChart = ({ recentSr = [] }) => {
 
     pagination: {
       style: {
-        borderTop: "1px solid #EEF1F4",
+        borderTop: `1px solid ${THEME.border}`,
         minHeight: "45px",
       },
     },
@@ -270,35 +343,6 @@ const SrChart = ({ recentSr = [] }) => {
 
   return (
     <div className="w-full">
-      {/* TOP LABEL */}
-
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div
-            className="
-              flex
-              h-7
-              w-7
-              items-center
-              justify-center
-              rounded-lg
-              bg-[var(--primary-color)]/[0.08]
-              text-[var(--primary-color)]
-            "
-          >
-            <FiInbox className="text-[13px]" />
-          </div>
-
-          <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#969EA8]">
-            Latest Requests
-          </span>
-        </div>
-
-        <span className="rounded-full bg-[#F6F7F9] px-2.5 py-1 text-[9px] font-bold text-[#8E96A1]">
-          {recentSr?.length || 0} shown
-        </span>
-      </div>
-
       {/* TABLE */}
 
       <div
@@ -306,7 +350,7 @@ const SrChart = ({ recentSr = [] }) => {
           overflow-hidden
           rounded-[16px]
           border
-          border-[#EDF0F3]
+          border-[#E9DED1]
           bg-white
         "
       >
@@ -343,19 +387,19 @@ const SrChart = ({ recentSr = [] }) => {
                   items-center
                   justify-center
                   rounded-2xl
-                  bg-[#F5F7F9]
-                  text-[#A3AAB3]
+                  bg-[#FFFBE9]
+                  text-[#AD8B73]
                 "
               >
                 <FiInbox className="text-[22px]" />
               </div>
 
-              <h4 className="text-sm font-bold text-[#555E69]">
+              <h4 className="text-sm font-bold text-[#65584F]">
                 No recent requests
               </h4>
 
-              <p className="mt-1 max-w-[220px] text-[10px] leading-5 text-[#9AA2AC]">
-                There are no service requests available to display right now.
+              <p className="mt-1 max-w-[220px] text-[10px] leading-5 text-[#9A897B]">
+                No service requests are available right now.
               </p>
             </div>
           }
