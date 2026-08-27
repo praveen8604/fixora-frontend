@@ -19,29 +19,43 @@ const CardItemTwo = ({
   const { t } = useTranslation();
 
   const formatNumber = (value) => {
-    if (!value || isNaN(value)) return 0;
+    if (value === null || value === undefined || isNaN(value)) {
+      return 0;
+    }
+
     return Math.round(value);
   };
 
-  /* =========================
-     LOADING
-  ========================= */
+  /* =========================================================
+      LOADING
+  ========================================================= */
 
   if (loading) {
     return (
-      <div className="h-[108px] w-full overflow-hidden rounded-2xl">
+      <div
+        className={`
+          h-[108px]
+          w-full
+          overflow-hidden
+          rounded-2xl
+          border
+          border-[#E3CAA5]
+          bg-white
+          ${className}
+        `}
+      >
         <Skeleton
           height="100%"
-          baseColor={mode === "dark" ? "#1f2937" : "#EEF1F5"}
-          highlightColor={mode === "dark" ? "#374151" : "#FFFFFF"}
+          baseColor="#FFFBE9"
+          highlightColor="#FFFFFF"
         />
       </div>
     );
   }
 
-  /* =========================
-     ORDER CARD
-  ========================= */
+  /* =========================================================
+      TODAY / YESTERDAY ORDER CARD
+  ========================================================= */
 
   if (title === "Today Order" || title === "Yesterday Order") {
     return (
@@ -55,31 +69,34 @@ const CardItemTwo = ({
           overflow-hidden
           rounded-2xl
           border
-          border-[#E7EAF0]
+          border-[#E3CAA5]
           bg-white
-          shadow-[0_4px_15px_rgba(30,40,55,0.04)]
+          shadow-[0_5px_18px_rgba(92,70,54,0.05)]
           transition-all
           duration-300
           hover:-translate-y-1
-          hover:shadow-[0_14px_30px_rgba(30,40,55,0.08)]
+          hover:border-[#CEAB93]
+          hover:shadow-[0_15px_32px_rgba(92,70,54,0.12)]
           ${cardBg}
         `}
       >
+        {/* Subtle background detail */}
+
         <div
           className="
             pointer-events-none
             absolute
-            right-[-30px]
-            top-[-30px]
+            -right-8
+            -top-8
             z-0
             h-28
             w-28
             rounded-full
-            bg-[#F4F5FA]
+            bg-[#FFFBE9]
             opacity-0
             transition-all
             duration-500
-            group-hover:scale-[1.8]
+            group-hover:scale-150
             group-hover:opacity-100
           "
         />
@@ -96,21 +113,68 @@ const CardItemTwo = ({
             ${className}
           `}
         >
+          {/* CONTENT */}
+
           <div className="min-w-0">
-            <p className="mb-2 text-sm font-medium text-[#737C8C]">
+
+            <p
+              className="
+                mb-2
+                text-sm
+                font-semibold
+                text-[#6B503E]
+                transition-colors
+                duration-300
+                group-hover:text-[#AD8B73]
+              "
+            >
               {title2 ? t(title2) : "Order"}
             </p>
 
-            <p className="text-2xl font-bold leading-none text-[#252A34]">
+            <p
+              className="
+                text-2xl
+                font-extrabold
+                leading-none
+                tracking-[-0.03em]
+                text-[#5C4636]
+              "
+            >
               {formatNumber(price)}
             </p>
 
-            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs font-medium text-[#8992A1]">
-              <span>Cash: {formatNumber(cash)}</span>
+            <div
+              className="
+                mt-3
+                flex
+                flex-wrap
+                gap-x-3
+                gap-y-1
+                text-[11px]
+                font-medium
+                text-[#9A806B]
+              "
+            >
+              <span>
+                Cash:{" "}
+                <span className="text-[#AD8B73]">
+                  {formatNumber(cash)}
+                </span>
+              </span>
 
-              <span>Card: {formatNumber(card)}</span>
+              <span>
+                Card:{" "}
+                <span className="text-[#AD8B73]">
+                  {formatNumber(card)}
+                </span>
+              </span>
 
-              <span>Credit: {formatNumber(credit)}</span>
+              <span>
+                Credit:{" "}
+                <span className="text-[#AD8B73]">
+                  {formatNumber(credit)}
+                </span>
+              </span>
             </div>
           </div>
 
@@ -128,35 +192,63 @@ const CardItemTwo = ({
               justify-center
               rounded-[16px]
               border
-              border-[#DDE2FF]
-              bg-[#F1F3FF]
+              border-[#E3CAA5]
+              bg-[#FFFBE9]
+              text-[#AD8B73]
               transition-all
               duration-300
-              group-hover:scale-110
-              group-hover:bg-[#5961D8]
+              group-hover:scale-105
+              group-hover:border-[#AD8B73]
+              group-hover:bg-[#AD8B73]
+              group-hover:text-white
             "
           >
             {Icon && (
               <Icon
                 style={{
-                  color: "#5961D8",
                   width: "22px",
                   height: "22px",
                   display: "block",
                   flexShrink: 0,
                 }}
-                className="group-hover:!text-white"
               />
             )}
           </div>
         </CardBody>
+
+        {/* Bottom accent */}
+
+        <div
+          className="
+            absolute
+            bottom-0
+            left-5
+            right-5
+            h-[2px]
+            overflow-hidden
+            rounded-full
+            bg-[#FFFBE9]
+          "
+        >
+          <div
+            className="
+              h-full
+              w-0
+              rounded-full
+              bg-[#AD8B73]
+              transition-all
+              duration-300
+              group-hover:w-full
+            "
+          />
+        </div>
       </Card>
     );
   }
 
-  /* =========================
-     NORMAL CARD
-  ========================= */
+  /* =========================================================
+      NORMAL CARD
+  ========================================================= */
 
   return (
     <Card
@@ -169,42 +261,43 @@ const CardItemTwo = ({
         overflow-hidden
         rounded-2xl
         border
-        border-[#E7EAF0]
+        border-[#E3CAA5]
         bg-white
-        shadow-[0_4px_15px_rgba(30,40,55,0.04)]
+        shadow-[0_5px_18px_rgba(92,70,54,0.05)]
         transition-all
         duration-300
         ease-out
         hover:-translate-y-1
-        hover:border-[#DDE2EA]
-        hover:shadow-[0_14px_30px_rgba(30,40,55,0.08)]
+        hover:border-[#CEAB93]
+        hover:shadow-[0_15px_32px_rgba(92,70,54,0.12)]
       "
     >
-      {/* Decorative background */}
+      {/* Subtle background detail */}
 
       <div
         className="
           pointer-events-none
           absolute
-          right-[-35px]
-          top-[-35px]
+          -right-8
+          -top-8
           z-0
-          h-32
-          w-32
+          h-28
+          w-28
           rounded-full
-          bg-[#F4F5FA]
+          bg-[#FFFBE9]
           opacity-0
           transition-all
           duration-500
-          group-hover:scale-[1.8]
+          group-hover:scale-150
           group-hover:opacity-100
         "
       />
 
       <CardBody className="relative z-10 flex w-full items-center p-5">
-        {/* =========================
+
+        {/* =====================================================
             ICON
-        ========================= */}
+        ====================================================== */}
 
         <div
           className="
@@ -218,51 +311,46 @@ const CardItemTwo = ({
             justify-center
             rounded-[16px]
             border
-            border-[#DDE2FF]
-            bg-[#F1F3FF]
-            shadow-[0_5px_15px_rgba(89,97,216,0.08)]
+            border-[#E3CAA5]
+            bg-[#FFFBE9]
+            text-[#AD8B73]
             transition-all
             duration-300
             ease-out
-            group-hover:scale-110
-            group-hover:border-[#5961D8]
-            group-hover:bg-[#5961D8]
-            group-hover:shadow-[0_8px_20px_rgba(89,97,216,0.22)]
+            group-hover:scale-105
+            group-hover:border-[#AD8B73]
+            group-hover:bg-[#AD8B73]
+            group-hover:text-white
           "
         >
           {Icon && (
             <Icon
               style={{
-                color: "#5961D8",
                 width: "22px",
                 height: "22px",
                 display: "block",
                 flexShrink: 0,
               }}
-              className="
-                transition-all
-                duration-300
-                group-hover:!text-white
-              "
             />
           )}
         </div>
 
-        {/* =========================
+        {/* =====================================================
             CONTENT
-        ========================= */}
+        ====================================================== */}
 
         <div className="relative z-20 ml-4 min-w-0">
+
           <h6
             className="
               mb-1
               truncate
               text-sm
-              font-medium
-              text-[#7A8392]
+              font-semibold
+              text-[#6B503E]
               transition-colors
               duration-300
-              group-hover:text-[#5961D8]
+              group-hover:text-[#AD8B73]
             "
           >
             {title2 ? t(title2) : "Total"}
@@ -271,9 +359,10 @@ const CardItemTwo = ({
           <p
             className="
               text-2xl
-              font-bold
+              font-extrabold
               leading-none
-              text-[#252A34]
+              tracking-[-0.03em]
+              text-[#5C4636]
             "
           >
             {formatNumber(price)}
@@ -287,16 +376,26 @@ const CardItemTwo = ({
             absolute
             bottom-0
             left-5
+            right-5
             z-20
-            h-[3px]
-            w-0
+            h-[2px]
+            overflow-hidden
             rounded-full
-            bg-[#5961D8]
-            transition-all
-            duration-300
-            group-hover:w-10
+            bg-[#FFFBE9]
           "
-        />
+        >
+          <div
+            className="
+              h-full
+              w-0
+              rounded-full
+              bg-[#AD8B73]
+              transition-all
+              duration-300
+              group-hover:w-full
+            "
+          />
+        </div>
       </CardBody>
     </Card>
   );

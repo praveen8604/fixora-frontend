@@ -4,82 +4,209 @@ import { Line } from "react-chartjs-2";
 
 const SaleChart = ({ salesReport }) => {
   const { getNumberTwo } = useUtilsFunction();
-  const [activeButton, setActiveButton] = useState({
-    title: "Sales",
-    color: "emerald",
-  });
 
-  const handleClick = ({ title, color }) => {
-    setActiveButton({ title, color });
+  const [activeButton, setActiveButton] = useState("Sales");
+
+  const handleClick = (title) => {
+    setActiveButton(title);
   };
+
+  const isSales = activeButton === "Sales";
+
+  const chartColor = isSales ? "#AD8B73" : "#CEAB93";
 
   const barOptions = {
     data: {
-      labels: salesReport?.map((or) => or.date),
+      labels: salesReport?.map((or) => or.date) || [],
+
       datasets: [
-        activeButton.title === "Sales"
-          ? {
-              label: "Sales",
-              data: salesReport?.map((or) => getNumberTwo(or.total)),
-              borderColor: "#10B981",
-              backgroundColor: "#10B981",
-              borderWidth: 3,
-              yAxisID: "y",
-            }
-          : {
-              label: "Order",
-              data: salesReport?.map((or) => or.order),
-              borderColor: "#F97316",
-              backgroundColor: "#F97316",
-              borderWidth: 3,
-              yAxisID: "y",
-            },
+        {
+          label: isSales ? "Sales" : "Orders",
+
+          data: isSales
+            ? salesReport?.map((or) => getNumberTwo(or.total)) || []
+            : salesReport?.map((or) => or.order) || [],
+
+          borderColor: chartColor,
+          backgroundColor: chartColor,
+
+          borderWidth: 3,
+
+          tension: 0.35,
+
+          pointRadius: 3,
+
+          pointHoverRadius: 5,
+
+          pointBackgroundColor: "#FFFBE9",
+
+          pointBorderColor: chartColor,
+
+          pointBorderWidth: 2,
+
+          fill: false,
+
+          yAxisID: "y",
+        },
       ],
     },
+
     options: {
       responsive: true,
-    },
-    legend: {
-      display: false,
+
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          display: false,
+        },
+
+        tooltip: {
+          backgroundColor: "#6F6258",
+
+          titleColor: "#FFFBE9",
+
+          bodyColor: "#FFFFFF",
+
+          borderColor: "#CEAB93",
+
+          borderWidth: 1,
+
+          padding: 10,
+
+          cornerRadius: 8,
+
+          displayColors: false,
+        },
+      },
+
+      scales: {
+        x: {
+          grid: {
+            display: false,
+          },
+
+          ticks: {
+            color: "#8B7B6D",
+
+            font: {
+              size: 10,
+              weight: "500",
+            },
+          },
+
+          border: {
+            display: false,
+          },
+        },
+
+        y: {
+          beginAtZero: true,
+
+          grid: {
+            color: "#EEE4D7",
+
+            drawTicks: false,
+          },
+
+          ticks: {
+            color: "#8B7B6D",
+
+            padding: 8,
+
+            font: {
+              size: 10,
+              weight: "500",
+            },
+
+            precision: 0,
+          },
+
+          border: {
+            display: false,
+          },
+        },
+      },
     },
   };
 
   return (
-    <>
-      <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 mb-4">
-        <ul className="flex flex-wrap -mb-px">
-          <li className="mr-2">
-            <button
-              onClick={() => handleClick({ title: "Sales", color: "emerald" })}
-              type="button"
-              className={`inline-block p-2 rounded-t-lg border-b-2 border-transparent ${
-                activeButton.title === "Sales"
-                  ? "text-emerald-600 border-emerald-600 dark:text-emerald-500 dark:border-emerald-500"
-                  : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-              }  focus:outline-none`}
-            >
-              Sales
-            </button>
-          </li>
+    <div className="w-full">
+      {/* ================================
+          CHART TABS
+      ================================= */}
 
-          <li className="mr-2">
-            <button
-              onClick={() => handleClick({ title: "Orders", color: "red" })}
-              type="button"
-              className={`inline-block p-2 rounded-t-lg border-b-2 border-transparent ${
-                activeButton.title === "Orders"
-                  ? "text-orange-500 border-orange-500 dark:text-orange-500 dark:border-orange-500"
-                  : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-              }  focus:outline-none`}
-            >
-              Orders
-            </button>
-          </li>
-        </ul>
+      <div className="mb-5 flex justify-center">
+        <div
+          className="
+            inline-flex
+            items-center
+            gap-1
+            rounded-xl
+            border
+            border-[#E3CAA5]
+            bg-[#FFFBE9]
+            p-1
+          "
+        >
+          {/* SALES */}
+
+          <button
+            onClick={() => handleClick("Sales")}
+            type="button"
+            className={`
+              rounded-lg
+              px-5
+              py-2
+              text-xs
+              font-semibold
+              transition-all
+              duration-200
+              focus:outline-none
+              ${
+                isSales
+                  ? "bg-[#AD8B73] text-white shadow-sm"
+                  : "text-[#8B7B6D] hover:bg-[#E3CAA5]/40"
+              }
+            `}
+          >
+            Sales
+          </button>
+
+          {/* ORDERS */}
+
+          <button
+            onClick={() => handleClick("Orders")}
+            type="button"
+            className={`
+              rounded-lg
+              px-5
+              py-2
+              text-xs
+              font-semibold
+              transition-all
+              duration-200
+              focus:outline-none
+              ${
+                !isSales
+                  ? "bg-[#CEAB93] text-white shadow-sm"
+                  : "text-[#8B7B6D] hover:bg-[#E3CAA5]/40"
+              }
+            `}
+          >
+            Orders
+          </button>
+        </div>
       </div>
 
-      <Line {...barOptions} />
-    </>
+      {/* ================================
+          CHART
+      ================================= */}
+
+      <div className="h-[280px] w-full">
+        <Line {...barOptions} />
+      </div>
+    </div>
   );
 };
 

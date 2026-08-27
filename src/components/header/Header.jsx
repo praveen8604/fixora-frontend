@@ -28,9 +28,10 @@ const Header = () => {
 
   const profileRef = useRef(null);
 
-  /*
-   * Close profile dropdown when clicking outside
-   */
+  /* =========================================================
+     CLOSE PROFILE DROPDOWN WHEN CLICKING OUTSIDE
+  ========================================================= */
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -41,7 +42,10 @@ const Header = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
 
     return () => {
       document.removeEventListener(
@@ -51,18 +55,22 @@ const Header = () => {
     };
   }, []);
 
-  /*
-   * Profile dropdown toggle
-   */
+  /* =========================================================
+     PROFILE DROPDOWN
+  ========================================================= */
+
   const handleProfileOpen = () => {
     setProfileOpen((prev) => !prev);
   };
 
-  /*
-   * Logout
-   */
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
   const handleLogOut = () => {
-    dispatch({ type: "USER_LOGOUT" });
+    dispatch({
+      type: "USER_LOGOUT",
+    });
 
     Cookies.remove("adminInfo");
     Cookies.remove("token");
@@ -72,11 +80,9 @@ const Header = () => {
     window.location.replace("/login");
   };
 
-  /*
-   * =========================================================
-   * HEADER TITLE
-   * =========================================================
-   */
+  /* =========================================================
+     HEADER TITLE
+  ========================================================= */
 
   const getHeaderTitle = () => {
     const extraTitles = [
@@ -119,7 +125,10 @@ const Header = () => {
     for (const route of sidebar) {
       if (route.subMenu?.length) {
         const child = [...route.subMenu]
-          .sort((a, b) => b.path.length - a.path.length)
+          .sort(
+            (a, b) =>
+              b.path.length - a.path.length
+          )
           .find(
             (item) =>
               pathname === item.path ||
@@ -144,6 +153,10 @@ const Header = () => {
 
   const headerTitle = getHeaderTitle();
 
+  /* =========================================================
+     RENDER
+  ========================================================= */
+
   return (
     <>
       {/* =====================================================
@@ -158,17 +171,16 @@ const Header = () => {
           z-[40]
           h-[72px]
           w-full
-          bg-white/95
-          backdrop-blur-xl
           border-b
-          border-[#E7EAF3]
-          shadow-[0_4px_20px_rgba(99,102,241,0.06)]
+          border-[#E3CAA5]
+          bg-[#FFFBE9]
+          shadow-[0_3px_18px_rgba(173,139,115,0.08)]
         "
       >
         <div
           className="
-            h-full
             flex
+            h-full
             items-center
             justify-between
             px-5
@@ -181,45 +193,49 @@ const Header = () => {
               LEFT SIDE
           ================================================== */}
 
-          <div className="flex items-center min-w-0">
-            {/* Small decorative line */}
+          <div className="flex min-w-0 items-center">
+
+            {/* Vertical Accent */}
 
             <div
               className="
-                hidden
-                md:block
-                w-[4px]
-                h-9
-                rounded-full
                 mr-4
-                bg-gradient-to-b
-                from-[var(--primary-elite-color)]
-                to-[#8B7CF6]
+                hidden
+                h-9
+                w-[4px]
+                rounded-full
+                bg-[#AD8B73]
+                md:block
               "
             />
 
             <div className="min-w-0">
+
+              {/* Small Heading */}
+
               <div
                 className="
-                  text-[11px]
-                  font-semibold
+                  mb-0.5
+                  text-[10px]
+                  font-bold
                   uppercase
                   tracking-[0.14em]
-                  text-[#8B91A7]
-                  mb-0.5
+                  text-[#9A806D]
                 "
               >
                 Admin Panel
               </div>
 
+              {/* Page Title */}
+
               <h1
                 className="
-                  text-[18px]
-                  md:text-[20px]
-                  font-bold
-                  text-[#252B4A]
                   truncate
+                  text-[18px]
+                  font-bold
                   leading-tight
+                  text-[#5F4637]
+                  md:text-[20px]
                 "
               >
                 {headerTitle}
@@ -232,7 +248,10 @@ const Header = () => {
           ================================================== */}
 
           <div className="flex items-center">
-            {/* PROFILE */}
+
+            {/* =================================================
+                PROFILE
+            ================================================== */}
 
             <div
               className="relative"
@@ -241,47 +260,45 @@ const Header = () => {
               <button
                 type="button"
                 onClick={handleProfileOpen}
+                aria-label="Open profile menu"
                 className="
                   group
                   flex
                   items-center
                   gap-2.5
+                  rounded-full
+                  border
+                  border-[#E3CAA5]
+                  bg-white
+                  py-1.5
                   pl-2
                   pr-3
-                  py-1.5
-                  rounded-full
-                  bg-[#F5F4FF]
-                  border
-                  border-[#E4E1FF]
-                  hover:bg-[#EEECFF]
-                  hover:border-[#D8D4FF]
-                  hover:shadow-[0_6px_18px_rgba(99,102,241,0.12)]
                   transition-all
                   duration-200
+                  hover:border-[#CEAB93]
+                  hover:bg-[#FFFBE9]
+                  hover:shadow-[0_5px_16px_rgba(173,139,115,0.12)]
                   focus:outline-none
                 "
-                aria-label="Open profile menu"
               >
+
                 {/* Avatar */}
 
                 <div
                   className="
+                    flex
                     h-9
                     w-9
-                    rounded-full
-                    flex
                     items-center
                     justify-center
                     overflow-hidden
-                    bg-gradient-to-br
-                    from-[var(--primary-elite-color)]
-                    to-[#8B7CF6]
-                    text-white
-                    font-bold
+                    rounded-full
+                    border-2
+                    border-[#E3CAA5]
+                    bg-[#AD8B73]
                     text-sm
-                    shadow-[0_4px_10px_rgba(99,102,241,0.20)]
-                    ring-2
-                    ring-white
+                    font-bold
+                    text-white
                   "
                 >
                   {adminInfo?.image ? (
@@ -299,37 +316,38 @@ const Header = () => {
                   )}
                 </div>
 
-                {/* Profile info */}
+                {/* Profile Info */}
 
-                <div className="hidden sm:block text-left max-w-[130px]">
+                <div className="hidden max-w-[130px] text-left sm:block">
                   <p
                     className="
+                      truncate
                       text-[12px]
                       font-bold
-                      text-[#303653]
-                      truncate
+                      text-[#5F4637]
                     "
                   >
-                    {adminInfo?.email || "Administrator"}
+                    {adminInfo?.email ||
+                      "Administrator"}
                   </p>
 
                   <p
                     className="
                       text-[10px]
                       font-medium
-                      text-[#8B91A7]
+                      text-[#9A806D]
                     "
                   >
                     Administrator
                   </p>
                 </div>
 
-                {/* Dropdown icon */}
+                {/* Chevron */}
 
                 <FiChevronDown
                   size={15}
                   className={`
-                    text-[#7379A0]
+                    text-[#AD8B73]
                     transition-transform
                     duration-200
                     ${
@@ -354,33 +372,31 @@ const Header = () => {
                     w-[230px]
                     overflow-hidden
                     rounded-2xl
-                    bg-white
                     border
-                    border-[#E8E7F4]
-                    shadow-[0_16px_40px_rgba(74,70,130,0.14)]
-                    animate-[fadeIn_0.18s_ease-out]
+                    border-[#E3CAA5]
+                    bg-[#FFFBE9]
+                    shadow-[0_16px_38px_rgba(173,139,115,0.16)]
                   "
                 >
+
                   {/* Dropdown Header */}
 
                   <div
                     className="
+                      border-b
+                      border-[#E3CAA5]
+                      bg-[#E3CAA5]/25
                       px-4
                       py-3.5
-                      bg-gradient-to-r
-                      from-[#F7F6FF]
-                      to-[#F0EEFF]
-                      border-b
-                      border-[#E9E7F6]
                     "
                   >
                     <p
                       className="
-                        text-[11px]
-                        uppercase
-                        tracking-wider
+                        text-[10px]
                         font-bold
-                        text-[#8B7CF6]
+                        uppercase
+                        tracking-[0.14em]
+                        text-[#AD8B73]
                       "
                     >
                       Account
@@ -389,17 +405,20 @@ const Header = () => {
                     <p
                       className="
                         mt-0.5
+                        truncate
                         text-sm
                         font-bold
-                        text-[#303653]
-                        truncate
+                        text-[#5F4637]
                       "
                     >
-                      {adminInfo?.email || "Administrator"}
+                      {adminInfo?.email ||
+                        "Administrator"}
                     </p>
                   </div>
 
-                  {/* Dashboard */}
+                  {/* =================================================
+                      DASHBOARD
+                  ================================================== */}
 
                   <Link
                     to="/dashboard"
@@ -415,27 +434,28 @@ const Header = () => {
                       py-3
                       text-sm
                       font-semibold
-                      text-[#596078]
-                      hover:bg-[#F4F2FF]
-                      hover:text-[var(--primary-elite-color)]
+                      text-[#806B5D]
+                      no-underline
                       transition-all
                       duration-200
+                      hover:bg-[#E3CAA5]/30
+                      hover:text-[#5F4637]
                     "
                   >
                     <span
                       className="
+                        flex
                         h-9
                         w-9
-                        rounded-xl
-                        flex
                         items-center
                         justify-center
-                        bg-[#F0EEFF]
-                        text-[var(--primary-elite-color)]
-                        group-hover:bg-[var(--primary-elite-color)]
-                        group-hover:text-white
+                        rounded-xl
+                        bg-[#E3CAA5]/35
+                        text-[#AD8B73]
                         transition-all
                         duration-200
+                        group-hover:bg-[#AD8B73]
+                        group-hover:text-white
                       "
                     >
                       <FiGrid size={16} />
@@ -446,7 +466,9 @@ const Header = () => {
                     </span>
                   </Link>
 
-                  {/* Logout */}
+                  {/* =================================================
+                      LOGOUT
+                  ================================================== */}
 
                   <AlertDialog
                     onClickInsider={() =>
@@ -463,37 +485,37 @@ const Header = () => {
                         onClick={onClickFunc}
                         className="
                           group
-                          w-full
                           flex
+                          w-full
                           items-center
                           gap-3
+                          border-t
+                          border-[#E3CAA5]
                           px-4
                           py-3
                           text-sm
                           font-semibold
-                          text-[#596078]
-                          hover:bg-[#FFF5F5]
-                          hover:text-[#E46A6A]
+                          text-[#806B5D]
                           transition-all
                           duration-200
-                          border-t
-                          border-[#F0EFF6]
+                          hover:bg-[#E3CAA5]/30
+                          hover:text-[#5F4637]
                         "
                       >
                         <span
                           className="
+                            flex
                             h-9
                             w-9
-                            rounded-xl
-                            flex
                             items-center
                             justify-center
-                            bg-[#FFF1F1]
-                            text-[#E46A6A]
-                            group-hover:bg-[#E46A6A]
-                            group-hover:text-white
+                            rounded-xl
+                            bg-[#E3CAA5]/35
+                            text-[#AD8B73]
                             transition-all
                             duration-200
+                            group-hover:bg-[#AD8B73]
+                            group-hover:text-white
                           "
                         >
                           <FiLogOut size={16} />
@@ -514,9 +536,6 @@ const Header = () => {
 
       {/* =====================================================
           HEADER SPACER
-
-          This prevents page content from going underneath
-          the fixed header.
       ====================================================== */}
 
       <div
