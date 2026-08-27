@@ -15,9 +15,9 @@ import { FiArrowUpRight, FiSearch } from "react-icons/fi";
 
 const tones = {
   slate: {
-    icon: "from-[#5E63D9] to-[#35C7F3]",
-    soft: "from-[#EEF0FF] to-[#F4FDFF]",
-    line: "from-[#5E63D9] to-[#35C7F3]",
+    icon: "from-[#AD8B73] to-[#CEAB93]",
+    soft: "from-[#FFFBE9] to-[#FFF5D6]",
+    line: "from-[#AD8B73] to-[#CEAB93]",
   },
   emerald: {
     icon: "from-[#10B981] to-[#67E8C4]",
@@ -30,9 +30,9 @@ const tones = {
     line: "from-[#F43F5E] to-[#FB7185]",
   },
   amber: {
-    icon: "from-[#8B5CF6] to-[#6366F1]",
-    soft: "from-[#F4F0FF] to-[#F5F3FF]",
-    line: "from-[#8B5CF6] to-[#4CC9F0]",
+    icon: "from-[#CEAB93] to-[#E3CAA5]",
+    soft: "from-[#FFFBE9] to-[#FFF5D6]",
+    line: "from-[#CEAB93] to-[#E3CAA5]",
   },
 };
 
@@ -40,31 +40,31 @@ const getRoleClass = (role) =>
   ({
     admin: "bg-[#FFF1F3] text-[#E11D48] border-[#FFE0E7]",
     technician: "bg-[#FFF7ED] text-[#D97706] border-[#FDE7C7]",
-    rider: "bg-[#F5F3FF] text-[#7C3AED] border-[#E8DEFF]",
+    rider: "bg-[#FFFBE9] text-[#AD8B73] border-[#E3CAA5]",
     customer: "bg-[#ECFDF5] text-[#059669] border-[#D1FAE5]",
-  }[role] || "bg-[#F4F6FA] text-[#667085] border-[#E7EBF1]");
+  }[role] || "bg-[#FFFBE9] text-[#AD8B73] border-[#E3CAA5]");
 
 const KpiCard = ({ title, value, desc, tone, Icon }) => {
   const t = tones[tone];
   return (
-    <div className="group relative overflow-hidden rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.035)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#C9D7EF] hover:shadow-[0_22px_45px_rgba(15,23,42,0.09)]">
+    <div className="group relative overflow-hidden rounded-[24px] border border-[#E3CAA5] bg-white p-5 shadow-[0_6px_25px_rgba(173,139,115,0.08)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#CEAB93] hover:shadow-[0_22px_45px_rgba(173,139,115,0.15)]">
       <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${t.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`} />
       <div className="relative z-10 flex items-start justify-between">
-        <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${t.soft} text-[#2563EB] transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
+        <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${t.soft} text-[#AD8B73] transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
           <Icon size={18} />
         </div>
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F6FA] text-[#98A2B3] transition-all duration-300 group-hover:bg-[#111827] group-hover:text-white">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFFBE9] text-[#CEAB93] transition-all duration-300 group-hover:bg-[#AD8B73] group-hover:text-white">
           <FiArrowUpRight size={14} />
         </div>
       </div>
       <div className="relative z-10 mt-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8B95A7]">{title}</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#AD8B73]">{title}</p>
         <div className="mt-2.5 flex items-end justify-between gap-2">
-          <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#111827]">{value}</h3>
-          <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#A0A8B8]">{desc}</span>
+          <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#3D2C1E]">{value}</h3>
+          <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#CEAB93]">{desc}</span>
         </div>
       </div>
-      <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#EDF0F5]">
+      <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#E3CAA5]">
         <div className={`h-full w-0 rounded-full bg-gradient-to-r ${t.line} transition-all duration-500 group-hover:w-full`} />
       </div>
     </div>
@@ -119,15 +119,15 @@ const AllUsers = () => {
 
   return (
     <AnimatedContent>
-      <div className="min-h-screen bg-[#F4F7FB] pb-10">
+      <div className="min-h-screen bg-[#FFFBE9] pb-10">
         <section className="mb-8">
-          <div className="relative overflow-hidden rounded-[30px] bg-[#0B1220] px-6 py-7 shadow-[0_20px_55px_rgba(15,23,42,0.15)] sm:px-8 sm:py-9">
-            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#2563EB]/20 blur-[2px]" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
+          <div className="relative overflow-hidden rounded-[30px] bg-[#3D2C1E] px-6 py-7 shadow-[0_20px_55px_rgba(61,44,30,0.25)] sm:px-8 sm:py-9">
+            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#AD8B73]/25 blur-[2px]" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
             <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <div className="mb-3 flex items-center gap-2.5">
-                  <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38BDF8]/50" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38BDF8]" /></span>
+                  <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E3CAA5]/60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E3CAA5]" /></span>
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">User Management</span>
                 </div>
                 <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-[34px]">All Users</h1>
@@ -139,12 +139,12 @@ const AllUsers = () => {
                   <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search users..." className="w-[180px] border-0 bg-transparent text-[12px] font-medium text-white outline-none placeholder:text-white/30 focus:ring-0" />
                 </div>
                 <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
-                  <FaUsers size={13} className="text-[#60A5FA]" />
+                  <FaUsers size={13} className="text-[#E3CAA5]" />
                   <span className="text-[12px] font-bold text-white/85">{totalUsers} Users</span>
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent" />
+            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#AD8B73]/60 to-transparent" />
           </div>
         </section>
 
@@ -159,33 +159,33 @@ const AllUsers = () => {
         <section>
           <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#6E52F5] to-[#4A89F3] text-white shadow-[0_16px_30px_rgba(100,93,242,0.28)]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#AD8B73] to-[#CEAB93] text-white shadow-[0_16px_30px_rgba(173,139,115,0.30)]">
                 <FaUsers size={22} />
               </div>
               <div>
-                <h2 className="text-[34px] font-extrabold tracking-[-0.05em] text-[#1F2430]">
+                <h2 className="text-[34px] font-extrabold tracking-[-0.05em] text-[#3D2C1E]">
                   User Collection
                 </h2>
-                <p className="text-sm text-[#7B8697]">
+                <p className="text-sm text-[#AD8B73]">
                   Manage and monitor every registered account
                 </p>
               </div>
             </div>
-            <span className="inline-flex w-fit items-center rounded-full border border-[#E5E8F2] bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#707B8D] shadow-sm">
+            <span className="inline-flex w-fit items-center rounded-full border border-[#E3CAA5] bg-[#FFFBE9] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#AD8B73] shadow-sm">
               {search ? `${filteredUsers.length} Matching` : `${totalUsers} Records`}
             </span>
           </div>
 
-          <div className="overflow-hidden rounded-[30px] border border-[#E8ECF5] bg-white/92 shadow-[0_18px_42px_rgba(84,98,130,0.10)] backdrop-blur-sm">
-            <div className="border-b border-[#F0F2F7] bg-[linear-gradient(180deg,rgba(247,248,255,0.95),rgba(255,255,255,0.9))] px-6 py-5">
+          <div className="overflow-hidden rounded-[30px] border border-[#E3CAA5] bg-white/95 shadow-[0_18px_42px_rgba(173,139,115,0.12)] backdrop-blur-sm">
+            <div className="border-b border-[#E3CAA5] bg-[linear-gradient(180deg,rgba(255,251,233,0.95),rgba(255,255,255,0.9))] px-6 py-5">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-[#282F3D]">All Users</h3>
-                  <p className="mt-1 text-xs text-[#98A1B0]">
+                  <h3 className="text-base font-bold text-[#3D2C1E]">All Users</h3>
+                  <p className="mt-1 text-xs text-[#CEAB93]">
                     {search ? `${filteredUsers.length} matching users in view` : "All registered users in the system"}
                   </p>
                 </div>
-                <span className="inline-flex w-fit items-center rounded-full bg-[#F5F7FC] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#7F8897]">
+                <span className="inline-flex w-fit items-center rounded-full bg-[#FFFBE9] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#AD8B73]">
                   Live Data
                 </span>
               </div>
@@ -194,9 +194,9 @@ const AllUsers = () => {
             <div className="overflow-x-auto">
               <table className="min-w-[850px] w-full">
                 <thead>
-                  <tr className="bg-[#F8FAFD]">
+                  <tr className="bg-[#FFFBE9]">
                     {["User", "Mobile No.", "Email", "Role", "Status"].map((h) => (
-                      <th key={h} className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.16em] text-[#99A3B3]">
+                      <th key={h} className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.16em] text-[#AD8B73]">
                         {h}
                       </th>
                     ))}
@@ -208,30 +208,30 @@ const AllUsers = () => {
                       <tr
                         key={data?._id || i}
                         onClick={() => history.push(`/user?userId=${data?._id}`)}
-                        className="group cursor-pointer border-b border-[#F2F4F8] bg-white transition-colors hover:bg-[#FAFBFF]"
+                        className="group cursor-pointer border-b border-[#E3CAA5]/40 bg-white transition-colors hover:bg-[#FFFBE9]"
                       >
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E5E9F3] bg-gradient-to-br from-[#F4F6FF] to-[#F6FCFF] text-sm font-bold text-[#3A4457] transition-all group-hover:from-[#6E52F5] group-hover:to-[#37B5EC] group-hover:text-white">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E3CAA5] bg-gradient-to-br from-[#FFFBE9] to-[#FFF5D6] text-sm font-bold text-[#AD8B73] transition-all group-hover:from-[#AD8B73] group-hover:to-[#CEAB93] group-hover:text-white">
                               {data?.userName?.[0]?.toUpperCase() || "?"}
                             </div>
                             <div className="min-w-0">
-                              <p className="max-w-[220px] truncate text-[12px] font-bold text-[#313847]">
+                              <p className="max-w-[220px] truncate text-[12px] font-bold text-[#3D2C1E]">
                                 {data?.userName || "--"}
                               </p>
-                              <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#A5ADBA]">
+                              <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#CEAB93]">
                                 {data?._id?.slice(0, 10)}...
                               </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-[11px] font-semibold text-[#5D6674]">
+                          <span className="text-[11px] font-semibold text-[#6B5344]">
                             {data?.phoneNumber || "--"}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="block max-w-[230px] truncate text-[11px] text-[#5D6674]" title={data?.email}>
+                          <span className="block max-w-[230px] truncate text-[11px] text-[#6B5344]" title={data?.email}>
                             {data?.email || "--"}
                           </span>
                         </td>
@@ -252,10 +252,10 @@ const AllUsers = () => {
                     <tr>
                       <td colSpan={5} className="py-20 text-center">
                         <div className="flex flex-col items-center">
-                          <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#F4F7FD] text-[#A0A9B8]">
+                          <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#FFFBE9] text-[#CEAB93]">
                             <FaUsers size={24} />
                           </div>
-                          <p className="mt-4 text-[13px] font-bold text-[#667085]">
+                          <p className="mt-4 text-[13px] font-bold text-[#AD8B73]">
                             No users found
                           </p>
                         </div>
@@ -266,7 +266,7 @@ const AllUsers = () => {
               </table>
             </div>
 
-            <div className="border-t border-[#F0F2F7] px-4 py-3">
+            <div className="border-t border-[#E3CAA5]/50 px-4 py-3">
               <Pagination
                 totalPages={totalPages}
                 activePage={activePage}

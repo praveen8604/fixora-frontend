@@ -29,11 +29,11 @@ const CustomerTable = ({ customers }) => {
         {customers?.map((user) => (
           <TableRow
             key={user._id}
-            className="transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="transition-all duration-200 hover:bg-[#FFFBE9] border-b border-[#E3CAA5]/40"
           >
             {/* Customer ID */}
             <TableCell>
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-semibold text-gray-600 dark:text-gray-300">
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#FFFBE9] border border-[#E3CAA5] text-[10px] font-bold text-[#AD8B73]">
                 #{user?._id?.substring(20, 24)}
               </span>
             </TableCell>
@@ -41,10 +41,10 @@ const CustomerTable = ({ customers }) => {
             {/* Joining Date */}
             <TableCell>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                <span className="text-[11.5px] font-bold text-[#3D2C1E]">
                   {dayjs(user.createdAt).format("MMM D, YYYY")}
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-[10px] text-[#CEAB93]">
                   {dayjs(user.createdAt).format("hh:mm A")}
                 </span>
               </div>
@@ -54,20 +54,16 @@ const CustomerTable = ({ customers }) => {
             <TableCell>
               <div className="flex items-center gap-3">
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                  style={{
-                    backgroundColor: "var(--secondary-elite-color)",
-                    color: "var(--primary-elite-color)",
-                  }}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-extrabold bg-[#FFFBE9] text-[#AD8B73] border border-[#E3CAA5]"
                 >
                   {user?.name?.charAt(0)?.toUpperCase() || "C"}
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                  <span className="text-[12px] font-bold text-[#3D2C1E]">
                     {user?.name || "N/A"}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-[#CEAB93]">
                     Customer
                   </span>
                 </div>
@@ -76,14 +72,14 @@ const CustomerTable = ({ customers }) => {
 
             {/* Email */}
             <TableCell>
-              <span className="text-sm text-gray-600 dark:text-gray-300">
+              <span className="text-[11.5px] font-medium text-[#6B5344]">
                 {user?.email || "N/A"}
               </span>
             </TableCell>
 
             {/* Phone */}
             <TableCell>
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+              <span className="text-[11.5px] font-semibold text-[#6B5344]">
                 {user?.phone || "N/A"}
               </span>
             </TableCell>
@@ -94,16 +90,13 @@ const CustomerTable = ({ customers }) => {
                 {/* View Orders */}
                 <Link to={`/users/customer-order/${user._id}`}>
                   <div
-                    className="p-2 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                    style={{
-                      color: "var(--primary-elite-color)",
-                    }}
+                    className="p-2 rounded-lg transition-all duration-200 text-[#CEAB93] hover:text-[#AD8B73] hover:bg-[#FFFBE9]"
                   >
                     <Tooltip
                       id={`view-${user._id}`}
                       Icon={FiZoomIn}
                       title={t("ViewOrder")}
-                      bgColor="var(--primary-elite-color)"
+                      bgColor="#AD8B73"
                     />
                   </div>
                 </Link>

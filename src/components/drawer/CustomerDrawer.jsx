@@ -17,7 +17,7 @@ const CustomerDrawer = ({ id }) => {
     <div className="flex flex-col h-full bg-white dark:bg-gray-800">
       {/* Header */}
       <div className="relative px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <div className="absolute left-0 top-0 h-full w-1 bg-[var(--primary-color)]" />
+        <div className="absolute left-0 top-0 h-full w-1 bg-[#AD8B73]" />
 
         {id ? (
           <Title
