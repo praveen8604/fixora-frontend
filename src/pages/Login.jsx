@@ -47,15 +47,12 @@ const Login = () => {
 
   const [userCountry, setUserCountry] = useState("in");
 
-  const maskedNumber = enteredMobileNumber?.replace(
-    /\d(?=\d{4})/g,
-    "*"
-  );
+  const maskedNumber = enteredMobileNumber?.replace(/\d(?=\d{4})/g, "*");
 
   const maskedEmail = enteredEmail?.replace(
     /^(.)(.*)(@.*)$/,
     (match, firstChar, middleChars, domain) =>
-      firstChar + middleChars.replace(/./g, "*") + domain
+      firstChar + middleChars.replace(/./g, "*") + domain,
   );
 
   useEffect(() => {
@@ -89,28 +86,14 @@ const Login = () => {
     const adminPayload = {
       _id: data._id || "local-admin",
       userName: data.userName || data.name || "Admin",
-      email:
-        data.email ||
-        enteredEmail ||
-        "admin@fixmantra.com",
-      phoneNumber:
-        data.phoneNumber ||
-        enteredMobileNumber ||
-        "",
-      countryCode:
-        data.countryCode ||
-        enteredCountryCode ||
-        "+91",
+      email: data.email || enteredEmail || "admin@fixmantra.com",
+      phoneNumber: data.phoneNumber || enteredMobileNumber || "",
+      countryCode: data.countryCode || enteredCountryCode || "+91",
       role: data.role || "Admin",
-      createdAt:
-        data.createdAt ||
-        new Date().toISOString(),
+      createdAt: data.createdAt || new Date().toISOString(),
     };
 
-    const token =
-      data.token ||
-      data.accessToken ||
-      "local-session";
+    const token = data.token || data.accessToken;
 
     dispatch({
       type: "USER_LOGIN",
@@ -119,21 +102,13 @@ const Login = () => {
 
     localStorage.setItem("theme", "light");
 
-    Cookies.set(
-      "adminInfo",
-      JSON.stringify(adminPayload),
-      {
-        expires: cookieTimeOut,
-      }
-    );
+    Cookies.set("adminInfo", JSON.stringify(adminPayload), {
+      expires: cookieTimeOut,
+    });
 
-    Cookies.set(
-      "token",
-      JSON.stringify(token),
-      {
-        expires: cookieTimeOut,
-      }
-    );
+    Cookies.set("token", JSON.stringify(token), {
+      expires: cookieTimeOut,
+    });
 
     notifySuccess("Login Success!");
 
@@ -141,82 +116,104 @@ const Login = () => {
   };
 
   const onSubmit = async (data) => {
-    try {
-      setIsLoading(true);
+  try {
+    setIsLoading(true);
 
-      const payload =
-        loginMethod === "otp"
-          ? {
-              phoneNumber: data.phoneNumber,
-              countryCode: data.countryCode,
-            }
-          : {
-              email: data.email,
-            };
+    const payload =
+      loginMethod === "otp"
+        ? {
+            phoneNumber: data.phoneNumber,
+            countryCode: data.countryCode,
+            isAuthServiceFor: "login",
+          }
+        : {
+            email: data.email,
+            isAuthServiceFor: "login",
+          };
 
-      await AdminServices.loginOTPAdmin(payload);
+    console.log("OTP REQUEST PAYLOAD:", payload);
+console.log("OTP REQUEST START");
 
-      if (loginMethod === "otp") {
-        setEnteredMobileNumber(data.phoneNumber);
-        setEnteredCountryCode(data.countryCode);
-      } else {
-        setEnteredEmail(data.email);
-      }
+const response = await AdminServices.loginOTPAdmin(payload);
 
-      notifySuccess("OTP sent successfully!");
+console.log("OTP REQUEST RESPONSE:", response);
 
-      setIsOtpSent(true);
-    } catch (error) {
-      notifyError(
-        error?.response?.data?.message ||
-          "Failed to send OTP."
-      );
-    } finally {
-      setIsLoading(false);
+    if (loginMethod === "otp") {
+      setEnteredMobileNumber(data.phoneNumber);
+      setEnteredCountryCode(data.countryCode);
+    } else {
+      setEnteredEmail(data.email);
     }
-  };
+
+    notifySuccess("OTP sent successfully!");
+    setIsOtpSent(true);
+  } catch (error) {
+    console.log("OTP SEND ERROR:", error);
+    console.log("OTP SEND ERROR RESPONSE:", error?.response?.data);
+
+    notifyError(
+      error?.response?.data?.message || "Failed to send OTP."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleOtpSubmit = async () => {
-    if (otp.length < 4) {
-      notifyError("Please enter a valid OTP.");
-      return;
-    }
+  if (otp.length < 4) {
+    notifyError("Please enter a valid OTP.");
+    return;
+  }
 
-    try {
-      setIsLoading(true);
+  try {
+    setIsLoading(true);
 
-      const payload =
-        loginMethod === "otp"
-          ? {
-              phoneNumber: enteredMobileNumber,
-              countryCode: enteredCountryCode,
-              otp,
-            }
-          : {
-              email: enteredEmail,
-              otp,
-            };
+    const payload =
+  loginMethod === "otp"
+    ? {
+        phoneNumber: enteredMobileNumber,
+        countryCode: enteredCountryCode,
+        secretCodeClient: otp,
+        deviceId: "admin-panel",
+        verificationMethod: "otp",
+        isLoginFor: "admin-panel",
+      }
+    : {
+        email: enteredEmail,
+        secretCodeClient: otp,
+        deviceId: "admin-panel",
+        verificationMethod: "email",
+        isLoginFor: "admin-panel",
+      };
 
-      const res = await AdminServices.verifyOTP(payload);
+    console.log("LOGIN PAYLOAD:", payload);
 
-      reduxDispatch(removeSetting("globalSetting"));
+    const res = await AdminServices.verifyOTP(payload);
 
-      goToDashboard(
-        res?.data || {
-          email: enteredEmail,
-          phoneNumber: enteredMobileNumber,
-          countryCode: enteredCountryCode,
-        }
-      );
-    } catch (error) {
-      notifyError(
-        error?.response?.data?.message ||
-          "Invalid OTP."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    console.log("LOGIN RESPONSE:", res);
+
+    reduxDispatch(removeSetting("globalSetting"));
+
+    goToDashboard(
+      res?.data || {
+        email: enteredEmail,
+        phoneNumber: enteredMobileNumber,
+        countryCode: enteredCountryCode,
+      },
+    );
+
+    notifySuccess("Login successful!");
+  } catch (error) {
+    console.log("LOGIN ERROR:", error);
+    console.log("LOGIN ERROR RESPONSE:", error?.response?.data);
+
+    notifyError(
+      error?.response?.data?.message || "Invalid OTP."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleChangeLoginMethod = (method) => {
     setLoginMethod(method);
@@ -886,20 +883,14 @@ const Login = () => {
 
       <div className="fm-login flex w-full items-center justify-center px-4 py-8 sm:px-6">
         <div className="fm-shell">
-
           {/* =====================================================
               LEFT BRAND / PRODUCT PANEL
           ===================================================== */}
 
           <div className="fm-brand-panel">
             <div>
-
               {/* Logo */}
-              <img
-                src={logo}
-                alt="FixMantra"
-                className="fm-brand-logo"
-              />
+              <img src={logo} alt="FixMantra" className="fm-brand-logo" />
 
               {/* Kicker */}
               <div className="fm-brand-kicker">
@@ -914,13 +905,12 @@ const Login = () => {
 
               <p className="fm-brand-description">
                 Access your administration workspace to manage customers,
-                service requests and day-to-day business operations from
-                one place.
+                service requests and day-to-day business operations from one
+                place.
               </p>
 
               {/* Product Features */}
               <div className="fm-feature-list">
-
                 <div className="fm-feature">
                   <div className="fm-feature-icon">
                     <FiCheckCircle className="text-sm" />
@@ -950,7 +940,6 @@ const Login = () => {
                     Monitor your business activity
                   </span>
                 </div>
-
               </div>
             </div>
 
@@ -966,12 +955,9 @@ const Login = () => {
 
           <div className="fm-form-panel">
             <div className="fm-form-container">
-
               {/* Top Information */}
               <div className="fm-form-top">
-                <span className="fm-console-label">
-                  FIXMANTRA ADMIN
-                </span>
+                <span className="fm-console-label">FIXMANTRA ADMIN</span>
 
                 <span className="fm-status">
                   <span className="fm-status-dot" />
@@ -985,23 +971,16 @@ const Login = () => {
                   <div className="fm-heading">
                     <h1>Welcome back</h1>
 
-                    <p>
-                      Sign in to continue to your administration workspace.
-                    </p>
+                    <p>Sign in to continue to your administration workspace.</p>
                   </div>
 
                   {/* Login Method */}
                   <div className="fm-methods">
-
                     <button
                       type="button"
-                      onClick={() =>
-                        handleChangeLoginMethod("otp")
-                      }
+                      onClick={() => handleChangeLoginMethod("otp")}
                       className={`fm-method ${
-                        loginMethod === "otp"
-                          ? "active"
-                          : ""
+                        loginMethod === "otp" ? "active" : ""
                       }`}
                     >
                       <span className="flex items-center justify-center gap-2">
@@ -1012,13 +991,9 @@ const Login = () => {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        handleChangeLoginMethod("email")
-                      }
+                      onClick={() => handleChangeLoginMethod("email")}
                       className={`fm-method ${
-                        loginMethod === "email"
-                          ? "active"
-                          : ""
+                        loginMethod === "email" ? "active" : ""
                       }`}
                     >
                       <span className="flex items-center justify-center gap-2">
@@ -1026,25 +1001,16 @@ const Login = () => {
                         Email
                       </span>
                     </button>
-
                   </div>
 
                   {/* Form */}
-                  <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="mt-5"
-                  >
-
+                  <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
                     {/* Mobile */}
                     {loginMethod === "otp" ? (
                       <div>
-
-                        <label className="fm-label">
-                          Mobile number
-                        </label>
+                        <label className="fm-label">Mobile number</label>
 
                         <div className="fm-phone">
-
                           <PhoneInput
                             country={userCountry}
                             onChange={handlePhoneChange}
@@ -1077,19 +1043,14 @@ const Login = () => {
                             })}
                             type="hidden"
                           />
-
                         </div>
                       </div>
                     ) : (
                       /* Email */
                       <div>
-
-                        <label className="fm-label">
-                          Email address
-                        </label>
+                        <label className="fm-label">Email address</label>
 
                         <div className="fm-email">
-
                           <div className="fm-email-icon">
                             <IoMdMail className="text-lg" />
                           </div>
@@ -1102,50 +1063,35 @@ const Login = () => {
                                 loginMethod === "email"
                                   ? "Please enter your Email"
                                   : false,
-                              onChange: (e) =>
-                                setEnteredEmail(
-                                  e.target.value
-                                ),
+                              onChange: (e) => setEnteredEmail(e.target.value),
                             })}
                           />
-
                         </div>
-
                       </div>
                     )}
 
                     {/* Errors */}
                     <div className="mt-2">
-                      <Error
-                        errorName={errors.countryCode}
-                      />
+                      <Error errorName={errors.countryCode} />
 
-                      <Error
-                        errorName={errors.phoneNumber}
-                      />
+                      <Error errorName={errors.phoneNumber} />
 
-                      <Error
-                        errorName={errors.email}
-                      />
+                      <Error errorName={errors.email} />
                     </div>
 
                     {/* Security */}
                     <div className="fm-security">
-
                       <div className="fm-security-icon">
                         <FiShield className="text-sm" />
                       </div>
 
                       <div>
-                        <p className="fm-security-title">
-                          Secure sign in
-                        </p>
+                        <p className="fm-security-title">Secure sign in</p>
 
                         <p className="fm-security-text">
                           Your verification details are kept protected.
                         </p>
                       </div>
-
                     </div>
 
                     {/* Continue */}
@@ -1169,47 +1115,33 @@ const Login = () => {
 
                     {/* Signup */}
                     <p className="fm-signup">
-                      Don't have an account?{" "}
-
-                      <Link to="/signup">
-                        Sign up
-                      </Link>
+                      Don't have an account? <Link to="/signup">Sign up</Link>
                     </p>
-
                   </form>
                 </>
               ) : (
-
                 /* =================================================
                    OTP SCREEN
                 ================================================= */
 
                 <div>
-
                   <div className="fm-otp-header">
-
                     <div className="fm-otp-icon">
                       <FiLock className="text-xl" />
                     </div>
 
-                    <h2>
-                      Verify your account
-                    </h2>
+                    <h2>Verify your account</h2>
 
                     <p>
                       {loginMethod === "otp"
                         ? `Enter the verification code sent to ${maskedNumber}.`
                         : `Enter the verification code sent to ${maskedEmail}.`}
                     </p>
-
                   </div>
 
                   {/* OTP */}
                   <div className="mt-7">
-
-                    <label className="fm-otp-label">
-                      Verification code
-                    </label>
+                    <label className="fm-otp-label">Verification code</label>
 
                     <input
                       type="text"
@@ -1217,9 +1149,7 @@ const Login = () => {
                       placeholder="••••••"
                       value={otp}
                       onChange={(e) =>
-                        setOtp(
-                          e.target.value.replace(/\D/g, "")
-                        )
+                        setOtp(e.target.value.replace(/\D/g, ""))
                       }
                       className="fm-otp"
                       maxLength={6}
@@ -1229,7 +1159,6 @@ const Login = () => {
                     <p className="fm-otp-help">
                       Enter the 6-digit verification code
                     </p>
-
                   </div>
 
                   {/* Verify */}
@@ -1263,11 +1192,8 @@ const Login = () => {
                     }}
                   >
                     ← Try a different{" "}
-                    {loginMethod === "otp"
-                      ? "phone number"
-                      : "email"}
+                    {loginMethod === "otp" ? "phone number" : "email"}
                   </button>
-
                 </div>
               )}
 
@@ -1278,10 +1204,8 @@ const Login = () => {
                 <FiShield className="text-xs" />
                 Secure FixMantra Admin Portal
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </>
