@@ -48,23 +48,23 @@ import { Popover } from "react-tiny-popover";
 ============================================================ */
 
 const THEME = {
-  primary: "#2563eb",
-  primaryDark: "#1d4ed8",
-  primarySoft: "#eff6ff",
-  primarySoft2: "#f5f8ff",
-  primaryBorder: "#dbeafe",
+  primary: "#AD8B73",
+  primaryDark: "#8B6B57",
+  primarySoft: "#FFFBE9",
+  primarySoft2: "#FFF5D6",
+  primaryBorder: "#E3CAA5",
 
-  text: "#111827",
-  textSoft: "#475569",
-  textMuted: "#64748b",
-  textLight: "#94a3b8",
+  text: "#3D2C1E",
+  textSoft: "#6B5344",
+  textMuted: "#AD8B73",
+  textLight: "#CEAB93",
 
   white: "#ffffff",
-  surface: "#f8fafc",
-  surface2: "#f1f5f9",
+  surface: "#FFFBE9",
+  surface2: "#FFF5D6",
 
-  border: "#e2e8f0",
-  borderSoft: "#edf2f7",
+  border: "#E3CAA5",
+  borderSoft: "#F5E8D0",
 
   success: "#16a34a",
   successSoft: "#f0fdf4",
@@ -982,18 +982,18 @@ const TicketManagement = () => {
 
   return (
     <AnimatedContent>
-      <div className="min-h-screen bg-[#F4F7FB] pb-8">
+      <div className="min-h-screen bg-[#FFFBE9] pb-8">
 
         {/* ====================================================
             PAGE HEADER
         ==================================================== */}
 
         <section className="mb-8">
-          <div className="relative overflow-hidden rounded-[30px] bg-[#0B1220] px-6 py-7 shadow-[0_20px_55px_rgba(15,23,42,0.15)] sm:px-8 sm:py-9">
+          <div className="relative overflow-hidden rounded-[30px] bg-[#3D2C1E] px-6 py-7 shadow-[0_20px_55px_rgba(61,44,30,0.25)] sm:px-8 sm:py-9">
 
-            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#2563EB]/20 blur-[2px]" />
+            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#AD8B73]/25 blur-[2px]" />
 
-            <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
 
             <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
@@ -1001,8 +1001,8 @@ const TicketManagement = () => {
                 <div className="mb-3 flex items-center gap-2.5">
 
                   <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#38BDF8]/50" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#38BDF8]" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E3CAA5]/60" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E3CAA5]" />
                   </span>
 
                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">
@@ -1033,7 +1033,7 @@ const TicketManagement = () => {
                     setSortablePopover(false)
                   }
                   content={
-                    <div className="mt-2 min-w-[175px] rounded-xl border border-[#E5EAF1] bg-white p-2 shadow-xl">
+                    <div className="mt-2 min-w-[175px] rounded-xl border border-[#E3CAA5] bg-white p-2 shadow-xl">
                       {[
                         {
                           label: "Newest First",
@@ -1058,8 +1058,8 @@ const TicketManagement = () => {
                             }
                             className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-[11px] font-semibold transition ${
                               sortBy === val
-                                ? "bg-[#EFF6FF] text-[#2563EB]"
-                                : "hover:bg-[#F4F7FB]"
+                                ? "bg-[#FFFBE9] text-[#AD8B73]"
+                                : "hover:bg-[#FFFBE9]"
                             }`}
                           >
                             <Icon size={13} />
@@ -1096,7 +1096,7 @@ const TicketManagement = () => {
                   Filter
 
                   {filterCount > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#38BDF8] text-[9px] font-bold text-[#0B1220]">
+                    <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#E3CAA5] text-[9px] font-bold text-[#3D2C1E]">
                       {filterCount}
                     </span>
                   )}
@@ -1110,7 +1110,7 @@ const TicketManagement = () => {
                       "/services/servicerequests/request"
                     )
                   }
-                  className="flex items-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-[12px] font-extrabold text-white shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+                  className="flex items-center gap-2 rounded-xl bg-[#AD8B73] px-4 py-2.5 text-[12px] font-extrabold text-white shadow-[0_8px_20px_rgba(173,139,115,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
                 >
                   <FaPlus size={9} />
 
@@ -1119,7 +1119,7 @@ const TicketManagement = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent" />
+            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#AD8B73]/60 to-transparent" />
           </div>
         </section>
 
@@ -1136,8 +1136,8 @@ const TicketManagement = () => {
                 value: requestStats.total,
                 desc: "Requests on this page",
                 Icon: FaTicketAlt,
-                soft: "from-[#EEF0FF] to-[#F4FDFF]",
-                line: "from-[#5E63D9] to-[#35C7F3]",
+                soft: "from-[#FFFBE9] to-[#FFF5D6]",
+                line: "from-[#AD8B73] to-[#CEAB93]",
               },
               {
                 title: "Open Requests",
@@ -1152,8 +1152,8 @@ const TicketManagement = () => {
                 value: requestStats.assigned,
                 desc: "With technician",
                 Icon: FaUserCog,
-                soft: "from-[#F4F0FF] to-[#F5F3FF]",
-                line: "from-[#8B5CF6] to-[#4CC9F0]",
+                soft: "from-[#FFFBE9] to-[#FFF5D6]",
+                line: "from-[#CEAB93] to-[#E3CAA5]",
               },
               {
                 title: "Pending",
@@ -1169,7 +1169,7 @@ const TicketManagement = () => {
               return (
                 <div
                   key={item.title}
-                  className="group relative overflow-hidden rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.035)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#C9D7EF] hover:shadow-[0_22px_45px_rgba(15,23,42,0.09)]"
+                  className="group relative overflow-hidden rounded-[24px] border border-[#E3CAA5] bg-white p-5 shadow-[0_6px_25px_rgba(173,139,115,0.08)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#CEAB93] hover:shadow-[0_22px_45px_rgba(173,139,115,0.15)]"
                 >
                   <div
                     className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${item.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`}
@@ -1178,35 +1178,35 @@ const TicketManagement = () => {
                   <div className="relative z-10 flex items-start justify-between">
 
                     <div
-                      className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${item.soft} text-[#2563EB] transition-all duration-300 group-hover:scale-110`}
+                      className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${item.soft} text-[#AD8B73] transition-all duration-300 group-hover:scale-110`}
                     >
                       <Icon size={18} />
                     </div>
 
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F6FA] text-[#98A2B3] transition-all duration-300 group-hover:bg-[#111827] group-hover:text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFFBE9] text-[#CEAB93] transition-all duration-300 group-hover:bg-[#AD8B73] group-hover:text-white">
                       <FiArrowUpRight size={14} />
                     </div>
                   </div>
 
                   <div className="relative z-10 mt-5">
 
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8B95A7]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#AD8B73]">
                       {item.title}
                     </p>
 
                     <div className="mt-2.5 flex items-end justify-between gap-2">
 
-                      <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#111827]">
+                      <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#3D2C1E]">
                         {item.value}
                       </h3>
 
-                      <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#A0A8B8]">
+                      <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#CEAB93]">
                         {item.desc}
                       </span>
                     </div>
                   </div>
 
-                  <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#EDF0F5]">
+                  <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#E3CAA5]">
                     <div
                       className={`h-full w-0 rounded-full bg-gradient-to-r ${item.line} transition-all duration-500 group-hover:w-full`}
                     />
@@ -1221,20 +1221,20 @@ const TicketManagement = () => {
             FILTER HEADER
         ==================================================== */}
 
-        <div className="mb-4 overflow-hidden rounded-[20px] border border-[#E5EAF1] bg-white shadow-[0_5px_20px_rgba(15,23,42,0.035)]">
+        <div className="mb-4 overflow-hidden rounded-[20px] border border-[#E3CAA5] bg-white shadow-[0_5px_20px_rgba(173,139,115,0.06)]">
 
-          <div className="flex items-center gap-3 border-b border-[#F0F2F7] px-4 py-3">
+          <div className="flex items-center gap-3 border-b border-[#E3CAA5] px-4 py-3">
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#E8F0FF] text-[#2563EB]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#FFFBE9] text-[#AD8B73]">
               <FiList size={15} />
             </div>
 
             <div>
-              <h2 className="text-[12px] font-extrabold text-[#111827]">
+              <h2 className="text-[12px] font-extrabold text-[#3D2C1E]">
                 Request Filters
               </h2>
 
-              <p className="text-[9px] text-[#8993A5]">
+              <p className="text-[9px] text-[#AD8B73]">
                 Search and filter service requests
               </p>
             </div>
@@ -1255,22 +1255,22 @@ const TicketManagement = () => {
             REQUEST TABLE
         ==================================================== */}
 
-        <div className="overflow-hidden rounded-[22px] border border-[#E8ECF5] bg-white shadow-[0_18px_42px_rgba(84,98,130,0.10)]">
+        <div className="overflow-hidden rounded-[22px] border border-[#E3CAA5] bg-white shadow-[0_18px_42px_rgba(173,139,115,0.10)]">
 
-          <div className="flex flex-col gap-3 border-b border-[#F0F2F7] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-b border-[#E3CAA5] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
 
             <div className="flex items-center gap-3">
 
-              <div className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-[#E8F0FF] text-[#2563EB]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-[#FFFBE9] text-[#AD8B73]">
                 <FaTicketAlt size={14} />
               </div>
 
               <div>
-                <h2 className="text-[13px] font-extrabold text-[#111827]">
+                <h2 className="text-[13px] font-extrabold text-[#3D2C1E]">
                   Recent Service Requests
                 </h2>
 
-                <p className="mt-0.5 text-[9px] font-medium text-[#8993A5]">
+                <p className="mt-0.5 text-[9px] font-medium text-[#AD8B73]">
                   Customer requests and service activity
                 </p>
               </div>
@@ -1278,11 +1278,11 @@ const TicketManagement = () => {
 
             <div className="flex items-center gap-2">
 
-              <div className="flex items-center gap-1.5 rounded-full bg-[#F5F7FC] px-3 py-1.5">
+              <div className="flex w-fit items-center gap-2 rounded-full border border-[#E3CAA5] bg-[#FFFBE9] px-3 py-1.5">
 
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2563EB]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#AD8B73]" />
 
-                <span className="text-[9px] font-extrabold uppercase tracking-wide text-[#7F8897]">
+                <span className="text-[9px] font-extrabold uppercase tracking-wide text-[#AD8B73]">
                   {serviceRequests?.length || 0} Showing
                 </span>
               </div>
@@ -1295,7 +1295,7 @@ const TicketManagement = () => {
                     limit,
                   })
                 }
-                className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#F4F6FA] text-[#98A2B3] transition-all duration-200 hover:bg-[#111827] hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#FFFBE9] border border-[#E3CAA5] text-[#AD8B73] transition-all duration-200 hover:bg-[#AD8B73] hover:text-white"
                 title="Refresh"
               >
                 <FiRefreshCw size={12} />
@@ -1315,15 +1315,15 @@ const TicketManagement = () => {
             noDataComponent={
               <div className="flex min-h-[330px] w-full flex-col items-center justify-center px-5 text-center">
 
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#E8F0FF] text-[#2563EB]">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#FFFBE9] text-[#AD8B73]">
                   <FaTicketAlt size={24} />
                 </div>
 
-                <div className="text-[14px] font-extrabold text-[#111827]">
+                <div className="text-[14px] font-extrabold text-[#3D2C1E]">
                   No Service Requests Found
                 </div>
 
-                <div className="mt-1 max-w-[330px] text-[10px] leading-5 text-[#8993A5]">
+                <div className="mt-1 max-w-[330px] text-[10px] leading-5 text-[#CEAB93]">
                   There are no service requests matching
                   the current filters.
                 </div>
@@ -1334,7 +1334,7 @@ const TicketManagement = () => {
                       "/services/servicerequests/request"
                     )
                   }
-                  className="mt-5 flex items-center gap-2 rounded-[10px] bg-[#2563EB] px-4 py-2 text-[10px] font-extrabold text-white transition-all hover:opacity-90"
+                  className="mt-5 flex items-center gap-2 rounded-[10px] bg-[#AD8B73] px-4 py-2 text-[10px] font-extrabold text-white transition-all hover:-translate-y-0.5 hover:opacity-90"
                 >
                   <FaPlus size={8} />
 
@@ -1348,27 +1348,27 @@ const TicketManagement = () => {
             customStyles={{
               table: {
                 style: {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "transparent",
                 },
               },
 
               headRow: {
                 style: {
                   minHeight: "50px",
-                  backgroundColor: "#F8FAFD",
+                  backgroundColor: "#FFFBE9",
                   borderBottom:
-                    "1px solid #F0F2F7",
+                    "1px solid #E3CAA5",
                 },
               },
 
               headCells: {
                 style: {
-                  fontSize: "9px",
+                  fontSize: "9.5px",
                   fontWeight: "800",
-                  color: "#99A3B3",
+                  color: "#AD8B73",
                   overflow: "hidden",
                   textTransform: "uppercase",
-                  letterSpacing: "0.75px",
+                  letterSpacing: "0.8px",
                   paddingLeft: "18px",
                   paddingRight: "18px",
                 },
@@ -1379,14 +1379,14 @@ const TicketManagement = () => {
                   minHeight: "78px",
                   backgroundColor: "#ffffff",
                   borderBottom:
-                    "1px solid #F2F4F8",
+                    "1px solid #E3CAA5",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                 },
 
                 highlightOnHoverStyle: {
-                  backgroundColor: "#FAFBFF",
-                  borderBottomColor: "#F2F4F8",
+                  backgroundColor: "#FFFBE9",
+                  borderBottomColor: "#E3CAA5",
                   outline: "none",
                   boxShadow:
                     `inset 3px 0 0 ${THEME.primary}`,

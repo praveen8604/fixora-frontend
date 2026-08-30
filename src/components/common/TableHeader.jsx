@@ -152,40 +152,40 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
           containerClassName="z-10"
           onClickOutside={() => setSortablePopover(false)}
           content={
-            <div className="bg-[var(--primary-color)] p-2 mt-2 shadow-xl rounded-md border-2 border-[#eaeaea]">
+            <div className="bg-white p-2 mt-2 shadow-xl rounded-md border-2 border-[#E3CAA5]">
               <div
                 className={`flex items-center gap-3 cursor-pointer border-2 ${
-                  sortBy === -1 ? "bg-[#f1f1f1]" : "bg-transparent"
+                  sortBy === -1 ? "bg-[#FFFBE9]" : "bg-transparent"
                 } ${
-                  sortBy === -1 ? "border-[#cfcfcf]" : "border-transparent"
+                  sortBy === -1 ? "border-[#E3CAA5]" : "border-transparent"
                 } p-2 rounded-md`}
                 onClick={() => {
                   handleSortBy(-1);
                 }}
               >
-                <FaSortAmountUpAlt />
-                <div className="text-sm">Sort by Newest</div>
+                <FaSortAmountUpAlt className="text-[#AD8B73]" />
+                <div className="text-sm text-[#3D2C1E]">Sort by Newest</div>
               </div>
-              <div className="mt-2 mb-2 h-[1.5px] w-full bg-[#eaeaea]"></div>
+              <div className="mt-2 mb-2 h-[1.5px] w-full bg-[#E3CAA5]"></div>
               <div
                 className={`flex items-center gap-3 cursor-pointer border-2 ${
-                  sortBy === 1 ? "bg-[#f1f1f1]" : "bg-transparent"
+                  sortBy === 1 ? "bg-[#FFFBE9]" : "bg-transparent"
                 } ${
-                  sortBy === 1 ? "border-[#cfcfcf]" : "border-transparent"
+                  sortBy === 1 ? "border-[#E3CAA5]" : "border-transparent"
                 } p-2 rounded-md`}
                 onClick={() => {
                   handleSortBy(1);
                 }}
               >
-                <FaSortAmountDownAlt />
-                <div className="text-sm">Sort by Oldest</div>
+                <FaSortAmountDownAlt className="text-[#AD8B73]" />
+                <div className="text-sm text-[#3D2C1E]">Sort by Oldest</div>
               </div>
             </div>
           }
         >
           <div
             onClick={() => setSortablePopover(!sortablePopover)}
-            className="flex items-center px-4 p-3 py-2 text-sm gap-2 rounded-md border-2 border-[var(--secondary-elite-color)] bg-[var(--secondary-elite-color)] text-white cursor-pointer"
+            className="flex items-center px-4 p-3 py-2 text-sm gap-2 rounded-md border-2 border-[#AD8B73] bg-[#AD8B73] text-white cursor-pointer transition-colors hover:bg-[#8B6B57]"
           >
             <HiSortDescending size={20} />
             <div>Sort</div>
@@ -193,7 +193,7 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
         </Popover>
         <div>
           <div
-            className="flex items-center px-4 p-3 py-2 text-sm gap-2 rounded-md border-2 border-gray-400 bg-[var(--secondary-light-1-color)] text-[var(--secondary-color)] cursor-pointer"
+            className="flex items-center px-4 p-3 py-2 text-sm gap-2 rounded-md border-2 border-[#E3CAA5] bg-[#FFFBE9] text-[#AD8B73] cursor-pointer transition-colors hover:bg-[#FFF5D6]"
             onClick={() => setFilterDragger(true)}
           >
             <MdOutlineTune size={20} />
@@ -201,7 +201,7 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
           </div>
           {filterCount > 0 && (
             <div className="h-0 flex justify-end">
-              <div className="relative bottom-[45px] left-[5px] h-4 w-4 rounded-full flex items-center justify-center text-[10px] bg-[#f00] text-white">
+              <div className="relative bottom-[45px] left-[5px] h-4 w-4 rounded-full flex items-center justify-center text-[10px] bg-[#E3CAA5] text-[#3D2C1E] font-bold">
                 {filterCount}
               </div>
             </div>
@@ -213,11 +213,11 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
         onClose={() => setFilterDragger(false)}
         drawerWidth="400px"
       >
-        <div className="p-4 bg-[var(--secondary-light-2-color)] h-[var(--doc-height)]">
-          <div className="font-bold text-md flex items-center gap-2 text-[var(--primary-elite-color)]">
+        <div className="p-4 bg-[#FFFBE9] h-[var(--doc-height)]">
+          <div className="font-bold text-md flex items-center gap-2 text-[#AD8B73]">
             <MdOutlineTune size={22} /> Filter
           </div>
-          <div className="flex flex-col text-sm mt-8">
+          <div className="flex flex-col text-sm mt-8 text-[#3D2C1E]">
             <label className="font-bold">Ticket Status</label>
             {data?.length > 0 && (
               <Dropdown
@@ -229,19 +229,19 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
               />
             )}
           </div>
-          <div className="flex flex-col text-sm mt-2">
+          <div className="flex flex-col text-sm mt-2 text-[#3D2C1E]">
             <label className="font-bold">Ticket Type</label>
             {data?.length > 0 && (
               <Dropdown
                 value={ticketTypeSelectedOption}
-                placeholder="Select a Ticket Status!"
+                placeholder="Select a Ticket Type!"
                 onSelect={handleTicketTypeSelect}
                 options={Object.values(SERVICE_REQUEST_TYPE)}
                 disabled={false}
               />
             )}
           </div>
-          <div className="flex flex-col text-sm mt-2">
+          <div className="flex flex-col text-sm mt-2 text-[#3D2C1E]">
             <label className="font-bold">Customers</label>
             {data?.length > 0 && (
               <Dropdown
@@ -256,7 +256,7 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
               />
             )}
           </div>
-          <div className="flex flex-col text-sm mt-2">
+          <div className="flex flex-col text-sm mt-2 text-[#3D2C1E]">
             <label className="font-bold">Rider</label>
             {data?.length > 0 && (
               <Dropdown
@@ -271,7 +271,7 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
               />
             )}
           </div>
-          <div className="flex flex-col text-sm mt-2">
+          <div className="flex flex-col text-sm mt-2 text-[#3D2C1E]">
             <label className="font-bold">Technician</label>
             {data?.length > 0 && (
               <Dropdown
@@ -286,15 +286,15 @@ const TableHeader = ({ title, data, filterValues, activePage, limit }) => {
               />
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-4">
             <button
-              className="mt-2 w-full border-2 border-[var(--primary-elite-color)] h-10 text-[var(--primary-elite-color)] rounded-md text-[13.5px] font-bold"
+              className="mt-2 w-full border-2 border-[#AD8B73] h-10 text-[#AD8B73] rounded-md text-[13.5px] font-bold transition-colors hover:bg-[#FFFBE9]"
               onClick={() => handleClearFilter()}
             >
               Clear
             </button>
             <button
-              className="mt-2 w-full bg-[var(--primary-elite-color)] h-10 text-[var(--primary-color)] rounded-md text-sm"
+              className="mt-2 w-full bg-[#AD8B73] h-10 text-white rounded-md text-sm font-bold transition-colors hover:bg-[#8B6B57]"
               onClick={() => handleFilter()}
             >
               Apply

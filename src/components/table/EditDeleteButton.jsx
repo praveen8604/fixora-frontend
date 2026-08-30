@@ -24,26 +24,26 @@ const EditDeleteButton = ({
           <>
             <Link
               to={`/categories/${parent?._id}`}
-              className="p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none"
+              className="p-2 cursor-pointer text-[#CEAB93] hover:text-[#AD8B73] focus:outline-none transition-colors"
             >
               <Tooltip
                 id="view"
                 Icon={FiZoomIn}
                 title={t("View")}
-                bgColor="#10B981"
+                bgColor="#AD8B73"
               />
             </Link>
 
             <button
               disabled={isCheck?.length > 0}
               onClick={() => handleUpdate(id)}
-              className="p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none"
+              className="p-2 cursor-pointer text-[#CEAB93] hover:text-[#AD8B73] focus:outline-none transition-colors"
             >
               <Tooltip
                 id="edit"
                 Icon={FiEdit}
                 title={t("Edit")}
-                bgColor="#10B981"
+                bgColor="#AD8B73"
               />
             </button>
           </>
@@ -51,13 +51,13 @@ const EditDeleteButton = ({
           <button
             disabled={isCheck?.length > 0}
             onClick={() => handleUpdate(id)}
-            className="p-2 cursor-pointer text-gray-400 hover:text-emerald-600 focus:outline-none"
+            className="p-2 cursor-pointer text-[#CEAB93] hover:text-[#AD8B73] focus:outline-none transition-colors"
           >
             <Tooltip
               id="edit"
               Icon={FiEdit}
               title={t("Edit")}
-              bgColor="#10B981"
+              bgColor="#AD8B73"
             />
           </button>
         )}
@@ -65,7 +65,7 @@ const EditDeleteButton = ({
         <button
           disabled={isCheck?.length > 0}
           onClick={() => handleModalOpen(id, title, product)}
-          className="p-2 cursor-pointer text-gray-400 hover:text-red-600 focus:outline-none"
+          className="p-2 cursor-pointer text-[#CEAB93] hover:text-red-500 focus:outline-none transition-colors"
         >
           <Tooltip
             id="delete"
