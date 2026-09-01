@@ -2,15 +2,15 @@ import requests from "./httpService";
 
 const AdminServices = {
   registerAdmin: async (body) => {
-    return requests.post("/api/eserve/v1/register", body);
+    return requests.post("/eserve/v1/register", body);
   },
 
   loginOTPAdmin: async (body) => {
-    return requests.post("/api/eserve/v1/otp/send", body);
+    return requests.post("/eserve/v1/otp/send", body);
   },
 
   verifyOTP: async (body) => {
-    return requests.post("/api/eserve/v1/login", body);
+    return requests.post("/eserve/v1/login", body);
   },
   getUser: async (userId) => {
     return requests.get(`/eserve/v1/user?userId=${userId}`);

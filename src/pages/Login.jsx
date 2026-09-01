@@ -21,6 +21,7 @@ import AdminServices from "@/services/AdminServices";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { DecryptData } from "@/utils/DecryptData";
 
 const Login = () => {
   const reduxDispatch = useDispatch();
@@ -83,37 +84,55 @@ const Login = () => {
   };
 
   const goToDashboard = (data = {}) => {
-    const adminPayload = {
-      _id: data._id || "local-admin",
-      userName: data.userName || data.name || "Admin",
-      email: data.email || enteredEmail || "admin@fixmantra.com",
-      phoneNumber: data.phoneNumber || enteredMobileNumber || "",
-      countryCode: data.countryCode || enteredCountryCode || "+91",
-      role: data.role || "Admin",
-      createdAt: data.createdAt || new Date().toISOString(),
-    };
+  const user = data?.user || {};
 
-    const token = data.token || data.accessToken;
-
-    dispatch({
-      type: "USER_LOGIN",
-      payload: adminPayload,
-    });
-
-    localStorage.setItem("theme", "light");
-
-    Cookies.set("adminInfo", JSON.stringify(adminPayload), {
-      expires: cookieTimeOut,
-    });
-
-    Cookies.set("token", JSON.stringify(token), {
-      expires: cookieTimeOut,
-    });
-
-    notifySuccess("Login Success!");
-
-    window.location.replace("/dashboard");
+  const adminPayload = {
+    _id: user._id || "local-admin",
+    userName: user.userName || "Admin",
+    email: user.email || enteredEmail || "admin@fixmantra.com",
+    phoneNumber:
+      user.phoneNumber || enteredMobileNumber || "",
+    countryCode:
+      user.countryCode || enteredCountryCode || "+91",
+    role: user.role || "admin",
+    createdAt: user.createdAt || new Date().toISOString(),
   };
+
+  const token = data?.jwt_token;
+
+  console.log("========== LOGIN TOKEN ==========");
+  console.log("JWT:", token);
+  console.log("=================================");
+
+  if (!token) {
+    notifyError("Authentication token missing.");
+    return;
+  }
+
+  dispatch({
+    type: "USER_LOGIN",
+    payload: adminPayload,
+  });
+
+  localStorage.setItem("theme", "light");
+
+  Cookies.set("adminInfo", JSON.stringify(adminPayload), {
+    expires: cookieTimeOut,
+  });
+
+  // IMPORTANT: JSON.stringify mat karo
+  Cookies.set("token", token, {
+    expires: cookieTimeOut,
+  });
+
+  console.log("========== COOKIE AFTER LOGIN ==========");
+  console.log("Token:", Cookies.get("token"));
+  console.log("========================================");
+
+  notifySuccess("Login Success!");
+
+  window.location.replace("/dashboard");
+};
 
   const onSubmit = async (data) => {
   try {
@@ -169,46 +188,83 @@ console.log("OTP REQUEST RESPONSE:", response);
     setIsLoading(true);
 
     const payload =
-  loginMethod === "otp"
-    ? {
-        phoneNumber: enteredMobileNumber,
-        countryCode: enteredCountryCode,
-        secretCodeClient: otp,
-        deviceId: "admin-panel",
-        verificationMethod: "otp",
-        isLoginFor: "admin-panel",
-      }
-    : {
-        email: enteredEmail,
-        secretCodeClient: otp,
-        deviceId: "admin-panel",
-        verificationMethod: "email",
-        isLoginFor: "admin-panel",
-      };
+      loginMethod === "otp"
+        ? {
+            phoneNumber: enteredMobileNumber,
+            countryCode: enteredCountryCode,
+            secretCodeClient: otp,
+            deviceId: "admin-panel",
+            verificationMethod: "otp",
+            isLoginFor: "admin-panel",
+          }
+        : {
+            email: enteredEmail,
+            secretCodeClient: otp,
+            deviceId: "admin-panel",
+            verificationMethod: "email",
+            isLoginFor: "admin-panel",
+          };
 
     console.log("LOGIN PAYLOAD:", payload);
 
+    // API call
     const res = await AdminServices.verifyOTP(payload);
 
-    console.log("LOGIN RESPONSE:", res);
+    console.log("========== RAW LOGIN RESPONSE ==========");
+    console.log(res);
+    console.log("=========================================");
 
+    // IMPORTANT: decrypt response
+    const decryptedResponse = DecryptData(res);
+
+    console.log("========== DECRYPTED LOGIN RESPONSE ==========");
+    console.log(decryptedResponse);
+    console.log("==============================================");
+
+    if (!decryptedResponse?.success) {
+      notifyError(
+        decryptedResponse?.message || "Login failed."
+      );
+      return;
+    }
+
+    // Backend structure:
+    // decryptedResponse.data.user
+    // decryptedResponse.data.jwt_token
+
+    const loginData = decryptedResponse?.data;
+
+    console.log("========== LOGIN DATA ==========");
+    console.log(loginData);
+    console.log("================================");
+
+    const jwt = loginData?.jwt_token;
+
+    console.log("========== LOGIN TOKEN ==========");
+    console.log("JWT:", jwt);
+    console.log("=================================");
+
+    if (!jwt) {
+      notifyError("JWT token not received from server.");
+      return;
+    }
+
+    // Save login information
     reduxDispatch(removeSetting("globalSetting"));
 
-    goToDashboard(
-      res?.data || {
-        email: enteredEmail,
-        phoneNumber: enteredMobileNumber,
-        countryCode: enteredCountryCode,
-      },
-    );
+    goToDashboard(loginData);
 
-    notifySuccess("Login successful!");
   } catch (error) {
     console.log("LOGIN ERROR:", error);
-    console.log("LOGIN ERROR RESPONSE:", error?.response?.data);
+    console.log(
+      "LOGIN ERROR RESPONSE:",
+      error?.response?.data
+    );
 
     notifyError(
-      error?.response?.data?.message || "Invalid OTP."
+      error?.response?.data?.message ||
+        error?.message ||
+        "Invalid OTP."
     );
   } finally {
     setIsLoading(false);

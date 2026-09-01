@@ -365,7 +365,7 @@ const SignUp = () => {
         addressInput: formData.addressInput || "madubani",
         countryCode: formData.countryCode,
         phoneNumber: formData.phoneNumber,
-        role: formData.role.toLowerCase(),
+        role: formData.role,
         verificationMethod: "otp",
         email: formData.email,
       };
@@ -542,20 +542,25 @@ const SignUp = () => {
             </label>
 
             <select
-              className="mt-1.5 mb-1 h-11 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm outline-none focus:border-[#50589C]"
-              {...register("role", {
-                required: "Role is required",
-              })}
-            >
-              <option value="">Select your role</option>
-              <option value="Customer">Customer</option>
-              <option value="Service Professional">
-                Service Professional
-              </option>
-              <option value="Admin / Manager">
-                Admin / Manager
-              </option>
-            </select>
+  className="mt-1.5 mb-1 h-11 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm outline-none focus:border-[#50589C]"
+  {...register("role", {
+    required: "Role is required",
+  })}
+>
+  <option value="">Select your role</option>
+
+  <option value="customer">
+    Customer
+  </option>
+
+  <option value="technician">
+    Service Professional
+  </option>
+
+  <option value="admin">
+    Admin / Manager
+  </option>
+</select>
 
             <Error errorName={errors.role} />
 
