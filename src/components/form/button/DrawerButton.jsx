@@ -12,22 +12,22 @@ const DrawerButton = ({ id, title, isSubmitting }) => {
   return (
     <>
       <div
-        className="fixed z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+        className="fixed z-10 bottom-0 w-full right-0 py-4 lg:py-8 px-6 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex bg-[#FFFBE9] border-t border-[#E3CAA5]"
         style={{ right: !isDrawerOpen && -50 }}
       >
         <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
-          <Button
+          <button
+            type="button"
             onClick={toggleDrawer}
-            className="h-12 bg-white w-full text-red-500 hover:bg-red-50 hover:border-red-100 hover:text-red-600 dark:bg-gray-700 dark:border-gray-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-red-700"
-            layout="outline"
+            className="h-12 w-full rounded-lg font-bold transition-all duration-200 border-2 border-[#E3CAA5] bg-white text-[#AD8B73] hover:bg-[#FFFBE9] hover:border-[#AD8B73]"
           >
             {t("CancelBtn")}
-          </Button>
+          </button>
         </div>
 
         <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
           {isSubmitting ? (
-            <Button disabled={true} type="button" className="w-full h-12">
+            <button disabled={true} type="button" className="flex justify-center items-center h-12 w-full rounded-lg font-bold transition-all duration-200 bg-[#AD8B73] text-white opacity-70">
               <img
                 src={spinnerLoadingImage}
                 alt="Loading"
@@ -35,9 +35,9 @@ const DrawerButton = ({ id, title, isSubmitting }) => {
                 height={10}
               />{" "}
               <span className="font-serif ml-2 font-light">Processing</span>
-            </Button>
+            </button>
           ) : (
-            <Button type="submit" className="w-full h-12">
+            <button type="submit" className="h-12 w-full rounded-lg font-bold transition-all duration-200 bg-[#AD8B73] text-white hover:bg-[#8B6B57]">
               {id ? (
                 <span>
                   {t("UpdateBtn")} {title}
@@ -45,7 +45,7 @@ const DrawerButton = ({ id, title, isSubmitting }) => {
               ) : (
                 <span>Add {title}</span>
               )}
-            </Button>
+            </button>
           )}
         </div>
       </div>
