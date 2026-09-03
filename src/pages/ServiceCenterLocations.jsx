@@ -1208,7 +1208,7 @@ const ServiceCenterLocation = () => {
             </div>
 
             <div className="flex w-fit items-center gap-2 rounded-full border border-accent bg-background px-3 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+
 
               <span className="text-[9px] font-extrabold uppercase tracking-wide text-primary">
                 {totalCenters} Centers

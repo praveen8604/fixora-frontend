@@ -1,3 +1,314 @@
+// import React, { useContext, useEffect, useState } from "react";
+// import DashboardServices from "@/services/DashboardServices";
+// import { DecryptData } from "@/utils/DecryptData";
+// import MainDrawer from "@/components/drawer/MainDrawer";
+// import StaffDrawer from "@/components/drawer/StaffDrawer";
+// import { SidebarContext } from "@/context/SidebarContext";
+// import { useHistory } from "react-router-dom";
+// import {
+//   FaUsers,
+//   FaCheckCircle,
+//   FaClock,
+//   FaTimesCircle,
+//   FaUserCog,
+//   FaExternalLinkAlt,
+// } from "react-icons/fa";
+// import { FiArrowUpRight } from "react-icons/fi";
+// import { BsBox } from "react-icons/bs";
+// import AnimatedContent from "@/components/common/AnimatedContent";
+// import Pagination from "@/components/common/Pagination";
+
+// const tones = {
+//   slate: {
+//     icon: "from-[#AD8B73] to-[#CEAB93]",
+//     soft: "from-[#FFFBE9] to-[#FFF5D6]",
+//     line: "from-[#AD8B73] to-[#CEAB93]",
+//   },
+//   emerald: {
+//     icon: "from-[#10B981] to-[#67E8C4]",
+//     soft: "from-[#ECFDF5] to-[#F0FDFA]",
+//     line: "from-[#10B981] to-[#59D6BF]",
+//   },
+//   amber: {
+//     icon: "from-[#CEAB93] to-[#E3CAA5]",
+//     soft: "from-[#FFFBE9] to-[#FFF5D6]",
+//     line: "from-[#CEAB93] to-[#E3CAA5]",
+//   },
+//   rose: {
+//     icon: "from-[#F43F5E] to-[#FB7185]",
+//     soft: "from-[#FFF1F3] to-[#FFF5F7]",
+//     line: "from-[#F43F5E] to-[#FB7185]",
+//   },
+// };
+
+// const getEligibilityClass = (s) =>
+//   ({
+//     eligible: "bg-[#ECFDF5] text-[#059669] border-[#D1FAE5]",
+//     pending: "bg-[#FFF7ED] text-[#D97706] border-[#FDE7C7]",
+//     "not-eligible": "bg-[#FFF1F3] text-[#E11D48] border-[#FFE0E7]",
+//   }[s] || "bg-[#FFFBE9] text-[#AD8B73] border-[#E3CAA5]");
+
+// const KpiCard = ({ title, value, desc, tone, Icon }) => {
+//   const t = tones[tone];
+//   return (
+//     <div className="group relative overflow-hidden rounded-[24px] border border-[#E3CAA5] bg-white p-5 shadow-[0_6px_25px_rgba(173,139,115,0.08)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#CEAB93] hover:shadow-[0_22px_45px_rgba(173,139,115,0.15)]">
+//       <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${t.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`} />
+//       <div className="relative z-10 flex items-start justify-between">
+//         <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${t.soft} text-[#AD8B73] transition-all duration-300 group-hover:scale-110`}>
+//           <Icon size={18} />
+//         </div>
+//         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFFBE9] text-[#CEAB93] transition-all duration-300 group-hover:bg-[#AD8B73] group-hover:text-white">
+//           <FiArrowUpRight size={14} />
+//         </div>
+//       </div>
+//       <div className="relative z-10 mt-5">
+//         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#AD8B73]">{title}</p>
+//         <div className="mt-2.5 flex items-end justify-between gap-2">
+//           <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#3D2C1E]">{value}</h3>
+//           <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#CEAB93]">{desc}</span>
+//         </div>
+//       </div>
+//       <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#E3CAA5]">
+//         <div className={`h-full w-0 rounded-full bg-gradient-to-r ${t.line} transition-all duration-500 group-hover:w-full`} />
+//       </div>
+//     </div>
+//   );
+// };
+
+// const Technician = () => {
+//   const { toggleDrawer } = useContext(SidebarContext);
+//   const history = useHistory();
+//   const [technicians, setTechnicians] = useState([]);
+//   const [id, setId] = useState("");
+//   const [totalPages, setTotalPages] = useState(0);
+//   const [activePage, setActivePage] = useState(1);
+//   const [limit, setLimit] = useState(10);
+
+//   const getTechniciansData = (page, lim) => {
+//     DashboardServices.getTechnicians(page, lim)
+//       .then((res) => {
+//         if (res) {
+//           const d = DecryptData(res);
+//           setTechnicians(d?.data?.technicians || []);
+//           setTotalPages(d?.data?.totalPages || 0);
+//         }
+//       })
+//       .catch(console.error);
+//   };
+
+//   useEffect(() => {
+//     getTechniciansData(activePage, limit);
+//   }, []);
+
+//   const eligibleCount = technicians.filter(
+//     (t) => t?.isPracticingEligible === "eligible"
+//   ).length;
+
+//   const metrics = [
+//     { title: "Total", value: technicians.length, desc: "All technicians", tone: "slate", Icon: FaUsers },
+//     { title: "Eligible", value: eligibleCount, desc: "Approved to work", tone: "emerald", Icon: FaCheckCircle },
+//     { title: "Pending", value: technicians.filter((t) => t?.isPracticingEligible === "pending").length, desc: "Awaiting approval", tone: "amber", Icon: FaClock },
+//     { title: "Not Eligible", value: technicians.filter((t) => t?.isPracticingEligible === "not-eligible").length, desc: "Not approved", tone: "rose", Icon: FaTimesCircle },
+//   ];
+
+//   return (
+//     <AnimatedContent>
+//       <div className="min-h-screen bg-[#FFFBE9] pb-10">
+//         <section className="mb-8">
+//           <div className="relative overflow-hidden rounded-[30px] bg-[#3D2C1E] px-6 py-7 shadow-[0_20px_55px_rgba(61,44,30,0.25)] sm:px-8 sm:py-9">
+//             <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#AD8B73]/25 blur-[2px]" />
+//             <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
+//             <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+//               <div>
+//                 <div className="mb-3 flex items-center gap-2.5">
+//                   <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E3CAA5]/60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E3CAA5]" /></span>
+//                   <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">User Management</span>
+//                 </div>
+//                 <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-[34px]">Technicians</h1>
+//                 <p className="mt-2 max-w-[520px] text-[13px] leading-6 text-white/50">Manage technician profiles, approval status and eligibility from one place.</p>
+//               </div>
+//               <div className="flex flex-wrap items-center gap-3">
+//                 <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
+//                   <FaUsers size={13} className="text-[#E3CAA5]" />
+//                   <span className="text-[12px] font-bold text-white/85">{technicians.length} Technicians</span>
+//                 </div>
+//                 <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
+//                   <FaCheckCircle size={13} className="text-emerald-400" />
+//                   <span className="text-[12px] font-bold text-white/85">{eligibleCount} Eligible</span>
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#AD8B73]/60 to-transparent" />
+//           </div>
+//         </section>
+
+//         <section className="mb-8">
+//           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+//             {metrics.map((m) => (
+//               <KpiCard key={m.title} {...m} />
+//             ))}
+//           </div>
+//         </section>
+
+//         <section>
+//           <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+//             <div className="flex items-center gap-4">
+//               <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#AD8B73] to-[#CEAB93] text-white shadow-[0_16px_30px_rgba(173,139,115,0.30)]">
+//                 <FaUserCog size={22} />
+//               </div>
+//               <div>
+//                 <h2 className="text-[34px] font-extrabold tracking-[-0.05em] text-[#3D2C1E]">Technician Collection</h2>
+//                 <p className="text-sm text-[#AD8B73]">Manage and monitor every technician profile</p>
+//               </div>
+//             </div>
+//             <span className="inline-flex w-fit items-center rounded-full border border-[#E3CAA5] bg-[#FFFBE9] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#AD8B73] shadow-sm">
+//               {technicians.length} Records
+//             </span>
+//           </div>
+
+//           <div className="overflow-hidden rounded-[30px] border border-[#E3CAA5] bg-white/95 shadow-[0_18px_42px_rgba(173,139,115,0.12)] backdrop-blur-sm">
+//             <div className="border-b border-[#E3CAA5] bg-[linear-gradient(180deg,rgba(255,251,233,0.95),rgba(255,255,255,0.9))] px-6 py-5">
+//               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+//                 <div>
+//                   <h3 className="text-base font-bold text-[#3D2C1E]">Technician List</h3>
+//                   <p className="mt-1 text-xs text-[#CEAB93]">Technician information, status and eligibility</p>
+//                 </div>
+//                 <span className="inline-flex w-fit items-center rounded-full bg-[#FFFBE9] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#AD8B73]">
+//                   Live Data
+//                 </span>
+//               </div>
+//             </div>
+
+//             <div className="overflow-x-auto">
+//               <table className="min-w-[1100px] w-full">
+//                 <thead>
+//                   <tr className="bg-[#FFFBE9]">
+//                     {["Technician", "Mobile No.", "Email", "Role", "Status", "Eligibility", "Action"].map((h) => (
+//                       <th key={h} className={`px-5 py-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[#AD8B73] ${h === "Action" ? "text-center" : "text-left"}`}>
+//                         {h}
+//                       </th>
+//                     ))}
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {technicians.length > 0 ? (
+//                     technicians.map((data, i) => (
+//                       <tr
+//                         key={data?._id || i}
+//                         onClick={() => history.push(`/users/technician/details?userId=${data?._id}`)}
+//                         className="group cursor-pointer border-b border-[#E3CAA5]/40 bg-white transition-colors hover:bg-[#FFFBE9]"
+//                       >
+//                         <td className="px-5 py-4">
+//                           <div className="flex items-center gap-3">
+//                             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E3CAA5] bg-gradient-to-br from-[#FFFBE9] to-[#FFF5D6] text-sm font-bold text-[#AD8B73] transition-all group-hover:from-[#AD8B73] group-hover:to-[#CEAB93] group-hover:text-white">
+//                               {data?.userName?.[0]?.toUpperCase() || "T"}
+//                             </div>
+//                             <div className="min-w-0">
+//                               <p className="max-w-[170px] truncate text-[12px] font-bold text-[#3D2C1E]">{data?.userName || "--"}</p>
+//                               <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#CEAB93]">Technician</p>
+//                             </div>
+//                           </div>
+//                         </td>
+//                         <td className="px-5 py-4"><span className="text-[11px] font-semibold text-[#6B5344]">{data?.phoneNumber || "--"}</span></td>
+//                         <td className="px-5 py-4"><span className="block max-w-[220px] truncate text-[11px] text-[#6B5344]" title={data?.email}>{data?.email || "--"}</span></td>
+//                         <td className="px-5 py-4"><span className="inline-flex rounded-full border border-[#E3CAA5] bg-[#FFFBE9] px-2.5 py-1 text-[9px] font-bold capitalize text-[#AD8B73]">{data?.role || "--"}</span></td>
+//                         <td className="px-5 py-4">
+//                           <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-bold capitalize ${data?.userStatus === "active" ? "bg-[#ECFDF5] text-[#059669] border-[#D1FAE5]" : "bg-[#FFF1F3] text-[#E11D48] border-[#FFE0E7]"}`}>
+//                             <span className={`h-1.5 w-1.5 rounded-full ${data?.userStatus === "active" ? "bg-[#10B981]" : "bg-[#F43F5E]"}`} />
+//                             {data?.userStatus === "inactive" ? "Blocked" : data?.userStatus || "--"}
+//                           </span>
+//                         </td>
+//                         <td className="px-5 py-4">
+//                           <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[9px] font-bold capitalize ${getEligibilityClass(data?.isPracticingEligible)}`}>
+//                             {data?.isPracticingEligible || "--"}
+//                           </span>
+//                         </td>
+//                         <td className="px-5 py-4">
+//                           <div className="flex justify-center">
+//                             <button
+//                               type="button"
+//                               onClick={(e) => {
+//                                 e.stopPropagation();
+//                                 setId(data?._id);
+//                                 toggleDrawer();
+//                               }}
+//                               className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E3CAA5] bg-[#FFFBE9] text-[#AD8B73] transition-all hover:bg-[#AD8B73] hover:text-white hover:border-[#AD8B73]"
+//                             >
+//                               <FaExternalLinkAlt size={11} />
+//                             </button>
+//                           </div>
+//                         </td>
+//                       </tr>
+//                     ))
+//                   ) : (
+//                     <tr>
+//                       <td colSpan={7}>
+//                         <div className="flex min-h-[280px] flex-col items-center justify-center">
+//                           <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#FFFBE9] text-[#CEAB93]">
+//                             <BsBox size={24} />
+//                           </div>
+//                           <p className="mt-4 text-sm font-bold text-[#AD8B73]">No Technicians Found</p>
+//                         </div>
+//                       </td>
+//                     </tr>
+//                   )}
+//                 </tbody>
+//               </table>
+//             </div>
+//             <div className="border-t border-[#E3CAA5]/50 px-5 py-3">
+//               <Pagination
+//                 totalPages={totalPages}
+//                 activePage={activePage}
+//                 limit={limit}
+//                 setPageValue={(p) => {
+//                   setActivePage(p);
+//                   getTechniciansData(p, limit);
+//                 }}
+//                 setLimit={(l) => {
+//                   setLimit(l);
+//                   setActivePage(1);
+//                   getTechniciansData(1, l);
+//                 }}
+//               />
+//             </div>
+//           </div>
+//         </section>
+//       </div>
+
+//       <MainDrawer windowDimensionHighWidth="400px">
+//         <StaffDrawer
+//           defaultStatus={technicians.find((t) => t?._id === id)?.isPracticingEligible}
+//           id={id}
+//           toggleDrawer={toggleDrawer}
+//           handleCallBack={() => getTechniciansData(activePage, limit)}
+//         />
+//       </MainDrawer>
+//     </AnimatedContent>
+//   );
+// };
+
+// export default Technician;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useContext, useEffect, useState } from "react";
 import DashboardServices from "@/services/DashboardServices";
 import { DecryptData } from "@/utils/DecryptData";
@@ -5,6 +316,7 @@ import MainDrawer from "@/components/drawer/MainDrawer";
 import StaffDrawer from "@/components/drawer/StaffDrawer";
 import { SidebarContext } from "@/context/SidebarContext";
 import { useHistory } from "react-router-dom";
+
 import {
   FaUsers,
   FaCheckCircle,
@@ -13,241 +325,1033 @@ import {
   FaUserCog,
   FaExternalLinkAlt,
 } from "react-icons/fa";
+
 import { FiArrowUpRight } from "react-icons/fi";
 import { BsBox } from "react-icons/bs";
+
 import AnimatedContent from "@/components/common/AnimatedContent";
 import Pagination from "@/components/common/Pagination";
 
-const tones = {
-  slate: {
-    icon: "from-[#AD8B73] to-[#CEAB93]",
-    soft: "from-[#FFFBE9] to-[#FFF5D6]",
-    line: "from-[#AD8B73] to-[#CEAB93]",
-  },
-  emerald: {
-    icon: "from-[#10B981] to-[#67E8C4]",
-    soft: "from-[#ECFDF5] to-[#F0FDFA]",
-    line: "from-[#10B981] to-[#59D6BF]",
-  },
-  amber: {
-    icon: "from-[#CEAB93] to-[#E3CAA5]",
-    soft: "from-[#FFFBE9] to-[#FFF5D6]",
-    line: "from-[#CEAB93] to-[#E3CAA5]",
-  },
-  rose: {
-    icon: "from-[#F43F5E] to-[#FB7185]",
-    soft: "from-[#FFF1F3] to-[#FFF5F7]",
-    line: "from-[#F43F5E] to-[#FB7185]",
-  },
+/* =========================================================
+   ELIGIBILITY CLASS
+========================================================= */
+
+const getEligibilityClass = (status) => {
+  switch (status) {
+    case "eligible":
+      return `
+        bg-accent/40
+        text-primary
+        border-accent
+      `;
+
+    case "pending":
+      return `
+        bg-secondary/15
+        text-secondary
+        border-secondary/30
+      `;
+
+    case "not-eligible":
+      return `
+        bg-primary/10
+        text-primary
+        border-primary/30
+      `;
+
+    default:
+      return `
+        bg-background
+        text-primary
+        border-accent
+      `;
+  }
 };
 
-const getEligibilityClass = (s) =>
-  ({
-    eligible: "bg-[#ECFDF5] text-[#059669] border-[#D1FAE5]",
-    pending: "bg-[#FFF7ED] text-[#D97706] border-[#FDE7C7]",
-    "not-eligible": "bg-[#FFF1F3] text-[#E11D48] border-[#FFE0E7]",
-  }[s] || "bg-[#FFFBE9] text-[#AD8B73] border-[#E3CAA5]");
+/* =========================================================
+   STATUS CLASS
+========================================================= */
 
-const KpiCard = ({ title, value, desc, tone, Icon }) => {
-  const t = tones[tone];
+const getStatusClass = (status) => {
+  if (status === "active") {
+    return `
+      bg-accent/40
+      text-primary
+      border-accent
+    `;
+  }
+
+  return `
+    bg-secondary/15
+    text-secondary
+    border-secondary/30
+  `;
+};
+
+/* =========================================================
+   KPI CARD
+========================================================= */
+
+const KpiCard = ({ title, value, desc, Icon }) => {
   return (
-    <div className="group relative overflow-hidden rounded-[24px] border border-[#E3CAA5] bg-white p-5 shadow-[0_6px_25px_rgba(173,139,115,0.08)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#CEAB93] hover:shadow-[0_22px_45px_rgba(173,139,115,0.15)]">
-      <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${t.soft} opacity-70 transition-all duration-500 group-hover:scale-[1.7]`} />
-      <div className="relative z-10 flex items-start justify-between">
-        <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] bg-gradient-to-br ${t.soft} text-[#AD8B73] transition-all duration-300 group-hover:scale-110`}>
+    <div
+      className="
+        group
+        relative
+        overflow-hidden
+        rounded-[24px]
+        border
+        border-accent
+        bg-white
+        p-5
+        shadow-[0_6px_25px_rgba(0,0,0,0.06)]
+        transition-all
+        duration-300
+        ease-out
+        hover:-translate-y-1.5
+        hover:border-secondary
+        hover:shadow-[0_22px_45px_rgba(0,0,0,0.10)]
+      "
+    >
+      {/* Decorative background */}
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -right-12
+          -top-12
+          h-32
+          w-32
+          rounded-full
+          bg-accent/30
+          opacity-70
+          transition-all
+          duration-500
+          group-hover:scale-[1.7]
+        "
+      />
+
+      <div
+        className="
+          relative
+          z-10
+          flex
+          items-start
+          justify-between
+        "
+      >
+        {/* Icon */}
+        <div
+          className="
+            flex
+            h-11
+            w-11
+            items-center
+            justify-center
+            rounded-[14px]
+            border
+            border-secondary
+            bg-background
+            text-primary
+            transition-all
+            duration-300
+            group-hover:scale-110
+            group-hover:bg-accent
+            group-hover:shadow-lg
+          "
+        >
           <Icon size={18} />
         </div>
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFFBE9] text-[#CEAB93] transition-all duration-300 group-hover:bg-[#AD8B73] group-hover:text-white">
+
+        {/* Arrow */}
+        <div
+          className="
+            flex
+            h-8
+            w-8
+            items-center
+            justify-center
+            rounded-full
+            border
+            border-accent
+            bg-background
+            text-secondary
+            transition-all
+            duration-300
+            group-hover:bg-primary
+            group-hover:text-white
+          "
+        >
           <FiArrowUpRight size={14} />
         </div>
       </div>
+
+      {/* Content */}
       <div className="relative z-10 mt-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#AD8B73]">{title}</p>
-        <div className="mt-2.5 flex items-end justify-between gap-2">
-          <h3 className="text-[30px] font-extrabold leading-none tracking-[-0.05em] text-[#3D2C1E]">{value}</h3>
-          <span className="mb-0.5 max-w-[105px] text-right text-[9px] font-medium leading-4 text-[#CEAB93]">{desc}</span>
+        <p
+          className="
+            text-[10px]
+            font-bold
+            uppercase
+            tracking-[0.14em]
+            text-secondary
+          "
+        >
+          {title}
+        </p>
+
+        <div
+          className="
+            mt-2.5
+            flex
+            items-end
+            justify-between
+            gap-2
+          "
+        >
+          <h3
+            className="
+              text-[30px]
+              font-extrabold
+              leading-none
+              tracking-[-0.05em]
+              text-primary
+            "
+          >
+            {value}
+          </h3>
+
+          <span
+            className="
+              mb-0.5
+              max-w-[105px]
+              text-right
+              text-[9px]
+              font-medium
+              leading-4
+              text-secondary
+            "
+          >
+            {desc}
+          </span>
         </div>
       </div>
-      <div className="absolute bottom-0 left-5 right-5 h-[2px] overflow-hidden rounded-full bg-[#E3CAA5]">
-        <div className={`h-full w-0 rounded-full bg-gradient-to-r ${t.line} transition-all duration-500 group-hover:w-full`} />
+
+      {/* Bottom line */}
+      <div
+        className="
+          absolute
+          bottom-0
+          left-5
+          right-5
+          h-[2px]
+          overflow-hidden
+          rounded-full
+          bg-accent
+        "
+      >
+        <div
+          className="
+            h-full
+            w-0
+            rounded-full
+            bg-primary
+            transition-all
+            duration-500
+            group-hover:w-full
+          "
+        />
       </div>
     </div>
   );
 };
 
+/* =========================================================
+   TECHNICIAN
+========================================================= */
+
 const Technician = () => {
   const { toggleDrawer } = useContext(SidebarContext);
   const history = useHistory();
+
   const [technicians, setTechnicians] = useState([]);
   const [id, setId] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [activePage, setActivePage] = useState(1);
   const [limit, setLimit] = useState(10);
 
+  /* =========================================================
+     GET TECHNICIANS
+  ========================================================= */
+
   const getTechniciansData = (page, lim) => {
     DashboardServices.getTechnicians(page, lim)
       .then((res) => {
         if (res) {
           const d = DecryptData(res);
-          setTechnicians(d?.data?.technicians || []);
-          setTotalPages(d?.data?.totalPages || 0);
+
+          setTechnicians(
+            d?.data?.technicians || []
+          );
+
+          setTotalPages(
+            d?.data?.totalPages || 0
+          );
         }
       })
       .catch(console.error);
   };
 
+  /* =========================================================
+     INITIAL LOAD
+  ========================================================= */
+
   useEffect(() => {
     getTechniciansData(activePage, limit);
   }, []);
 
+  /* =========================================================
+     COUNTS
+  ========================================================= */
+
   const eligibleCount = technicians.filter(
-    (t) => t?.isPracticingEligible === "eligible"
+    (t) =>
+      t?.isPracticingEligible === "eligible"
   ).length;
 
+  const pendingCount = technicians.filter(
+    (t) =>
+      t?.isPracticingEligible === "pending"
+  ).length;
+
+  const notEligibleCount = technicians.filter(
+    (t) =>
+      t?.isPracticingEligible ===
+      "not-eligible"
+  ).length;
+
+  /* =========================================================
+     METRICS
+  ========================================================= */
+
   const metrics = [
-    { title: "Total", value: technicians.length, desc: "All technicians", tone: "slate", Icon: FaUsers },
-    { title: "Eligible", value: eligibleCount, desc: "Approved to work", tone: "emerald", Icon: FaCheckCircle },
-    { title: "Pending", value: technicians.filter((t) => t?.isPracticingEligible === "pending").length, desc: "Awaiting approval", tone: "amber", Icon: FaClock },
-    { title: "Not Eligible", value: technicians.filter((t) => t?.isPracticingEligible === "not-eligible").length, desc: "Not approved", tone: "rose", Icon: FaTimesCircle },
+    {
+      title: "Total",
+      value: technicians.length,
+      desc: "All technicians",
+      Icon: FaUsers,
+    },
+    {
+      title: "Eligible",
+      value: eligibleCount,
+      desc: "Approved to work",
+      Icon: FaCheckCircle,
+    },
+    {
+      title: "Pending",
+      value: pendingCount,
+      desc: "Awaiting approval",
+      Icon: FaClock,
+    },
+    {
+      title: "Not Eligible",
+      value: notEligibleCount,
+      desc: "Not approved",
+      Icon: FaTimesCircle,
+    },
   ];
 
   return (
     <AnimatedContent>
-      <div className="min-h-screen bg-[#FFFBE9] pb-10">
+      <div
+        className="
+          min-h-screen
+          bg-background
+          pb-10
+        "
+      >
+        {/* =====================================================
+            HERO
+        ====================================================== */}
+
         <section className="mb-8">
-          <div className="relative overflow-hidden rounded-[30px] bg-[#3D2C1E] px-6 py-7 shadow-[0_20px_55px_rgba(61,44,30,0.25)] sm:px-8 sm:py-9">
-            <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-[#AD8B73]/25 blur-[2px]" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
-            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div
+            className="
+              relative
+              overflow-hidden
+              rounded-[30px]
+              border
+              border-secondary
+              bg-primary
+              px-6
+              py-7
+              shadow-[0_20px_55px_rgba(0,0,0,0.18)]
+              sm:px-8
+              sm:py-9
+            "
+          >
+            {/* Decorative circle */}
+            <div
+              className="
+                pointer-events-none
+                absolute
+                -right-24
+                -top-28
+                h-[340px]
+                w-[340px]
+                rounded-full
+                bg-secondary/25
+              "
+            />
+
+            {/* Grid */}
+            <div
+              className="
+                pointer-events-none
+                absolute
+                inset-0
+                opacity-[0.04]
+                [background-image:linear-gradient(#F8F8FA_1px,transparent_1px),linear-gradient(90deg,#F8F8FA_1px,transparent_1px)]
+                [background-size:34px_34px]
+              "
+            />
+
+            <div
+              className="
+                relative
+                z-10
+                flex
+                flex-col
+                gap-6
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+              "
+            >
+              {/* Heading */}
               <div>
-                <div className="mb-3 flex items-center gap-2.5">
-                  <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E3CAA5]/60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E3CAA5]" /></span>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/45">User Management</span>
-                </div>
-                <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-white sm:text-[34px]">Technicians</h1>
-                <p className="mt-2 max-w-[520px] text-[13px] leading-6 text-white/50">Manage technician profiles, approval status and eligibility from one place.</p>
+                <h1
+                  className="
+                    text-[28px]
+                    font-extrabold
+                    leading-tight
+                    tracking-[-0.04em]
+                    text-white
+                    sm:text-[34px]
+                  "
+                >
+                  Technicians
+                </h1>
+
+                <p
+                  className="
+                    mt-2
+                    max-w-[520px]
+                    text-[13px]
+                    leading-6
+                    text-white/70
+                  "
+                >
+                  Manage technician profiles,
+                  approval status and eligibility
+                  from one place.
+                </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
-                  <FaUsers size={13} className="text-[#E3CAA5]" />
-                  <span className="text-[12px] font-bold text-white/85">{technicians.length} Technicians</span>
+
+              {/* Hero Stats */}
+              <div
+                className="
+                  flex
+                  flex-wrap
+                  items-center
+                  gap-3
+                "
+              >
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-2.5
+                    rounded-xl
+                    border
+                    border-secondary/70
+                    bg-secondary/20
+                    px-4
+                    py-2.5
+                  "
+                >
+                  <FaUsers
+                    size={13}
+                    className="text-accent"
+                  />
+
+                  <span
+                    className="
+                      text-[12px]
+                      font-bold
+                      text-white
+                    "
+                  >
+                    {technicians.length} Technicians
+                  </span>
                 </div>
-                <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-white/[0.055] px-4 py-2.5 backdrop-blur-xl">
-                  <FaCheckCircle size={13} className="text-emerald-400" />
-                  <span className="text-[12px] font-bold text-white/85">{eligibleCount} Eligible</span>
+
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-2.5
+                    rounded-xl
+                    border
+                    border-secondary/70
+                    bg-secondary/20
+                    px-4
+                    py-2.5
+                  "
+                >
+                  <FaCheckCircle
+                    size={13}
+                    className="text-accent"
+                  />
+
+                  <span
+                    className="
+                      text-[12px]
+                      font-bold
+                      text-white
+                    "
+                  >
+                    {eligibleCount} Eligible
+                  </span>
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#AD8B73]/60 to-transparent" />
+
+            {/* Bottom line */}
+            <div
+              className="
+                absolute
+                bottom-0
+                left-8
+                right-8
+                h-px
+                bg-secondary
+              "
+            />
           </div>
         </section>
 
+        {/* =====================================================
+            KPI CARDS
+        ====================================================== */}
+
         <section className="mb-8">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div
+            className="
+              grid
+              grid-cols-1
+              gap-4
+              sm:grid-cols-2
+              xl:grid-cols-4
+            "
+          >
             {metrics.map((m) => (
-              <KpiCard key={m.title} {...m} />
+              <KpiCard
+                key={m.title}
+                {...m}
+              />
             ))}
           </div>
         </section>
 
+        {/* =====================================================
+            TECHNICIAN COLLECTION
+        ====================================================== */}
+
         <section>
-          <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-[#AD8B73] to-[#CEAB93] text-white shadow-[0_16px_30px_rgba(173,139,115,0.30)]">
+          {/* Section Header */}
+          <div
+            className="
+              mb-5
+              flex
+              flex-col
+              gap-4
+              sm:flex-row
+              sm:items-center
+              sm:justify-between
+            "
+          >
+            <div
+              className="
+                flex
+                items-center
+                gap-4
+              "
+            >
+              <div
+                className="
+                  flex
+                  h-14
+                  w-14
+                  items-center
+                  justify-center
+                  rounded-[20px]
+                  border
+                  border-secondary
+                  bg-primary
+                  text-white
+                  shadow-[0_16px_30px_rgba(0,0,0,0.18)]
+                "
+              >
                 <FaUserCog size={22} />
               </div>
+
               <div>
-                <h2 className="text-[34px] font-extrabold tracking-[-0.05em] text-[#3D2C1E]">Technician Collection</h2>
-                <p className="text-sm text-[#AD8B73]">Manage and monitor every technician profile</p>
+                <h2
+                  className="
+                    text-[34px]
+                    font-extrabold
+                    tracking-[-0.05em]
+                    text-primary
+                  "
+                >
+                  Technician Collection
+                </h2>
+
+                <p
+                  className="
+                    text-sm
+                    text-secondary
+                  "
+                >
+                  Manage and monitor every
+                  technician profile
+                </p>
               </div>
             </div>
-            <span className="inline-flex w-fit items-center rounded-full border border-[#E3CAA5] bg-[#FFFBE9] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#AD8B73] shadow-sm">
+
+            <span
+              className="
+                inline-flex
+                w-fit
+                items-center
+                rounded-full
+                border
+                border-secondary
+                bg-background
+                px-4
+                py-2
+                text-[11px]
+                font-bold
+                uppercase
+                tracking-[0.12em]
+                text-primary
+                shadow-sm
+              "
+            >
               {technicians.length} Records
             </span>
           </div>
 
-          <div className="overflow-hidden rounded-[30px] border border-[#E3CAA5] bg-white/95 shadow-[0_18px_42px_rgba(173,139,115,0.12)] backdrop-blur-sm">
-            <div className="border-b border-[#E3CAA5] bg-[linear-gradient(180deg,rgba(255,251,233,0.95),rgba(255,255,255,0.9))] px-6 py-5">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* ===================================================
+              TABLE CARD
+          ==================================================== */}
+
+          <div
+            className="
+              overflow-hidden
+              rounded-[30px]
+              border
+              border-accent
+              bg-white
+              shadow-[0_18px_42px_rgba(0,0,0,0.08)]
+            "
+          >
+            {/* Table Header */}
+            <div
+              className="
+                border-b
+                border-accent
+                bg-background
+                px-6
+                py-5
+              "
+            >
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-3
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+                "
+              >
                 <div>
-                  <h3 className="text-base font-bold text-[#3D2C1E]">Technician List</h3>
-                  <p className="mt-1 text-xs text-[#CEAB93]">Technician information, status and eligibility</p>
+                  <h3
+                    className="
+                      text-base
+                      font-bold
+                      text-primary
+                    "
+                  >
+                    Technician List
+                  </h3>
+
+                  <p
+                    className="
+                      mt-1
+                      text-xs
+                      text-secondary
+                    "
+                  >
+                    Technician information,
+                    status and eligibility
+                  </p>
                 </div>
-                <span className="inline-flex w-fit items-center rounded-full bg-[#FFFBE9] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#AD8B73]">
+
+                <span
+                  className="
+                    inline-flex
+                    w-fit
+                    items-center
+                    rounded-full
+                    border
+                    border-secondary
+                    bg-white
+                    px-3
+                    py-1
+                    text-[10px]
+                    font-bold
+                    uppercase
+                    tracking-[0.12em]
+                    text-primary
+                  "
+                >
                   Live Data
                 </span>
               </div>
             </div>
 
+            {/* =================================================
+                TABLE
+            ================================================== */}
+
             <div className="overflow-x-auto">
-              <table className="min-w-[1100px] w-full">
+              <table className="w-full min-w-[1100px]">
                 <thead>
-                  <tr className="bg-[#FFFBE9]">
-                    {["Technician", "Mobile No.", "Email", "Role", "Status", "Eligibility", "Action"].map((h) => (
-                      <th key={h} className={`px-5 py-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[#AD8B73] ${h === "Action" ? "text-center" : "text-left"}`}>
+                  <tr className="bg-background">
+                    {[
+                      "Technician",
+                      "Mobile No.",
+                      "Email",
+                      "Role",
+                      "Status",
+                      "Eligibility",
+                      "Action",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className={`
+                          px-5
+                          py-4
+                          text-[10px]
+                          font-bold
+                          uppercase
+                          tracking-[0.16em]
+                          text-secondary
+                          ${
+                            h === "Action"
+                              ? "text-center"
+                              : "text-left"
+                          }
+                        `}
+                      >
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
+
                 <tbody>
                   {technicians.length > 0 ? (
-                    technicians.map((data, i) => (
-                      <tr
-                        key={data?._id || i}
-                        onClick={() => history.push(`/users/technician/details?userId=${data?._id}`)}
-                        className="group cursor-pointer border-b border-[#E3CAA5]/40 bg-white transition-colors hover:bg-[#FFFBE9]"
-                      >
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E3CAA5] bg-gradient-to-br from-[#FFFBE9] to-[#FFF5D6] text-sm font-bold text-[#AD8B73] transition-all group-hover:from-[#AD8B73] group-hover:to-[#CEAB93] group-hover:text-white">
-                              {data?.userName?.[0]?.toUpperCase() || "T"}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="max-w-[170px] truncate text-[12px] font-bold text-[#3D2C1E]">{data?.userName || "--"}</p>
-                              <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#CEAB93]">Technician</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4"><span className="text-[11px] font-semibold text-[#6B5344]">{data?.phoneNumber || "--"}</span></td>
-                        <td className="px-5 py-4"><span className="block max-w-[220px] truncate text-[11px] text-[#6B5344]" title={data?.email}>{data?.email || "--"}</span></td>
-                        <td className="px-5 py-4"><span className="inline-flex rounded-full border border-[#E3CAA5] bg-[#FFFBE9] px-2.5 py-1 text-[9px] font-bold capitalize text-[#AD8B73]">{data?.role || "--"}</span></td>
-                        <td className="px-5 py-4">
-                          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-bold capitalize ${data?.userStatus === "active" ? "bg-[#ECFDF5] text-[#059669] border-[#D1FAE5]" : "bg-[#FFF1F3] text-[#E11D48] border-[#FFE0E7]"}`}>
-                            <span className={`h-1.5 w-1.5 rounded-full ${data?.userStatus === "active" ? "bg-[#10B981]" : "bg-[#F43F5E]"}`} />
-                            {data?.userStatus === "inactive" ? "Blocked" : data?.userStatus || "--"}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4">
-                          <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[9px] font-bold capitalize ${getEligibilityClass(data?.isPracticingEligible)}`}>
-                            {data?.isPracticingEligible || "--"}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setId(data?._id);
-                                toggleDrawer();
-                              }}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E3CAA5] bg-[#FFFBE9] text-[#AD8B73] transition-all hover:bg-[#AD8B73] hover:text-white hover:border-[#AD8B73]"
+                    technicians.map(
+                      (data, i) => (
+                        <tr
+                          key={
+                            data?._id || i
+                          }
+                          onClick={() =>
+                            history.push(
+                              `/users/technician/details?userId=${data?._id}`
+                            )
+                          }
+                          className="
+                            group
+                            cursor-pointer
+                            border-b
+                            border-accent/40
+                            bg-white
+                            transition-colors
+                            hover:bg-background
+                          "
+                        >
+                          {/* Technician */}
+                          <td className="px-5 py-4">
+                            <div
+                              className="
+                                flex
+                                items-center
+                                gap-3
+                              "
                             >
-                              <FaExternalLinkAlt size={11} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                              <div
+                                className="
+                                  flex
+                                  h-11
+                                  w-11
+                                  shrink-0
+                                  items-center
+                                  justify-center
+                                  rounded-2xl
+                                  border
+                                  border-secondary
+                                  bg-background
+                                  text-sm
+                                  font-bold
+                                  text-primary
+                                  transition-all
+                                  group-hover:bg-primary
+                                  group-hover:text-white
+                                "
+                              >
+                                {data
+                                  ?.userName?.[0]
+                                  ?.toUpperCase() ||
+                                  "T"}
+                              </div>
+
+                              <div className="min-w-0">
+                                <p
+                                  className="
+                                    max-w-[170px]
+                                    truncate
+                                    text-[12px]
+                                    font-bold
+                                    text-primary
+                                  "
+                                >
+                                  {data?.userName ||
+                                    "--"}
+                                </p>
+
+                                <p
+                                  className="
+                                    mt-0.5
+                                    text-[9px]
+                                    font-semibold
+                                    uppercase
+                                    tracking-wide
+                                    text-secondary
+                                  "
+                                >
+                                  Technician
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Mobile */}
+                          <td className="px-5 py-4">
+                            <span
+                              className="
+                                text-[11px]
+                                font-semibold
+                                text-secondary
+                              "
+                            >
+                              {data?.phoneNumber ||
+                                "--"}
+                            </span>
+                          </td>
+
+                          {/* Email */}
+                          <td className="px-5 py-4">
+                            <span
+                              className="
+                                block
+                                max-w-[220px]
+                                truncate
+                                text-[11px]
+                                text-secondary
+                              "
+                              title={data?.email}
+                            >
+                              {data?.email ||
+                                "--"}
+                            </span>
+                          </td>
+
+                          {/* Role */}
+                          <td className="px-5 py-4">
+                            <span
+                              className="
+                                inline-flex
+                                rounded-full
+                                border
+                                border-accent
+                                bg-background
+                                px-2.5
+                                py-1
+                                text-[9px]
+                                font-bold
+                                capitalize
+                                text-primary
+                              "
+                            >
+                              {data?.role ||
+                                "--"}
+                            </span>
+                          </td>
+
+                          {/* Status */}
+                          <td className="px-5 py-4">
+                            <span
+                              className={`
+                                inline-flex
+                                items-center
+                                gap-1.5
+                                rounded-full
+                                border
+                                px-2.5
+                                py-1
+                                text-[9px]
+                                font-bold
+                                capitalize
+                                ${getStatusClass(
+                                  data?.userStatus
+                                )}
+                              `}
+                            >
+                              <span
+                                className="
+                                  h-1.5
+                                  w-1.5
+                                  rounded-full
+                                  bg-primary
+                                "
+                              />
+
+                              {data?.userStatus ===
+                              "inactive"
+                                ? "Blocked"
+                                : data?.userStatus ||
+                                  "--"}
+                            </span>
+                          </td>
+
+                          {/* Eligibility */}
+                          <td className="px-5 py-4">
+                            <span
+                              className={`
+                                inline-flex
+                                items-center
+                                rounded-full
+                                border
+                                px-2.5
+                                py-1
+                                text-[9px]
+                                font-bold
+                                capitalize
+                                ${getEligibilityClass(
+                                  data?.isPracticingEligible
+                                )}
+                              `}
+                            >
+                              {data?.isPracticingEligible ||
+                                "--"}
+                            </span>
+                          </td>
+
+                          {/* Action */}
+                          <td className="px-5 py-4">
+                            <div className="flex justify-center">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+
+                                  setId(
+                                    data?._id
+                                  );
+
+                                  toggleDrawer();
+                                }}
+                                className="
+                                  flex
+                                  h-8
+                                  w-8
+                                  items-center
+                                  justify-center
+                                  rounded-lg
+                                  border
+                                  border-secondary
+                                  bg-background
+                                  text-primary
+                                  transition-all
+                                  hover:bg-primary
+                                  hover:text-white
+                                  hover:border-primary
+                                "
+                              >
+                                <FaExternalLinkAlt
+                                  size={11}
+                                />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    )
                   ) : (
                     <tr>
                       <td colSpan={7}>
-                        <div className="flex min-h-[280px] flex-col items-center justify-center">
-                          <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#FFFBE9] text-[#CEAB93]">
+                        <div
+                          className="
+                            flex
+                            min-h-[280px]
+                            flex-col
+                            items-center
+                            justify-center
+                          "
+                        >
+                          <div
+                            className="
+                              flex
+                              h-16
+                              w-16
+                              items-center
+                              justify-center
+                              rounded-[22px]
+                              border
+                              border-secondary
+                              bg-background
+                              text-primary
+                            "
+                          >
                             <BsBox size={24} />
                           </div>
-                          <p className="mt-4 text-sm font-bold text-[#AD8B73]">No Technicians Found</p>
+
+                          <p
+                            className="
+                              mt-4
+                              text-sm
+                              font-bold
+                              text-primary
+                            "
+                          >
+                            No Technicians Found
+                          </p>
                         </div>
                       </td>
                     </tr>
@@ -255,19 +1359,37 @@ const Technician = () => {
                 </tbody>
               </table>
             </div>
-            <div className="border-t border-[#E3CAA5]/50 px-5 py-3">
+
+            {/* =================================================
+                PAGINATION
+            ================================================== */}
+
+            <div
+              className="
+                border-t
+                border-accent/50
+                px-5
+                py-3
+              "
+            >
               <Pagination
                 totalPages={totalPages}
                 activePage={activePage}
                 limit={limit}
                 setPageValue={(p) => {
                   setActivePage(p);
-                  getTechniciansData(p, limit);
+                  getTechniciansData(
+                    p,
+                    limit
+                  );
                 }}
                 setLimit={(l) => {
                   setLimit(l);
                   setActivePage(1);
-                  getTechniciansData(1, l);
+                  getTechniciansData(
+                    1,
+                    l
+                  );
                 }}
               />
             </div>
@@ -275,12 +1397,25 @@ const Technician = () => {
         </section>
       </div>
 
+      {/* =======================================================
+          DRAWER
+      ======================================================== */}
+
       <MainDrawer windowDimensionHighWidth="400px">
         <StaffDrawer
-          defaultStatus={technicians.find((t) => t?._id === id)?.isPracticingEligible}
+          defaultStatus={
+            technicians.find(
+              (t) => t?._id === id
+            )?.isPracticingEligible
+          }
           id={id}
           toggleDrawer={toggleDrawer}
-          handleCallBack={() => getTechniciansData(activePage, limit)}
+          handleCallBack={() =>
+            getTechniciansData(
+              activePage,
+              limit
+            )
+          }
         />
       </MainDrawer>
     </AnimatedContent>

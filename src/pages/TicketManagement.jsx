@@ -2870,12 +2870,7 @@ const TicketManagement = () => {
                   backgroundColor: COLORS.background,
                 }}
               >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: COLORS.primary,
-                  }}
-                />
+
 
                 <span
                   className="text-[9px] font-extrabold uppercase tracking-wide"

@@ -125,9 +125,11 @@ const Login = () => {
     expires: cookieTimeOut,
   });
 
-  console.log("========== COOKIE AFTER LOGIN ==========");
-  console.log("Token:", Cookies.get("token"));
-  console.log("========================================");
+console.log("========== COOKIE AFTER LOGIN ==========");
+console.log("JWT token:", token);
+console.log("Saved cookie:", Cookies.get("token"));
+console.log("All cookies:", Cookies.get());
+console.log("========================================");
 
   notifySuccess("Login Success!");
 
