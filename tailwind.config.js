@@ -2,17 +2,28 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 const config = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+
   darkMode: "class",
+
   theme: {
     extend: {
+      colors: {
+        primary: "#0A3024",
+        secondary: "#497367",
+        accent: "#B0D4CB",
+        background: "#F8F8FA",
+      },
+
       fontFamily: {
         sans: ["Open Sans", "sans-serif"],
         serif: ["Inter", ...defaultTheme.fontFamily.sans],
       },
+
       boxShadow: {
         bottom:
           "0 5px 6px -7px rgba(0, 0, 0, 0.6), 0 2px 4px -5px rgba(0, 0, 0, 0.06)",
       },
+
       height: {
         28: "100px",
         sm: "350px",
@@ -22,6 +33,7 @@ const config = {
         lg: "500px",
         xl: "600px",
       },
+
       width: {
         80: "80px",
         100: "100px",
@@ -29,9 +41,11 @@ const config = {
         300: "300px",
         400: "400px",
       },
+
       padding: {
         2.5: "10px",
       },
+
       screens: {
         "2xl": "1440px",
         xl: "1280px",
@@ -42,6 +56,7 @@ const config = {
         xs: "420px",
         xss: "320px",
       },
+
       inset: {
         "-1": "-1rem",
         "-2": "-2rem",
@@ -66,12 +81,14 @@ const config = {
       },
     },
   },
+
   variants: {
     display: ["group-hover"],
   },
+
   plugins: [
     require("tailwind-scrollbar-hide"),
-    //require('tailwind-scrollbar')
+    // require("tailwind-scrollbar")
   ],
 };
 

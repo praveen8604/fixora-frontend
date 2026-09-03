@@ -2,11 +2,11 @@ import requests from "./httpService";
 
 const DashboardServices = {
   getAllDashData: async (body) => {
-    return requests.get(`/eserve/v1/admin/dashboard`, body);
-  },
+  return requests.get(`/eserve/v1/dashboard/admin`, body);
+},
   getDashboardData: async (body) => {
-    return requests.get(`/eserve/v1/dashboard/admin`, body);
-  },
+  return requests.get(`/eserve/v1/dashboard/admin`, body);
+},
   getPaymentLogs: async (page, limit) => {
     return requests.get(`/eserve/v1/payments?page=${page}&limit=${limit}`);
   },
