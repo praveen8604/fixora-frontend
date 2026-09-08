@@ -48,7 +48,10 @@ const Login = () => {
 
   const [userCountry, setUserCountry] = useState("in");
 
-  const maskedNumber = enteredMobileNumber?.replace(/\d(?=\d{4})/g, "*");
+  const maskedNumber = enteredMobileNumber?.replace(
+    /\d(?=\d{4})/g,
+    "*",
+  );
 
   const maskedEmail = enteredEmail?.replace(
     /^(.)(.*)(@.*)$/,
@@ -74,7 +77,9 @@ const Login = () => {
       ? value.slice(dialCode.length)
       : value;
 
-    const formattedCountryCode = dialCode ? `+${dialCode}` : "";
+    const formattedCountryCode = dialCode
+      ? `+${dialCode}`
+      : "";
 
     setValue("countryCode", formattedCountryCode);
     setValue("phoneNumber", nationalNumber);
@@ -84,194 +89,242 @@ const Login = () => {
   };
 
   const goToDashboard = (data = {}) => {
-  const user = data?.user || {};
+    const user = data?.user || {};
 
-  const adminPayload = {
-    _id: user._id || "local-admin",
-    userName: user.userName || "Admin",
-    email: user.email || enteredEmail || "admin@fixmantra.com",
-    phoneNumber:
-      user.phoneNumber || enteredMobileNumber || "",
-    countryCode:
-      user.countryCode || enteredCountryCode || "+91",
-    role: user.role || "admin",
-    createdAt: user.createdAt || new Date().toISOString(),
-  };
+    const adminPayload = {
+      _id: user._id || "local-admin",
+      userName: user.userName || "Admin",
+      email:
+        user.email ||
+        enteredEmail ||
+        "admin@fixmantra.com",
+      phoneNumber:
+        user.phoneNumber ||
+        enteredMobileNumber ||
+        "",
+      countryCode:
+        user.countryCode ||
+        enteredCountryCode ||
+        "+91",
+      role: user.role || "admin",
+      createdAt:
+        user.createdAt ||
+        new Date().toISOString(),
+    };
 
-  const token = data?.jwt_token;
-
-  console.log("========== LOGIN TOKEN ==========");
-  console.log("JWT:", token);
-  console.log("=================================");
-
-  if (!token) {
-    notifyError("Authentication token missing.");
-    return;
-  }
-
-  dispatch({
-    type: "USER_LOGIN",
-    payload: adminPayload,
-  });
-
-  localStorage.setItem("theme", "light");
-
-  Cookies.set("adminInfo", JSON.stringify(adminPayload), {
-    expires: cookieTimeOut,
-  });
-
-  // IMPORTANT: JSON.stringify mat karo
-  Cookies.set("token", token, {
-    expires: cookieTimeOut,
-  });
-
-console.log("========== COOKIE AFTER LOGIN ==========");
-console.log("JWT token:", token);
-console.log("Saved cookie:", Cookies.get("token"));
-console.log("All cookies:", Cookies.get());
-console.log("========================================");
-
-  notifySuccess("Login Success!");
-
-  window.location.replace("/dashboard");
-};
-
-  const onSubmit = async (data) => {
-  try {
-    setIsLoading(true);
-
-    const payload =
-      loginMethod === "otp"
-        ? {
-            phoneNumber: data.phoneNumber,
-            countryCode: data.countryCode,
-            isAuthServiceFor: "login",
-          }
-        : {
-            email: data.email,
-            isAuthServiceFor: "login",
-          };
-
-    console.log("OTP REQUEST PAYLOAD:", payload);
-console.log("OTP REQUEST START");
-
-const response = await AdminServices.loginOTPAdmin(payload);
-
-console.log("OTP REQUEST RESPONSE:", response);
-
-    if (loginMethod === "otp") {
-      setEnteredMobileNumber(data.phoneNumber);
-      setEnteredCountryCode(data.countryCode);
-    } else {
-      setEnteredEmail(data.email);
-    }
-
-    notifySuccess("OTP sent successfully!");
-    setIsOtpSent(true);
-  } catch (error) {
-    console.log("OTP SEND ERROR:", error);
-    console.log("OTP SEND ERROR RESPONSE:", error?.response?.data);
-
-    notifyError(
-      error?.response?.data?.message || "Failed to send OTP."
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-  const handleOtpSubmit = async () => {
-  if (otp.length < 4) {
-    notifyError("Please enter a valid OTP.");
-    return;
-  }
-
-  try {
-    setIsLoading(true);
-
-    const payload =
-      loginMethod === "otp"
-        ? {
-            phoneNumber: enteredMobileNumber,
-            countryCode: enteredCountryCode,
-            secretCodeClient: otp,
-            deviceId: "admin-panel",
-            verificationMethod: "otp",
-            isLoginFor: "admin-panel",
-          }
-        : {
-            email: enteredEmail,
-            secretCodeClient: otp,
-            deviceId: "admin-panel",
-            verificationMethod: "email",
-            isLoginFor: "admin-panel",
-          };
-
-    console.log("LOGIN PAYLOAD:", payload);
-
-    // API call
-    const res = await AdminServices.verifyOTP(payload);
-
-    console.log("========== RAW LOGIN RESPONSE ==========");
-    console.log(res);
-    console.log("=========================================");
-
-    // IMPORTANT: decrypt response
-    const decryptedResponse = DecryptData(res);
-
-    console.log("========== DECRYPTED LOGIN RESPONSE ==========");
-    console.log(decryptedResponse);
-    console.log("==============================================");
-
-    if (!decryptedResponse?.success) {
-      notifyError(
-        decryptedResponse?.message || "Login failed."
-      );
-      return;
-    }
-
-    // Backend structure:
-    // decryptedResponse.data.user
-    // decryptedResponse.data.jwt_token
-
-    const loginData = decryptedResponse?.data;
-
-    console.log("========== LOGIN DATA ==========");
-    console.log(loginData);
-    console.log("================================");
-
-    const jwt = loginData?.jwt_token;
+    const token = data?.jwt_token;
 
     console.log("========== LOGIN TOKEN ==========");
-    console.log("JWT:", jwt);
+    console.log("JWT:", token);
     console.log("=================================");
 
-    if (!jwt) {
-      notifyError("JWT token not received from server.");
+    if (!token) {
+      notifyError("Authentication token missing.");
       return;
     }
 
-    // Save login information
-    reduxDispatch(removeSetting("globalSetting"));
+    dispatch({
+      type: "USER_LOGIN",
+      payload: adminPayload,
+    });
 
-    goToDashboard(loginData);
+    localStorage.setItem("theme", "light");
 
-  } catch (error) {
-    console.log("LOGIN ERROR:", error);
+    Cookies.set(
+      "adminInfo",
+      JSON.stringify(adminPayload),
+      {
+        expires: cookieTimeOut,
+      },
+    );
+
+    // IMPORTANT: JSON.stringify mat karo
+    Cookies.set("token", token, {
+      expires: cookieTimeOut,
+    });
+
     console.log(
-      "LOGIN ERROR RESPONSE:",
-      error?.response?.data
+      "========== COOKIE AFTER LOGIN ==========",
+    );
+    console.log("JWT token:", token);
+    console.log(
+      "Saved cookie:",
+      Cookies.get("token"),
+    );
+    console.log("All cookies:", Cookies.get());
+    console.log(
+      "========================================",
     );
 
-    notifyError(
-      error?.response?.data?.message ||
-        error?.message ||
-        "Invalid OTP."
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
+    notifySuccess("Login Success!");
+
+    window.location.replace("/dashboard");
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true);
+
+      const payload =
+        loginMethod === "otp"
+          ? {
+              phoneNumber: data.phoneNumber,
+              countryCode: data.countryCode,
+              isAuthServiceFor: "login",
+            }
+          : {
+              email: data.email,
+              isAuthServiceFor: "login",
+            };
+
+      console.log(
+        "OTP REQUEST PAYLOAD:",
+        payload,
+      );
+
+      console.log("OTP REQUEST START");
+
+      const response =
+        await AdminServices.loginOTPAdmin(payload);
+
+      console.log(
+        "OTP REQUEST RESPONSE:",
+        response,
+      );
+
+      if (loginMethod === "otp") {
+        setEnteredMobileNumber(data.phoneNumber);
+        setEnteredCountryCode(data.countryCode);
+      } else {
+        setEnteredEmail(data.email);
+      }
+
+      notifySuccess("OTP sent successfully!");
+
+      setIsOtpSent(true);
+    } catch (error) {
+      console.log("OTP SEND ERROR:", error);
+      console.log(
+        "OTP SEND ERROR RESPONSE:",
+        error?.response?.data,
+      );
+
+      notifyError(
+        error?.response?.data?.message ||
+          "Failed to send OTP.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    if (otp.length < 4) {
+      notifyError("Please enter a valid OTP.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const payload =
+        loginMethod === "otp"
+          ? {
+              phoneNumber: enteredMobileNumber,
+              countryCode: enteredCountryCode,
+              secretCodeClient: otp,
+              deviceId: "admin-panel",
+              verificationMethod: "otp",
+              isLoginFor: "admin-panel",
+            }
+          : {
+              email: enteredEmail,
+              secretCodeClient: otp,
+              deviceId: "admin-panel",
+              verificationMethod: "email",
+              isLoginFor: "admin-panel",
+            };
+
+      console.log("LOGIN PAYLOAD:", payload);
+
+      const res =
+        await AdminServices.verifyOTP(payload);
+
+      console.log(
+        "========== RAW LOGIN RESPONSE ==========",
+      );
+      console.log(res);
+      console.log(
+        "=========================================",
+      );
+
+      const decryptedResponse = DecryptData(res);
+
+      console.log(
+        "========== DECRYPTED LOGIN RESPONSE ==========",
+      );
+      console.log(decryptedResponse);
+      console.log(
+        "==============================================",
+      );
+
+      if (!decryptedResponse?.success) {
+        notifyError(
+          decryptedResponse?.message ||
+            "Login failed.",
+        );
+        return;
+      }
+
+      const loginData =
+        decryptedResponse?.data;
+
+      console.log(
+        "========== LOGIN DATA ==========",
+      );
+      console.log(loginData);
+      console.log(
+        "================================",
+      );
+
+      const jwt = loginData?.jwt_token;
+
+      console.log(
+        "========== LOGIN TOKEN ==========",
+      );
+      console.log("JWT:", jwt);
+      console.log(
+        "=================================",
+      );
+
+      if (!jwt) {
+        notifyError(
+          "JWT token not received from server.",
+        );
+        return;
+      }
+
+      reduxDispatch(
+        removeSetting("globalSetting"),
+      );
+
+      goToDashboard(loginData);
+    } catch (error) {
+      console.log("LOGIN ERROR:", error);
+      console.log(
+        "LOGIN ERROR RESPONSE:",
+        error?.response?.data,
+      );
+
+      notifyError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Invalid OTP.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleChangeLoginMethod = (method) => {
     setLoginMethod(method);
@@ -286,13 +339,13 @@ console.log("OTP REQUEST RESPONSE:", response);
         {`
           /* =========================================================
              FIXMANTRA LOGIN
-             Clean / Premium / Product-focused
+             Layout / Plugin Styling Only
+             
+             Theme colors are handled by Tailwind classes.
           ========================================================= */
 
           .fm-login {
             min-height: 100vh;
-            background: #f5f7fa;
-            color: #111827;
           }
 
           .fm-shell {
@@ -301,10 +354,8 @@ console.log("OTP REQUEST RESPONSE:", response);
             min-height: 650px;
             display: grid;
             grid-template-columns: 0.92fr 1.08fr;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 18px;
             overflow: hidden;
+            border-radius: 18px;
             box-shadow:
               0 18px 45px rgba(15, 23, 42, 0.07),
               0 3px 10px rgba(15, 23, 42, 0.03);
@@ -320,8 +371,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             flex-direction: column;
             justify-content: space-between;
             padding: 48px;
-            background: #f8fafc;
-            border-right: 1px solid #e5e7eb;
           }
 
           .fm-brand-panel::before {
@@ -331,7 +380,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             left: 0;
             width: 4px;
             height: 100%;
-            background: #2563eb;
           }
 
           .fm-brand-logo {
@@ -346,7 +394,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             align-items: center;
             gap: 8px;
             margin-top: 55px;
-            color: #2563eb;
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
@@ -356,13 +403,11 @@ console.log("OTP REQUEST RESPONSE:", response);
           .fm-brand-kicker span {
             width: 22px;
             height: 2px;
-            background: #2563eb;
           }
 
           .fm-brand-title {
             margin-top: 14px;
             max-width: 390px;
-            color: #111827;
             font-size: 34px;
             line-height: 1.18;
             font-weight: 700;
@@ -372,7 +417,6 @@ console.log("OTP REQUEST RESPONSE:", response);
           .fm-brand-description {
             max-width: 385px;
             margin-top: 16px;
-            color: #667085;
             font-size: 14px;
             line-height: 1.8;
           }
@@ -393,8 +437,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             align-items: center;
             gap: 12px;
             padding: 12px 14px;
-            background: #ffffff;
-            border: 1px solid #e6e9ee;
             border-radius: 10px;
           }
 
@@ -406,18 +448,14 @@ console.log("OTP REQUEST RESPONSE:", response);
             height: 32px;
             flex-shrink: 0;
             border-radius: 8px;
-            background: #eff6ff;
-            color: #2563eb;
           }
 
           .fm-feature-text {
-            color: #374151;
             font-size: 12px;
             font-weight: 600;
           }
 
           .fm-brand-footer {
-            color: #98a2b3;
             font-size: 10px;
             line-height: 1.6;
           }
@@ -431,7 +469,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             align-items: center;
             justify-content: center;
             padding: 48px 65px;
-            background: #ffffff;
           }
 
           .fm-form-container {
@@ -447,7 +484,6 @@ console.log("OTP REQUEST RESPONSE:", response);
           }
 
           .fm-console-label {
-            color: #667085;
             font-size: 11px;
             font-weight: 600;
             letter-spacing: 0.04em;
@@ -457,7 +493,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             display: flex;
             align-items: center;
             gap: 6px;
-            color: #667085;
             font-size: 10px;
           }
 
@@ -465,11 +500,9 @@ console.log("OTP REQUEST RESPONSE:", response);
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #22c55e;
           }
 
           .fm-heading h1 {
-            color: #101828;
             font-size: 28px;
             line-height: 1.2;
             font-weight: 700;
@@ -478,7 +511,6 @@ console.log("OTP REQUEST RESPONSE:", response);
 
           .fm-heading p {
             margin-top: 8px;
-            color: #667085;
             font-size: 13px;
             line-height: 1.6;
           }
@@ -493,8 +525,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             gap: 4px;
             margin-top: 28px;
             padding: 4px;
-            background: #f2f4f7;
-            border: 1px solid #e4e7ec;
             border-radius: 10px;
           }
 
@@ -503,22 +533,13 @@ console.log("OTP REQUEST RESPONSE:", response);
             border: 1px solid transparent;
             border-radius: 7px;
             background: transparent;
-            color: #667085;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .fm-method:hover {
-            color: #344054;
-          }
-
-          .fm-method.active {
-            background: #ffffff;
-            border-color: #e4e7ec;
-            color: #1d2939;
-            box-shadow: 0 1px 3px rgba(16, 24, 40, 0.07);
+            transition:
+              background-color 0.2s ease,
+              color 0.2s ease,
+              border-color 0.2s ease;
           }
 
           /* =========================================================
@@ -528,7 +549,6 @@ console.log("OTP REQUEST RESPONSE:", response);
           .fm-label {
             display: block;
             margin-bottom: 8px;
-            color: #344054;
             font-size: 12px;
             font-weight: 600;
           }
@@ -538,67 +558,58 @@ console.log("OTP REQUEST RESPONSE:", response);
           ========================================================= */
 
           .fm-phone {
+            position: relative;
             width: 100%;
             height: 48px;
             overflow: hidden;
-            border: 1px solid #d0d5dd;
+            border-width: 1px;
+            border-style: solid;
             border-radius: 9px;
-            background: #ffffff;
-            transition:
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
-          }
-
-          .fm-phone:focus-within {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+            box-sizing: border-box;
           }
 
           .fm-phone .form-control {
             width: 100% !important;
             height: 46px !important;
-            border: none !important;
-            background: transparent !important;
-            color: #101828 !important;
-            font-size: 14px !important;
             padding-left: 58px !important;
-          }
-
-          .fm-phone .form-control::placeholder {
-            color: #98a2b3 !important;
+            padding-right: 12px !important;
+            border: none !important;
+            outline: none !important;
+            background: transparent !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
           }
 
           .fm-phone .flag-dropdown {
-            background: #ffffff !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 50px !important;
+            height: 46px !important;
             border: none !important;
-            border-right: 1px solid #eaecf0 !important;
+            border-right-width: 1px !important;
+            border-right-style: solid !important;
             border-radius: 9px 0 0 9px !important;
+            z-index: 2 !important;
           }
 
           .fm-phone .selected-flag {
+            width: 50px !important;
             height: 46px !important;
-            background: transparent !important;
+            padding: 0 0 0 12px !important;
             border-radius: 9px 0 0 9px !important;
           }
 
           .fm-phone .selected-flag:hover {
-            background: #f9fafb !important;
+            background: transparent !important;
           }
 
           .fm-phone .country-list {
-            background: #ffffff !important;
-            color: #344054 !important;
-            border: 1px solid #e4e7ec !important;
+            border-width: 1px !important;
+            border-style: solid !important;
             border-radius: 9px !important;
-            box-shadow: 0 12px 25px rgba(16, 24, 40, 0.1) !important;
-          }
-
-          .fm-phone .country-list .country:hover {
-            background: #f2f4f7 !important;
-          }
-
-          .fm-phone .country-list .country.highlight {
-            background: #eff6ff !important;
+            box-shadow:
+              0 12px 25px rgba(16, 24, 40, 0.1) !important;
           }
 
           /* =========================================================
@@ -610,17 +621,10 @@ console.log("OTP REQUEST RESPONSE:", response);
             width: 100%;
             height: 48px;
             overflow: hidden;
-            border: 1px solid #d0d5dd;
+            border-width: 1px;
+            border-style: solid;
             border-radius: 9px;
-            background: #ffffff;
-            transition:
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
-          }
-
-          .fm-email:focus-within {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+            box-sizing: border-box;
           }
 
           .fm-email-icon {
@@ -628,24 +632,22 @@ console.log("OTP REQUEST RESPONSE:", response);
             align-items: center;
             justify-content: center;
             width: 46px;
+            min-width: 46px;
             flex-shrink: 0;
-            border-right: 1px solid #eaecf0;
-            color: #667085;
+            border-right-width: 1px;
+            border-right-style: solid;
           }
 
           .fm-email input {
             width: 100%;
+            min-width: 0;
             height: 46px;
             padding: 0 14px;
             border: 0;
             outline: none;
             background: transparent;
-            color: #101828;
             font-size: 14px;
-          }
-
-          .fm-email input::placeholder {
-            color: #98a2b3;
+            box-sizing: border-box;
           }
 
           /* =========================================================
@@ -658,9 +660,9 @@ console.log("OTP REQUEST RESPONSE:", response);
             gap: 10px;
             margin-top: 18px;
             padding: 11px 12px;
-            border: 1px solid #eaecf0;
+            border-width: 1px;
+            border-style: solid;
             border-radius: 9px;
-            background: #fafafa;
           }
 
           .fm-security-icon {
@@ -671,19 +673,15 @@ console.log("OTP REQUEST RESPONSE:", response);
             height: 30px;
             flex-shrink: 0;
             border-radius: 7px;
-            background: #eff6ff;
-            color: #2563eb;
           }
 
           .fm-security-title {
-            color: #475467;
             font-size: 11px;
             font-weight: 600;
           }
 
           .fm-security-text {
             margin-top: 2px;
-            color: #98a2b3;
             font-size: 10px;
           }
 
@@ -697,8 +695,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             margin-top: 18px;
             border-radius: 9px !important;
             border: 0 !important;
-            background: #2563eb !important;
-            color: #ffffff !important;
             font-size: 13px !important;
             font-weight: 600 !important;
             box-shadow: none !important;
@@ -708,7 +704,6 @@ console.log("OTP REQUEST RESPONSE:", response);
           }
 
           .fm-button:hover {
-            background: #1d4ed8 !important;
             transform: translateY(-1px);
           }
 
@@ -728,18 +723,12 @@ console.log("OTP REQUEST RESPONSE:", response);
           .fm-signup {
             margin-top: 20px;
             text-align: center;
-            color: #667085;
             font-size: 12px;
           }
 
           .fm-signup a {
-            color: #2563eb;
             font-weight: 600;
             transition: color 0.2s ease;
-          }
-
-          .fm-signup a:hover {
-            color: #1d4ed8;
           }
 
           /* =========================================================
@@ -757,14 +746,12 @@ console.log("OTP REQUEST RESPONSE:", response);
             width: 52px;
             height: 52px;
             margin: 0 auto 20px;
-            border: 1px solid #dbeafe;
+            border-width: 1px;
+            border-style: solid;
             border-radius: 10px;
-            background: #eff6ff;
-            color: #2563eb;
           }
 
           .fm-otp-header h2 {
-            color: #101828;
             font-size: 22px;
             font-weight: 700;
           }
@@ -772,14 +759,12 @@ console.log("OTP REQUEST RESPONSE:", response);
           .fm-otp-header p {
             max-width: 320px;
             margin: 8px auto 0;
-            color: #667085;
             font-size: 13px;
             line-height: 1.6;
           }
 
           .fm-otp-label {
             margin-bottom: 8px;
-            color: #344054;
             font-size: 12px;
             font-weight: 600;
           }
@@ -787,34 +772,21 @@ console.log("OTP REQUEST RESPONSE:", response);
           .fm-otp {
             width: 100%;
             height: 54px;
-            border: 1px solid #d0d5dd;
+            border-width: 1px;
+            border-style: solid;
             border-radius: 9px;
             outline: none;
-            background: #ffffff;
-            color: #101828;
             text-align: center;
             font-size: 21px;
             font-weight: 600;
             letter-spacing: 0.55em;
             padding-left: 0.55em;
-            transition:
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
-          }
-
-          .fm-otp:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-          }
-
-          .fm-otp::placeholder {
-            color: #d0d5dd;
+            box-sizing: border-box;
           }
 
           .fm-otp-help {
             margin-top: 7px;
             text-align: center;
-            color: #98a2b3;
             font-size: 10px;
           }
 
@@ -824,14 +796,8 @@ console.log("OTP REQUEST RESPONSE:", response);
             margin-top: 18px;
             border: 0;
             background: transparent;
-            color: #667085;
             font-size: 12px;
             cursor: pointer;
-            transition: color 0.2s ease;
-          }
-
-          .fm-change:hover {
-            color: #2563eb;
           }
 
           /* =========================================================
@@ -842,7 +808,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             width: 100%;
             height: 1px;
             margin-top: 28px;
-            background: #eaecf0;
           }
 
           .fm-form-footer {
@@ -851,7 +816,6 @@ console.log("OTP REQUEST RESPONSE:", response);
             justify-content: center;
             gap: 6px;
             margin-top: 14px;
-            color: #98a2b3;
             font-size: 10px;
           }
 
@@ -868,8 +832,6 @@ console.log("OTP REQUEST RESPONSE:", response);
 
             .fm-brand-panel {
               padding: 34px;
-              border-right: 0;
-              border-bottom: 1px solid #e5e7eb;
             }
 
             .fm-brand-panel::before {
@@ -939,29 +901,71 @@ console.log("OTP REQUEST RESPONSE:", response);
         `}
       </style>
 
-      <div className="fm-login flex w-full items-center justify-center px-4 py-8 sm:px-6">
-        <div className="fm-shell">
+      <div
+        className="
+          fm-login
+          flex
+          min-h-screen
+          w-full
+          items-center
+          justify-center
+          bg-background
+          px-4
+          py-8
+          sm:px-6
+        "
+      >
+        <div
+          className="
+            fm-shell
+            border
+            border-accent
+            bg-white
+          "
+        >
           {/* =====================================================
               LEFT BRAND / PRODUCT PANEL
           ===================================================== */}
 
-          <div className="fm-brand-panel">
+          <div
+            className="
+              fm-brand-panel
+              border-r
+              border-accent
+              bg-background
+            "
+          >
+            <div
+              className="
+                absolute
+                left-0
+                top-0
+                h-full
+                w-1
+                bg-primary
+              "
+            />
+
             <div>
               {/* Logo */}
-              <img src={logo} alt="FixMantra" className="fm-brand-logo" />
+              <img
+                src={logo}
+                alt="FixMantra"
+                className="fm-brand-logo"
+              />
 
               {/* Kicker */}
-              <div className="fm-brand-kicker">
-                <span />
+              <div className="fm-brand-kicker text-primary">
+                <span className="bg-primary" />
                 Admin Console
               </div>
 
               {/* Main Message */}
-              <h2 className="fm-brand-title">
+              <h2 className="fm-brand-title text-primary">
                 Everything you need to manage your service operations.
               </h2>
 
-              <p className="fm-brand-description">
+              <p className="fm-brand-description text-secondary">
                 Access your administration workspace to manage customers,
                 service requests and day-to-day business operations from one
                 place.
@@ -969,32 +973,71 @@ console.log("OTP REQUEST RESPONSE:", response);
 
               {/* Product Features */}
               <div className="fm-feature-list">
-                <div className="fm-feature">
-                  <div className="fm-feature-icon">
+                <div
+                  className="
+                    fm-feature
+                    border
+                    border-accent
+                    bg-white
+                  "
+                >
+                  <div
+                    className="
+                      fm-feature-icon
+                      bg-accent
+                      text-primary
+                    "
+                  >
                     <FiCheckCircle className="text-sm" />
                   </div>
 
-                  <span className="fm-feature-text">
+                  <span className="fm-feature-text text-primary">
                     Manage service requests efficiently
                   </span>
                 </div>
 
-                <div className="fm-feature">
-                  <div className="fm-feature-icon">
+                <div
+                  className="
+                    fm-feature
+                    border
+                    border-accent
+                    bg-white
+                  "
+                >
+                  <div
+                    className="
+                      fm-feature-icon
+                      bg-accent
+                      text-primary
+                    "
+                  >
                     <FiCheckCircle className="text-sm" />
                   </div>
 
-                  <span className="fm-feature-text">
+                  <span className="fm-feature-text text-primary">
                     Keep customer operations organized
                   </span>
                 </div>
 
-                <div className="fm-feature">
-                  <div className="fm-feature-icon">
+                <div
+                  className="
+                    fm-feature
+                    border
+                    border-accent
+                    bg-white
+                  "
+                >
+                  <div
+                    className="
+                      fm-feature-icon
+                      bg-accent
+                      text-primary
+                    "
+                  >
                     <FiCheckCircle className="text-sm" />
                   </div>
 
-                  <span className="fm-feature-text">
+                  <span className="fm-feature-text text-primary">
                     Monitor your business activity
                   </span>
                 </div>
@@ -1002,7 +1045,7 @@ console.log("OTP REQUEST RESPONSE:", response);
             </div>
 
             {/* Left Footer */}
-            <div className="fm-brand-footer">
+            <div className="fm-brand-footer text-secondary">
               Built for simple, reliable service management.
             </div>
           </div>
@@ -1011,15 +1054,12 @@ console.log("OTP REQUEST RESPONSE:", response);
               RIGHT LOGIN PANEL
           ===================================================== */}
 
-          <div className="fm-form-panel">
+          <div className="fm-form-panel bg-white">
             <div className="fm-form-container">
               {/* Top Information */}
               <div className="fm-form-top">
-                <span className="fm-console-label">FIXMANTRA ADMIN</span>
-
-                <span className="fm-status">
-                  <span className="fm-status-dot" />
-                  System available
+                <span className="fm-console-label text-primary">
+                  FIXMANTRA ADMIN
                 </span>
               </div>
 
@@ -1027,19 +1067,37 @@ console.log("OTP REQUEST RESPONSE:", response);
                 <>
                   {/* Heading */}
                   <div className="fm-heading">
-                    <h1>Welcome back</h1>
+                    <h1 className="text-primary">
+                      Welcome back
+                    </h1>
 
-                    <p>Sign in to continue to your administration workspace.</p>
+                    <p className="text-secondary">
+                      Sign in to continue to your administration workspace.
+                    </p>
                   </div>
 
                   {/* Login Method */}
-                  <div className="fm-methods">
+                  <div
+                    className="
+                      fm-methods
+                      border
+                      border-accent
+                      bg-background
+                    "
+                  >
                     <button
                       type="button"
-                      onClick={() => handleChangeLoginMethod("otp")}
-                      className={`fm-method ${
-                        loginMethod === "otp" ? "active" : ""
-                      }`}
+                      onClick={() =>
+                        handleChangeLoginMethod("otp")
+                      }
+                      className={`
+                        fm-method
+                        ${
+                          loginMethod === "otp"
+                            ? "border-accent bg-white text-primary shadow-sm"
+                            : "text-secondary hover:text-primary"
+                        }
+                      `}
                     >
                       <span className="flex items-center justify-center gap-2">
                         <FaPhoneAlt className="text-[10px]" />
@@ -1049,10 +1107,17 @@ console.log("OTP REQUEST RESPONSE:", response);
 
                     <button
                       type="button"
-                      onClick={() => handleChangeLoginMethod("email")}
-                      className={`fm-method ${
-                        loginMethod === "email" ? "active" : ""
-                      }`}
+                      onClick={() =>
+                        handleChangeLoginMethod("email")
+                      }
+                      className={`
+                        fm-method
+                        ${
+                          loginMethod === "email"
+                            ? "border-accent bg-white text-primary shadow-sm"
+                            : "text-secondary hover:text-primary"
+                        }
+                      `}
                     >
                       <span className="flex items-center justify-center gap-2">
                         <IoMdMail className="text-sm" />
@@ -1062,13 +1127,26 @@ console.log("OTP REQUEST RESPONSE:", response);
                   </div>
 
                   {/* Form */}
-                  <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="mt-5"
+                  >
                     {/* Mobile */}
                     {loginMethod === "otp" ? (
                       <div>
-                        <label className="fm-label">Mobile number</label>
+                        <label className="fm-label text-primary">
+                          Mobile number
+                        </label>
 
-                        <div className="fm-phone">
+                        <div
+                          className="
+                            fm-phone
+                            border-accent
+                            bg-white
+                            text-primary
+                            focus-within:border-primary
+                          "
+                        >
                           <PhoneInput
                             country={userCountry}
                             onChange={handlePhoneChange}
@@ -1106,10 +1184,24 @@ console.log("OTP REQUEST RESPONSE:", response);
                     ) : (
                       /* Email */
                       <div>
-                        <label className="fm-label">Email address</label>
+                        <label className="fm-label text-primary">
+                          Email address
+                        </label>
 
-                        <div className="fm-email">
-                          <div className="fm-email-icon">
+                        <div
+                          className="
+                            fm-email
+                            border-accent
+                            bg-white
+                          "
+                        >
+                          <div
+                            className="
+                              fm-email-icon
+                              border-accent
+                              text-secondary
+                            "
+                          >
                             <IoMdMail className="text-lg" />
                           </div>
 
@@ -1121,8 +1213,12 @@ console.log("OTP REQUEST RESPONSE:", response);
                                 loginMethod === "email"
                                   ? "Please enter your Email"
                                   : false,
-                              onChange: (e) => setEnteredEmail(e.target.value),
+                              onChange: (e) =>
+                                setEnteredEmail(
+                                  e.target.value,
+                                ),
                             })}
+                            className="text-primary placeholder:text-secondary placeholder:opacity-60"
                           />
                         </div>
                       </div>
@@ -1130,23 +1226,43 @@ console.log("OTP REQUEST RESPONSE:", response);
 
                     {/* Errors */}
                     <div className="mt-2">
-                      <Error errorName={errors.countryCode} />
+                      <Error
+                        errorName={errors.countryCode}
+                      />
 
-                      <Error errorName={errors.phoneNumber} />
+                      <Error
+                        errorName={errors.phoneNumber}
+                      />
 
-                      <Error errorName={errors.email} />
+                      <Error
+                        errorName={errors.email}
+                      />
                     </div>
 
                     {/* Security */}
-                    <div className="fm-security">
-                      <div className="fm-security-icon">
+                    <div
+                      className="
+                        fm-security
+                        border-accent
+                        bg-background
+                      "
+                    >
+                      <div
+                        className="
+                          fm-security-icon
+                          bg-accent
+                          text-primary
+                        "
+                      >
                         <FiShield className="text-sm" />
                       </div>
 
                       <div>
-                        <p className="fm-security-title">Secure sign in</p>
+                        <p className="fm-security-title text-primary">
+                          Secure sign in
+                        </p>
 
-                        <p className="fm-security-text">
+                        <p className="fm-security-text text-secondary">
                           Your verification details are kept protected.
                         </p>
                       </div>
@@ -1155,7 +1271,15 @@ console.log("OTP REQUEST RESPONSE:", response);
                     {/* Continue */}
                     <Button
                       type="submit"
-                      className="fm-button !flex items-center justify-center"
+                      className="
+                        fm-button
+                        !flex
+                        items-center
+                        justify-center
+                        !bg-primary
+                        !text-white
+                        hover:!bg-secondary
+                      "
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -1172,8 +1296,17 @@ console.log("OTP REQUEST RESPONSE:", response);
                     </Button>
 
                     {/* Signup */}
-                    <p className="fm-signup">
-                      Don't have an account? <Link to="/signup">Sign up</Link>
+                    <p className="fm-signup text-secondary">
+                      Don't have an account?{" "}
+                      <Link
+                        to="/signup"
+                        className="
+                          text-primary
+                          hover:text-secondary
+                        "
+                      >
+                        Sign up
+                      </Link>
                     </p>
                   </form>
                 </>
@@ -1184,13 +1317,22 @@ console.log("OTP REQUEST RESPONSE:", response);
 
                 <div>
                   <div className="fm-otp-header">
-                    <div className="fm-otp-icon">
+                    <div
+                      className="
+                        fm-otp-icon
+                        border-accent
+                        bg-accent
+                        text-primary
+                      "
+                    >
                       <FiLock className="text-xl" />
                     </div>
 
-                    <h2>Verify your account</h2>
+                    <h2 className="text-primary">
+                      Verify your account
+                    </h2>
 
-                    <p>
+                    <p className="text-secondary">
                       {loginMethod === "otp"
                         ? `Enter the verification code sent to ${maskedNumber}.`
                         : `Enter the verification code sent to ${maskedEmail}.`}
@@ -1199,7 +1341,9 @@ console.log("OTP REQUEST RESPONSE:", response);
 
                   {/* OTP */}
                   <div className="mt-7">
-                    <label className="fm-otp-label">Verification code</label>
+                    <label className="fm-otp-label text-primary">
+                      Verification code
+                    </label>
 
                     <input
                       type="text"
@@ -1207,14 +1351,27 @@ console.log("OTP REQUEST RESPONSE:", response);
                       placeholder="••••••"
                       value={otp}
                       onChange={(e) =>
-                        setOtp(e.target.value.replace(/\D/g, ""))
+                        setOtp(
+                          e.target.value.replace(
+                            /\D/g,
+                            "",
+                          ),
+                        )
                       }
-                      className="fm-otp"
+                      className="
+                        fm-otp
+                        border-accent
+                        bg-white
+                        text-primary
+                        placeholder:text-secondary
+                        placeholder:opacity-30
+                        focus:border-primary
+                      "
                       maxLength={6}
                       autoComplete="one-time-code"
                     />
 
-                    <p className="fm-otp-help">
+                    <p className="fm-otp-help text-secondary">
                       Enter the 6-digit verification code
                     </p>
                   </div>
@@ -1223,7 +1380,15 @@ console.log("OTP REQUEST RESPONSE:", response);
                   <Button
                     type="button"
                     onClick={handleOtpSubmit}
-                    className="fm-button !flex items-center justify-center"
+                    className="
+                      fm-button
+                      !flex
+                      items-center
+                      justify-center
+                      !bg-primary
+                      !text-white
+                      hover:!bg-secondary
+                    "
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -1242,7 +1407,11 @@ console.log("OTP REQUEST RESPONSE:", response);
                   {/* Change */}
                   <button
                     type="button"
-                    className="fm-change"
+                    className="
+                      fm-change
+                      text-secondary
+                      hover:text-primary
+                    "
                     onClick={() => {
                       setIsOtpSent(false);
                       setIsLoading(false);
@@ -1250,15 +1419,17 @@ console.log("OTP REQUEST RESPONSE:", response);
                     }}
                   >
                     ← Try a different{" "}
-                    {loginMethod === "otp" ? "phone number" : "email"}
+                    {loginMethod === "otp"
+                      ? "phone number"
+                      : "email"}
                   </button>
                 </div>
               )}
 
               {/* Footer */}
-              <div className="fm-divider" />
+              <div className="fm-divider bg-accent" />
 
-              <div className="fm-form-footer">
+              <div className="fm-form-footer text-secondary">
                 <FiShield className="text-xs" />
                 Secure FixMantra Admin Portal
               </div>
