@@ -570,7 +570,7 @@ const TableHeader = ({
             setSortablePopover(false)
           }
           content={
-            <div className="mt-2 rounded-md border border-accent bg-background p-2 shadow-[0_12px_30px_rgba(10,48,36,0.12)]">
+            <div className="mt-2 rounded-md border border-accent bg-background p-2 shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
 
               {/* NEWEST */}
 

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const LineChart = ({ salesReport }) => {
   const { t } = useTranslation();
 
-  const [activeButton, setActiveButton] = useState("Orders");
+  const [activeRange, setActiveRange] = useState("30");
 
   /* =========================================================
      CLEAN & SORT DATA
@@ -29,185 +29,151 @@ const LineChart = ({ salesReport }) => {
       .sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [salesReport]);
 
-  /* =========================================================
-     TAB CONFIG
-  ========================================================= */
+  const filteredReport = useMemo(() => {
+    if (activeRange === "all" || sortedReport.length === 0) {
+      return sortedReport;
+    }
 
-  const tabs = [
-    {
-      title: "Orders",
-      label: t("Pending"),
-      key: "inprogress",
-    },
-    {
-      title: "Sales",
-      label: t("Completed"),
-      key: "completed",
-    },
-    {
-      title: "Cancelled",
-      label: t("Cancelled"),
-      key: "cancelled",
-    },
-  ];
+    const days = Number(activeRange);
+    const lastDate = new Date(sortedReport[sortedReport.length - 1].date);
 
-  const activeTab =
-    tabs.find((tab) => tab.title === activeButton) || tabs[0];
+    if (Number.isNaN(lastDate.getTime())) {
+      return sortedReport;
+    }
+
+    const startDate = new Date(lastDate);
+    startDate.setDate(startDate.getDate() - days + 1);
+
+    return sortedReport.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= lastDate;
+    });
+  }, [activeRange, sortedReport]);
+
+  const getValue = (item, keys) => {
+    const value = keys.reduce((result, key) => result ?? item?.[key], null);
+    return Number(value) || 0;
+  };
 
   /* =========================================================
      CHART DATA
   ========================================================= */
 
   const chartData = {
-    labels: sortedReport.map((item) => item.date),
+    labels: filteredReport.map((item) => item.date),
 
     datasets: [
       {
-        label: activeTab.label,
-
-        data: sortedReport.map(
-          (item) => Number(item?.[activeTab.key]) || 0
+        label: "Total Requests",
+        data: filteredReport.map((item) =>
+          getValue(item, ["total", "totalRequests", "all"]),
         ),
-
-        borderColor: "#497367",
-        backgroundColor: "#497367",
-
-        borderWidth: 3,
-
+        borderColor: "#0a2540",
+        backgroundColor: "rgba(23,107,79,0.10)",
+        fill: true,
         tension: 0.4,
-
-        pointRadius: 3,
-
-        pointHoverRadius: 6,
-
-        pointBorderWidth: 2,
-
-        pointBackgroundColor: "#FFFFFF",
-
-        pointBorderColor: "#0A3024",
-
+        borderWidth: 2.5,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+      },
+      {
+        label: "Completed",
+        data: filteredReport.map((item) =>
+          getValue(item, ["completed", "complete"]),
+        ),
+        borderColor: "#2E8B68",
+        backgroundColor: "transparent",
         fill: false,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+      },
+      {
+        label: "Pending",
+        data: filteredReport.map((item) =>
+          getValue(item, ["pending", "received", "inprogress"]),
+        ),
+        borderColor: "#D39B35",
+        backgroundColor: "transparent",
+        fill: false,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+      },
+      {
+        label: "Cancelled",
+        data: filteredReport.map((item) =>
+          getValue(item, ["cancelled", "canceled"]),
+        ),
+        borderColor: "#C96262",
+        backgroundColor: "transparent",
+        fill: false,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 5,
       },
     ],
   };
 
-  /* =========================================================
-     CHART OPTIONS
-  ========================================================= */
-
   const options = {
     responsive: true,
-
     maintainAspectRatio: false,
-
     interaction: {
       intersect: false,
       mode: "index",
     },
-
     animation: {
       duration: 500,
     },
-
     plugins: {
       legend: {
-        display: false,
+        display: true,
+        position: "bottom",
+        labels: {
+          color: "#6B7280",
+          usePointStyle: true,
+          boxWidth: 8,
+          font: { size: 10, weight: "600" },
+        },
       },
-
       tooltip: {
-        backgroundColor: "#0A3024",
-
-        titleColor: "#FFFFFF",
-
+        backgroundColor: "#0d3257",
+        titleColor: "#d1fae5",
         bodyColor: "#FFFFFF",
-
         padding: 12,
-
         cornerRadius: 8,
-
-        displayColors: false,
-
-        titleFont: {
-          size: 11,
-          weight: "700",
-        },
-
-        bodyFont: {
-          size: 12,
-          weight: "600",
-        },
-
-        callbacks: {
-          label: (context) => {
-            return `${activeTab.label}: ${context.parsed.y}`;
-          },
-        },
+        titleFont: { size: 11, weight: "700" },
+        bodyFont: { size: 12, weight: "600" },
       },
     },
-
     scales: {
       x: {
-        grid: {
-          display: false,
-        },
-
+        grid: { display: false },
         ticks: {
-          color: "#497367",
-
-          font: {
-            size: 10,
-            weight: "500",
-          },
-
+          color: "#6B7280",
+          font: { size: 10, weight: "500" },
           maxRotation: 0,
-
           autoSkip: true,
-
           maxTicksLimit: 7,
         },
-
-        border: {
-          display: false,
-        },
+        border: { display: false },
       },
-
       y: {
         beginAtZero: true,
-
         grace: "8%",
-
-        grid: {
-          color: "#E8EEEB",
-
-          drawTicks: false,
-        },
-
+        grid: { color: "#d1fae5", drawTicks: false },
         ticks: {
-          color: "#497367",
-
+          color: "#6B7280",
           padding: 8,
-
-          font: {
-            size: 10,
-            weight: "500",
-          },
-
+          font: { size: 10, weight: "500" },
           precision: 0,
         },
-
-        border: {
-          display: false,
-        },
+        border: { display: false },
       },
     },
-  };
-
-  /* =========================================================
-     HANDLER
-  ========================================================= */
-
-  const handleTabChange = (title) => {
-    setActiveButton(title);
   };
 
   /* =========================================================
@@ -228,12 +194,12 @@ const LineChart = ({ salesReport }) => {
 
           <div className="mt-1.5 flex items-center gap-2">
             <span className="text-sm font-bold text-primary">
-              {activeTab.label}
+              Request activity
             </span>
           </div>
         </div>
 
-        {/* TABS */}
+        {/* RANGE FILTER */}
 
         <div
           className="
@@ -241,19 +207,17 @@ const LineChart = ({ salesReport }) => {
             w-fit
             rounded-xl
             border
-            border-[#E8EEEB]
+            border-[#E2E8F0]
             bg-background
             p-1
           "
         >
-          {tabs.map((tab) => {
-            const active = activeButton === tab.title;
-
+          {[{ value: "7", label: "Last 7 days" }, { value: "30", label: "Last 30 days" }, { value: "90", label: "Last 3 months" }, { value: "all", label: "All available" }].map((range) => {
             return (
               <button
-                key={tab.title}
+                key={range.value}
                 type="button"
-                onClick={() => handleTabChange(tab.title)}
+                onClick={() => setActiveRange(range.value)}
                 className={`
                   relative
                   flex
@@ -272,13 +236,13 @@ const LineChart = ({ salesReport }) => {
                   sm:min-w-[96px]
 
                   ${
-                    active
-                      ? "bg-white text-primary shadow-[0_2px_8px_rgba(10,48,36,0.08)]"
+                    activeRange === range.value
+                      ? "bg-white text-primary shadow-[0_2px_8px_rgba(17,24,39,0.08)]"
                       : "text-secondary hover:bg-white hover:text-primary"
                   }
                 `}
               >
-                {tab.label}
+                {range.label}
               </button>
             );
           })}
@@ -287,7 +251,7 @@ const LineChart = ({ salesReport }) => {
 
       {/* CHART */}
 
-      {sortedReport.length > 0 ? (
+      {filteredReport.length > 0 ? (
         <div className="h-[290px] w-full">
           <Line data={chartData} options={options} />
         </div>

@@ -154,7 +154,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_BASE_URL,
+  baseURL:
+    import.meta.env.VITE_APP_API_BASE_URL ||
+    "https://fixora-backend-xi.vercel.app",
   timeout: 50000,
   headers: {
     Accept: "application/json",

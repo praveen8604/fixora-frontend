@@ -409,13 +409,8 @@ const SignUp = () => {
             {/* Logo */}
             <img
               src={logo}
-              alt="Fixora"
-              className="
-                mx-auto
-                mb-5
-                h-10
-                object-contain
-              "
+              alt="RepairMint"
+              className="mx-auto mb-5 h-12 object-contain"
             />
 
             {/* Heading */}

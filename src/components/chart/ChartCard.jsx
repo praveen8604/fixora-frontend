@@ -14,7 +14,7 @@ const ChartCard = ({
   mode,
 }) => {
   const skeletonBase =
-    mode === "dark" ? "#DDE9E5" : "#E8EEEB";
+    mode === "dark" ? "#DDE9E5" : "#E2E8F0";
 
   const skeletonHighlight = "#FFFFFF";
 
@@ -26,13 +26,13 @@ const ChartCard = ({
         overflow-hidden
         rounded-[18px]
         border
-        border-[#E8EEEB]
+        border-[#E2E8F0]
         bg-white
-        shadow-[0_4px_18px_rgba(10,48,36,0.04)]
+        shadow-[0_4px_18px_rgba(15,23,42,0.04)]
         transition-all
         duration-300
         hover:border-accent
-        hover:shadow-[0_12px_30px_rgba(10,48,36,0.08)]
+        hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)]
       "
     >
       {/* =====================================================
@@ -170,7 +170,7 @@ const ChartCard = ({
             justify-between
             rounded-xl
             border
-            border-[#E8EEEB]
+            border-[#E2E8F0]
             bg-background
             px-4
             py-3
@@ -197,7 +197,7 @@ const ChartCard = ({
           DIVIDER
       ===================================================== */}
 
-      <div className="mx-5 h-px bg-[#E8EEEB]" />
+      <div className="mx-5 h-px bg-[#E2E8F0]" />
 
       {/* =====================================================
           CHART AREA

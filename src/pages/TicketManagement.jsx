@@ -3,6 +3,8 @@ import { getServiceRequests } from "@/reduxStore/action/serviceRequestAction";
 import moment from "moment";
 import DataTable from "react-data-table-component";
 import React, { useEffect, useMemo, useState } from "react";
+import "chart.js/auto";
+import { Doughnut } from "react-chartjs-2";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
@@ -433,6 +435,42 @@ const TicketManagement = () => {
     };
   }, [serviceRequests]);
 
+  const statusChart = useMemo(() => {
+    const counts = (serviceRequests || []).reduce((result, request) => {
+      const status = String(request?.ticketStatus || "Unknown").trim();
+      const key = status || "Unknown";
+      result[key] = (result[key] || 0) + 1;
+      return result;
+    }, {});
+
+    const sortedStatuses = Object.entries(counts).sort(
+      ([, firstCount], [, secondCount]) => secondCount - firstCount,
+    );
+    const visibleStatuses = sortedStatuses.slice(0, 5);
+    const remainingCount = sortedStatuses
+      .slice(5)
+      .reduce((total, [, count]) => total + count, 0);
+
+    if (remainingCount > 0) {
+      visibleStatuses.push(["Other", remainingCount]);
+    }
+
+    const chartColors = [
+      "#0a2540",
+      "#2E8B68",
+      "#6FB894",
+      "#A9D8BB",
+      "#0d3257",
+      "#DDEFE4",
+    ];
+
+    return {
+      labels: visibleStatuses.map(([status]) => status),
+      values: visibleStatuses.map(([, count]) => count),
+      colors: chartColors.slice(0, visibleStatuses.length),
+    };
+  }, [serviceRequests]);
+
   /* ==========================================================
      TABLE COLUMNS
   ========================================================== */
@@ -805,7 +843,7 @@ const TicketManagement = () => {
 
         <section className="mb-8">
           <div
-            className="relative overflow-hidden rounded-[30px] px-6 py-7 shadow-[0_20px_55px_rgba(10,48,36,0.25)] sm:px-8 sm:py-9"
+            className="relative overflow-hidden rounded-[30px] px-6 py-7 shadow-[0_20px_55px_rgba(15,23,42,0.25)] sm:px-8 sm:py-9"
             style={{
               backgroundColor: COLORS.primary,
             }}
@@ -957,7 +995,7 @@ const TicketManagement = () => {
                       "/services/servicerequests/request"
                     )
                   }
-                  className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-extrabold text-white shadow-[0_8px_20px_rgba(10,48,36,0.30)] transition hover:-translate-y-0.5 hover:opacity-90"
+                  className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-extrabold text-white shadow-[0_8px_20px_rgba(15,23,42,0.30)] transition hover:-translate-y-0.5 hover:opacity-90"
                   style={{
                     backgroundColor: COLORS.secondary,
                   }}
@@ -1016,7 +1054,7 @@ const TicketManagement = () => {
               return (
                 <div
                   key={item.title}
-                  className="group relative overflow-hidden rounded-[24px] border bg-white p-5 shadow-[0_6px_25px_rgba(10,48,36,0.08)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_22px_45px_rgba(10,48,36,0.15)]"
+                  className="group relative overflow-hidden rounded-[24px] border bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.08)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_22px_45px_rgba(15,23,42,0.15)]"
                   style={{
                     borderColor: COLORS.accent,
                   }}
@@ -1102,11 +1140,99 @@ const TicketManagement = () => {
         </section>
 
         {/* ====================================================
+            STATUS CHART
+        ==================================================== */}
+
+        <section className="mb-8 rounded-[22px] border bg-white p-5 shadow-[0_10px_30px_rgba(17,24,39,0.06)] sm:p-6" style={{ borderColor: COLORS.accent }}>
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: COLORS.secondary }}>
+                Request analytics
+              </p>
+              <h2 className="mt-1 text-[17px] font-extrabold" style={{ color: COLORS.primary }}>
+                Requests by status
+              </h2>
+            </div>
+            <span className="text-[10px] font-semibold" style={{ color: COLORS.secondary }}>
+              Based on the current request results
+            </span>
+          </div>
+
+          {statusChart.values.length > 0 ? (
+            <div className="grid items-center gap-6 lg:grid-cols-[minmax(220px,300px)_1fr]">
+              <div className="relative mx-auto h-[240px] w-full max-w-[300px]">
+                <Doughnut
+                  data={{
+                    labels: statusChart.labels,
+                    datasets: [
+                      {
+                        data: statusChart.values,
+                        backgroundColor: statusChart.colors,
+                        borderColor: "#FFFFFF",
+                        borderWidth: 4,
+                        hoverOffset: 6,
+                      },
+                    ],
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "70%",
+                    plugins: {
+                      legend: { display: false },
+                      tooltip: {
+                        backgroundColor: "#0d3257",
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: {
+                          label: (context) =>
+                            ` ${context.label}: ${context.parsed}`,
+                        },
+                      },
+                    },
+                  }}
+                />
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-[28px] font-extrabold leading-none" style={{ color: COLORS.primary }}>
+                    {requestStats.total}
+                  </span>
+                  <span className="mt-1 text-[10px] font-semibold" style={{ color: COLORS.secondary }}>
+                    requests
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {statusChart.labels.map((status, index) => (
+                  <div key={status} className="flex items-center justify-between rounded-xl border px-3 py-3" style={{ borderColor: COLORS.accent, backgroundColor: COLORS.background }}>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: statusChart.colors[index] }} />
+                      <span className="truncate text-[11px] font-bold capitalize" style={{ color: COLORS.primary }}>
+                        {status}
+                      </span>
+                    </div>
+                    <span className="ml-3 text-[13px] font-extrabold" style={{ color: COLORS.primary }}>
+                      {statusChart.values[index]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex min-h-[180px] items-center justify-center rounded-xl border text-center" style={{ borderColor: COLORS.accent, backgroundColor: COLORS.background }}>
+              <p className="text-[11px] font-semibold" style={{ color: COLORS.secondary }}>
+                No request data available for this chart.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* ====================================================
             FILTER HEADER
         ==================================================== */}
 
         <div
-          className="mb-4 overflow-hidden rounded-[20px] border bg-white shadow-[0_5px_20px_rgba(10,48,36,0.06)]"
+          className="mb-4 overflow-hidden rounded-[20px] border bg-white shadow-[0_5px_20px_rgba(15,23,42,0.06)]"
           style={{
             borderColor: COLORS.accent,
           }}
@@ -1164,7 +1290,7 @@ const TicketManagement = () => {
         ==================================================== */}
 
         <div
-          className="overflow-hidden rounded-[22px] border bg-white shadow-[0_18px_42px_rgba(10,48,36,0.10)]"
+          className="overflow-hidden rounded-[22px] border bg-white shadow-[0_18px_42px_rgba(15,23,42,0.10)]"
           style={{
             borderColor: COLORS.accent,
           }}

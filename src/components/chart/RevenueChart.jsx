@@ -8,10 +8,10 @@ const RevenueChart = () => {
   const { data } = useAsync(OrderServices.getBestSellerProductChart);
 
   const themeColors = [
-    "#AD8B73",
-    "#CEAB93",
-    "#E3CAA5",
-    "#FFFBE9",
+    "#0a2540",
+    "#2E8B68",
+    "#8FC8AE",
+    "#DDF2E7",
   ];
 
   const PieOption = {
@@ -52,10 +52,10 @@ const RevenueChart = () => {
         },
 
         tooltip: {
-          backgroundColor: "#6F6258",
-          titleColor: "#FFFBE9",
+          backgroundColor: "#0d3257",
+          titleColor: "#d1fae5",
           bodyColor: "#FFFFFF",
-          borderColor: "#CEAB93",
+          borderColor: "#2E8B68",
           borderWidth: 1,
 
           padding: 10,

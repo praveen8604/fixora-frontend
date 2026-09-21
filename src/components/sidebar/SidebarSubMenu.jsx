@@ -77,17 +77,15 @@ const SidebarSubMenu = ({
                     isActive
                       ? `
                         border-accent
-                        bg-accent
+                        bg-accent/40
                         text-primary
-                        shadow-[0_4px_12px_rgba(176,212,203,0.12)]
                       `
                       : `
                         border-transparent
                         bg-transparent
-                        text-accent
-                        hover:border-secondary
-                        hover:bg-secondary
-                        hover:text-white
+                        text-secondary
+                        hover:bg-slate-100
+                        hover:text-primary
                       `
                   }
                 `}
@@ -102,7 +100,7 @@ const SidebarSubMenu = ({
                     w-[3px]
                     -translate-y-1/2
                     rounded-r-full
-                    bg-accent
+                    bg-brandGreen
                     transition-all
                     duration-200
 
@@ -135,18 +133,18 @@ const SidebarSubMenu = ({
                       ${
                         isActive
                           ? `
-                            border-primary/20
-                            bg-primary/10
-                            text-primary
+                            border-brandGreen/20
+                            bg-brandGreen/10
+                            text-brandGreen
                           `
                           : `
                             border-transparent
-                            bg-secondary/40
-                            text-accent
+                            bg-slate-100
+                            text-secondary
                             group-hover:translate-x-0.5
-                            group-hover:border-accent/40
-                            group-hover:bg-accent/20
-                            group-hover:text-white
+                            group-hover:border-brandGreen/40
+                            group-hover:bg-brandGreen/10
+                            group-hover:text-brandGreen
                           `
                       }
                     `}
@@ -171,7 +169,7 @@ const SidebarSubMenu = ({
                     z-10
                     overflow-hidden
                     text-nowrap
-                    text-[11px]
+                    text-[12px]
                     leading-5
                     transition-all
                     duration-200
@@ -184,9 +182,9 @@ const SidebarSubMenu = ({
                         `
                         : `
                           font-medium
-                          text-accent
+                          text-secondary
                           group-hover:font-semibold
-                          group-hover:text-white
+                          group-hover:text-primary
                         `
                     }
                   `}
@@ -198,7 +196,7 @@ const SidebarSubMenu = ({
                 <span
                   className={`
                     ml-auto
-                    text-[12px]
+                    text-[14px]
                     transition-all
                     duration-200
 
@@ -207,14 +205,14 @@ const SidebarSubMenu = ({
                         ? `
                           translate-x-0
                           opacity-100
-                          text-primary
+                          text-brandGreen
                         `
                         : `
                           -translate-x-1
                           opacity-0
                           group-hover:translate-x-0
                           group-hover:opacity-100
-                          group-hover:text-accent
+                          group-hover:text-brandGreen
                         `
                     }
                   `}

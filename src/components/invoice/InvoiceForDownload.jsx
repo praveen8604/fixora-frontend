@@ -347,7 +347,7 @@ const InvoiceForDownload = ({
                   src={logoDark}
                   alt="kachabazar"
                   style={{
-                    width: 90,
+                    width: 140,
                     alignItems: "right",
                     textAlign: "right",
                     float: "right",

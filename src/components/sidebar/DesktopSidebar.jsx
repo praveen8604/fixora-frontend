@@ -19,9 +19,9 @@ const DesktopSidebar = () => {
         flex-shrink-0
         overflow-hidden
         border-r
-        border-secondary
-        bg-primary
-        shadow-[4px_0_18px_rgba(10,48,36,0.12)]
+        border-[#E5E7EB]
+        bg-white
+        shadow-[4px_0_18px_rgba(17,24,39,0.05)]
       "
       style={{
         width: sidebarWidth,

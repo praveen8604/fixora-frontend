@@ -950,8 +950,8 @@ const Login = () => {
               {/* Logo */}
               <img
                 src={logo}
-                alt="FixMantra"
-                className="fm-brand-logo"
+                alt="RepairMint"
+                className="fm-brand-logo mb-5 h-12 object-contain"
               />
 
               {/* Kicker */}

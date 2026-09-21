@@ -21,7 +21,7 @@ const Layout = () => {
           You are in offline mode!{" "}
         </div>
       )}
-      <div className="flex h-screen bg-[#F3F6FB]">
+      <div className="flex h-screen bg-[#F7F8F7]">
         <Sidebar />
         <div
           className="flex flex-col flex-1 min-h-0 overflow-hidden"

@@ -177,9 +177,10 @@ const Header = () => {
           z-[40]
           h-[72px]
           border-b
-          border-accent/60
-          bg-white
-          shadow-[0_3px_18px_rgba(10,48,36,0.06)]
+          border-slate-200
+          bg-white/95
+          backdrop-blur-md
+          shadow-sm
         "
         style={{
           left: headerLeft,
@@ -195,55 +196,36 @@ const Header = () => {
             items-center
             justify-between
             px-5
-            md:px-7
-            lg:pr-7
+            md:px-8
           "
         >
           {/* =================================================
               LEFT SIDE
           ================================================== */}
-
-          <div className="flex min-w-0 items-center">
-            {/* Vertical Accent */}
-
-            <div
-              className="
-                mr-4
-                hidden
-                h-9
-                w-[4px]
-                rounded-full
-                bg-primary
-                md:block
-              "
-            />
-
-            <div className="min-w-0">
+          <div className="flex min-w-0 items-center gap-4">
+            <div className="min-w-0 flex flex-col justify-center">
               {/* Admin Panel */}
-
               <div
                 className="
-                  mb-0.5
-                  text-[10px]
-                  font-bold
+                  text-[11px]
+                  font-semibold
                   uppercase
-                  tracking-[0.14em]
-                  text-secondary
+                  tracking-wider
+                  text-slate-500
+                  mb-0.5
                 "
               >
                 Admin Panel
               </div>
 
               {/* Page Title */}
-
               <h1
                 className="
                   truncate
-                  text-[18px]
+                  text-[20px]
                   font-bold
-                  leading-tight
-                  text-primary
-                  md:text-[20px]
+                  tracking-tight
+                  text-slate-900
                 "
               >
                 {headerTitle}
@@ -260,10 +242,7 @@ const Header = () => {
                 PROFILE
             ================================================== */}
 
-            <div
-              className="relative"
-              ref={profileRef}
-            >
+            <div className="relative" ref={profileRef}>
               <button
                 type="button"
                 onClick={handleProfileOpen}
@@ -272,38 +251,36 @@ const Header = () => {
                   group
                   flex
                   items-center
-                  gap-2.5
-                  rounded-full
+                  gap-3
+                  rounded-lg
                   border
-                  border-accent
+                  border-slate-200
                   bg-white
                   py-1.5
-                  pl-2
+                  pl-1.5
                   pr-3
                   transition-all
                   duration-200
-                  hover:border-secondary
-                  hover:bg-background
-                  hover:shadow-[0_5px_16px_rgba(10,48,36,0.10)]
+                  hover:border-slate-300
+                  hover:bg-slate-50
                   focus:outline-none
+                  focus:ring-2
+                  focus:ring-indigo-500/20
                 "
               >
                 {/* Avatar */}
-
                 <div
                   className="
                     flex
-                    h-9
-                    w-9
+                    h-8
+                    w-8
                     items-center
                     justify-center
                     overflow-hidden
-                    rounded-full
-                    border-2
-                    border-accent
-                    bg-primary
-                    text-sm
-                    font-bold
+                    rounded-md
+                    bg-indigo-600
+                    text-xs
+                    font-medium
                     text-white
                   "
                 >
@@ -323,24 +300,25 @@ const Header = () => {
                 </div>
 
                 {/* Profile Info */}
-
-                <div className="hidden max-w-[130px] text-left sm:block">
+                <div className="hidden max-w-[140px] text-left sm:block">
                   <p
                     className="
                       truncate
-                      text-[12px]
-                      font-bold
-                      text-primary
+                      text-[13px]
+                      font-semibold
+                      text-slate-900
+                      leading-none
+                      mb-1
                     "
                   >
                     {adminInfo?.email || "Administrator"}
                   </p>
-
                   <p
                     className="
-                      text-[10px]
+                      text-[11px]
                       font-medium
-                      text-secondary
+                      text-slate-500
+                      leading-none
                     "
                   >
                     Administrator
@@ -348,18 +326,13 @@ const Header = () => {
                 </div>
 
                 {/* Chevron */}
-
                 <FiChevronDown
-                  size={15}
+                  size={16}
                   className={`
-                    text-secondary
+                    text-slate-400
                     transition-transform
                     duration-200
-                    ${
-                      profileOpen
-                        ? "rotate-180"
-                        : "rotate-0"
-                    }
+                    ${profileOpen ? "rotate-180" : "rotate-0"}
                   `}
                 />
               </button>
@@ -367,29 +340,28 @@ const Header = () => {
               {/* =================================================
                   PROFILE DROPDOWN
               ================================================== */}
-
               {profileOpen && (
                 <div
                   className="
                     absolute
                     right-0
-                    top-[52px]
-                    w-[230px]
+                    top-[56px]
+                    w-[240px]
                     overflow-hidden
-                    rounded-2xl
+                    rounded-xl
                     border
-                    border-accent
+                    border-slate-100
                     bg-white
-                    shadow-[0_16px_38px_rgba(10,48,36,0.14)]
+                    shadow-lg
+                    shadow-slate-200/50
                   "
                 >
                   {/* Dropdown Header */}
-
                   <div
                     className="
                       border-b
-                      border-accent/60
-                      bg-background
+                      border-slate-100
+                      bg-slate-50/50
                       px-4
                       py-3.5
                     "
@@ -399,135 +371,82 @@ const Header = () => {
                         text-[10px]
                         font-bold
                         uppercase
-                        tracking-[0.14em]
-                        text-secondary
+                        tracking-widest
+                        text-slate-500
                       "
                     >
                       Account
                     </p>
-
                     <p
                       className="
-                        mt-0.5
+                        mt-1
                         truncate
-                        text-sm
-                        font-bold
-                        text-primary
+                        text-[13px]
+                        font-semibold
+                        text-slate-900
                       "
                     >
                       {adminInfo?.email || "Administrator"}
                     </p>
                   </div>
 
-                  {/* =================================================
-                      DASHBOARD
-                  ================================================== */}
-
-                  <Link
-                    to="/dashboard"
-                    onClick={() => setProfileOpen(false)}
-                    className="
-                      group
-                      flex
-                      items-center
-                      gap-3
-                      px-4
-                      py-3
-                      text-sm
-                      font-semibold
-                      text-secondary
-                      no-underline
-                      transition-all
-                      duration-200
-                      hover:bg-accent/30
-                      hover:text-primary
-                    "
-                  >
-                    <span
+                  <div className="py-1.5">
+                    {/* DASHBOARD */}
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setProfileOpen(false)}
                       className="
+                        group
                         flex
-                        h-9
-                        w-9
                         items-center
-                        justify-center
-                        rounded-xl
-                        bg-accent/50
-                        text-primary
-                        transition-all
-                        duration-200
-                        group-hover:bg-secondary
-                        group-hover:text-white
+                        gap-3
+                        px-4
+                        py-2.5
+                        text-sm
+                        font-medium
+                        text-slate-600
+                        transition-colors
+                        hover:bg-slate-50
+                        hover:text-slate-900
                       "
                     >
-                      <FiGrid size={16} />
-                    </span>
+                      <FiGrid size={16} className="text-slate-400 group-hover:text-indigo-600" />
+                      <span>{t("Dashboard")}</span>
+                    </Link>
 
-                    <span>
-                      {t("Dashboard")}
-                    </span>
-                  </Link>
-
-                  {/* =================================================
-                      LOGOUT
-                  ================================================== */}
-
-                  <AlertDialog
-                    onClickInsider={() =>
-                      setProfileOpen(true)
-                    }
-                    onAgree={handleLogOut}
-                    dialogTitle="Logout?"
-                    dialogDetails="Are you sure you want to logout?"
-                    AgreeButtonValue="Yes, Logout!"
-                    CancelButton="Cancel"
-                    triggerButton={(onClickFunc) => (
-                      <button
-                        type="button"
-                        onClick={onClickFunc}
-                        className="
-                          group
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          border-t
-                          border-accent/60
-                          px-4
-                          py-3
-                          text-sm
-                          font-semibold
-                          text-secondary
-                          transition-all
-                          duration-200
-                          hover:bg-accent/30
-                          hover:text-primary
-                        "
-                      >
-                        <span
+                    {/* LOGOUT */}
+                    <AlertDialog
+                      onClickInsider={() => setProfileOpen(true)}
+                      onAgree={handleLogOut}
+                      dialogTitle="Logout?"
+                      dialogDetails="Are you sure you want to logout?"
+                      AgreeButtonValue="Yes, Logout!"
+                      CancelButton="Cancel"
+                      triggerButton={(onClickFunc) => (
+                        <button
+                          type="button"
+                          onClick={onClickFunc}
                           className="
+                            group
                             flex
-                            h-9
-                            w-9
+                            w-full
                             items-center
-                            justify-center
-                            rounded-xl
-                            bg-accent/50
-                            text-primary
-                            transition-all
-                            duration-200
-                            group-hover:bg-secondary
-                            group-hover:text-white
+                            gap-3
+                            px-4
+                            py-2.5
+                            text-sm
+                            font-medium
+                            text-red-600
+                            transition-colors
+                            hover:bg-red-50
                           "
                         >
-                          <FiLogOut size={16} />
-                        </span>
-
-                        <span>
-                          {t("LogOut")}
-                        </span>
-                      </button>
-                    )}
-                  />
+                          <FiLogOut size={16} className="text-red-500 group-hover:text-red-600" />
+                          <span>{t("LogOut")}</span>
+                        </button>
+                      )}
+                    />
+                  </div>
                 </div>
               )}
             </div>

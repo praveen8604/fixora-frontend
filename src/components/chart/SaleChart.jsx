@@ -13,7 +13,7 @@ const SaleChart = ({ salesReport }) => {
 
   const isSales = activeButton === "Sales";
 
-  const chartColor = isSales ? "#AD8B73" : "#CEAB93";
+  const chartColor = isSales ? "#0a2540" : "#2E8B68";
 
   const barOptions = {
     data: {
@@ -38,7 +38,7 @@ const SaleChart = ({ salesReport }) => {
 
           pointHoverRadius: 5,
 
-          pointBackgroundColor: "#FFFBE9",
+          pointBackgroundColor: "#d1fae5",
 
           pointBorderColor: chartColor,
 
@@ -62,13 +62,13 @@ const SaleChart = ({ salesReport }) => {
         },
 
         tooltip: {
-          backgroundColor: "#6F6258",
+          backgroundColor: "#0d3257",
 
-          titleColor: "#FFFBE9",
+          titleColor: "#d1fae5",
 
           bodyColor: "#FFFFFF",
 
-          borderColor: "#CEAB93",
+          borderColor: "#2E8B68",
 
           borderWidth: 1,
 
@@ -144,8 +144,8 @@ const SaleChart = ({ salesReport }) => {
             gap-1
             rounded-xl
             border
-            border-[#E3CAA5]
-            bg-[#FFFBE9]
+            border-[#D5E8DD]
+            bg-[#F3FAF6]
             p-1
           "
         >
@@ -165,8 +165,8 @@ const SaleChart = ({ salesReport }) => {
               focus:outline-none
               ${
                 isSales
-                  ? "bg-[#AD8B73] text-white shadow-sm"
-                  : "text-[#8B7B6D] hover:bg-[#E3CAA5]/40"
+                  ? "bg-[#0a2540] text-white shadow-sm"
+                  : "text-[#6B7280] hover:bg-[#d1fae5]"
               }
             `}
           >
@@ -189,8 +189,8 @@ const SaleChart = ({ salesReport }) => {
               focus:outline-none
               ${
                 !isSales
-                  ? "bg-[#CEAB93] text-white shadow-sm"
-                  : "text-[#8B7B6D] hover:bg-[#E3CAA5]/40"
+                  ? "bg-[#2E8B68] text-white shadow-sm"
+                  : "text-[#6B7280] hover:bg-[#d1fae5]"
               }
             `}
           >

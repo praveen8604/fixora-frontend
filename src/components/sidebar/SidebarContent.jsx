@@ -15,8 +15,9 @@ import { IoLogOutOutline } from "react-icons/io5";
 
 import sidebar from "@/routes/sidebar";
 
-import logo from "@/assets/img/logo/logo.png";
-import logo_short from "@/assets/img/logo/logohead.png";
+
+import logo_short from "@/assets/img/logo/logo.png";
+import logo from "@/assets/img/logo/logohead.png";
 
 import { SidebarContext } from "@/context/SidebarContext";
 import { AdminContext } from "@/context/AdminContext";
@@ -36,11 +37,36 @@ const SidebarContent = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
-  const [openMenu, setOpenMenu] = useState(null);
+  const isRouteActive = (route) => {
+    if (!route) return false;
+
+    const currentPath = pathname || "";
+    const routePath = route.path || "";
+
+    return (
+      routePath === currentPath ||
+      routePath.split("/")[1] ===
+      currentPath.split("/")[1]
+    );
+  };
+
+  const [openMenu, setOpenMenu] = useState(() => {
+    const activeRoute = sidebar.find((route) => isRouteActive(route));
+    return activeRoute ? activeRoute.name : null;
+  });
   const [panelPos, setPanelPos] = useState(0);
 
   const itemRefs = useRef({});
   const panelRef = useRef(null);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      const activeRoute = sidebar.find((route) => isRouteActive(route));
+      setOpenMenu(activeRoute ? activeRoute.name : null);
+    } else {
+      setOpenMenu(null);
+    }
+  }, [pathname, isSidebarOpen]);
 
   // =========================================================
   // LOGOUT
@@ -109,36 +135,13 @@ const SidebarContent = () => {
   // CLOSE FLOATING MENU WHEN SIDEBAR OPENS
   // =========================================================
 
-  useEffect(() => {
-    if (isSidebarOpen) {
-      setOpenMenu(null);
-    }
-  }, [isSidebarOpen]);
-
   // =========================================================
-  // ACTIVE FLOATING PANEL
+  // ACTIVE ROUTE (Moved up)
   // =========================================================
 
   const activePanel = sidebar.find(
     (route) => route.name === openMenu
   );
-
-  // =========================================================
-  // ACTIVE ROUTE
-  // =========================================================
-
-  const isRouteActive = (route) => {
-    if (!route) return false;
-
-    const currentPath = pathname || "";
-    const routePath = route.path || "";
-
-    return (
-      routePath === currentPath ||
-      routePath.split("/")[1] ===
-        currentPath.split("/")[1]
-    );
-  };
 
   return (
     <div
@@ -148,8 +151,8 @@ const SidebarContent = () => {
         h-full
         flex-col
         overflow-hidden
-        bg-primary
-        text-accent
+        bg-white
+        text-[#6B7280]
       "
     >
       {/* =====================================================
@@ -162,72 +165,67 @@ const SidebarContent = () => {
           z-20
           shrink-0
           px-3
-          pt-4
+          pt-3
+          pb-2
         "
       >
         <div
           className={`
             relative
             flex
-            h-[72px]
+            h-[60px]
             w-full
             items-center
-            rounded-xl
-            border
-            border-secondary
-            bg-white
-            shadow-[0_3px_12px_rgba(0,0,0,0.10)]
+            rounded-lg
+            bg-slate-50
             transition-all
             duration-300
 
-            ${
-              isSidebarOpen
-                ? "px-2 pr-7"
-                : "justify-center px-2"
-            }
+            ${isSidebarOpen ? "px-3" : "justify-center px-2"}
           `}
         >
           {/* Logo */}
-
-          <a
-            href="/dashboard"
-            onMouseOver={openSidebar}
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleSidebar();
+            }}
+            role="button"
+            tabIndex={0}
             className={`
               relative
+              z-50
               flex
               min-w-0
+              cursor-pointer
               items-center
               overflow-visible
               no-underline
 
-              ${
-                isSidebarOpen
-                  ? "w-full"
-                  : "justify-center"
-              }
+              ${isSidebarOpen ? "w-full" : "justify-center"}
             `}
           >
             {isSidebarOpen ? (
               <div
                 className="
                   flex
-                  h-[54px]
+                  h-[48px]
                   w-full
                   items-center
                   justify-start
-                  rounded-lg
-                  bg-white
-                  px-3
+                  rounded-md
+                  bg-slate-50
                 "
               >
                 <img
                   src={logo}
-                  alt="Fix Mantra"
+                  alt="RepairMint"
                   className="
                     block
-                    h-[43px]
+                    h-[36px]
                     w-auto
-                    max-w-[205px]
+                    max-w-[180px]
                     object-contain
                     object-left
                   "
@@ -241,13 +239,13 @@ const SidebarContent = () => {
                   w-10
                   items-center
                   justify-center
-                  rounded-lg
-                  bg-white
+                  rounded-md
+                  bg-slate-50
                 "
               >
                 <img
                   src={logo_short}
-                  alt="Fix Mantra"
+                  alt="RepairMint"
                   className="
                     block
                     h-8
@@ -257,74 +255,28 @@ const SidebarContent = () => {
                 />
               </div>
             )}
-          </a>
-
-          {/* Collapse Button */}
-
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            aria-label="Toggle sidebar"
-            className={`
-              absolute
-              -right-[11px]
-              top-[23px]
-              z-30
-              flex
-              h-[26px]
-              w-[26px]
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-accent
-              bg-primary
-              text-accent
-              shadow-[0_3px_10px_rgba(0,0,0,0.18)]
-              transition-all
-              duration-200
-              hover:bg-secondary
-              hover:text-white
-
-              ${
-                isSidebarOpen
-                  ? "rotate-0"
-                  : "rotate-180"
-              }
-            `}
-            style={{
-              ...(dimentions?.width <= 1024 &&
-              !isSidebarOpen
-                ? {
-                    left: "20px",
-                    right: "auto",
-                  }
-                : {}),
-            }}
-          >
-            <FaArrowCircleLeft size={14} />
-          </button>
+          </div>
         </div>
 
         {/* Workspace Label */}
-
         {isSidebarOpen && (
           <div
             className="
-              mt-5
+              mt-4
+              mb-1
               flex
               items-center
-              gap-2
-              px-2
+              gap-3
+              px-3
             "
           >
             <span
               className="
-                text-[9px]
+                text-[10px]
                 font-bold
                 uppercase
-                tracking-[0.14em]
-                text-accent
+                tracking-widest
+                text-slate-400
               "
             >
               Workspace
@@ -334,7 +286,7 @@ const SidebarContent = () => {
               className="
                 h-px
                 flex-1
-                bg-secondary/50
+                bg-slate-200
               "
             />
           </div>
@@ -385,139 +337,97 @@ const SidebarContent = () => {
                     }
                   }}
                   className={`
-                    group
-                    relative
-                    flex
-                    min-h-[50px]
-                    w-full
-                    items-center
-                    justify-between
-                    overflow-hidden
-                    rounded-xl
-                    border
-                    px-3
-                    no-underline
-                    transition-all
-                    duration-200
+                      group
+                      relative
+                      flex
+                      min-h-[44px]
+                      w-full
+                      items-center
+                      justify-between
+                      overflow-hidden
+                      rounded-lg
+                      px-3
+                      py-2
+                      no-underline
+                      transition-all
+                      duration-200
 
-                    ${
-                      isActive
-                        ? `
-                          border-accent
-                          bg-accent
-                          text-primary
-                          shadow-[0_4px_12px_rgba(176,212,203,0.16)]
-                        `
-                        : `
-                          border-transparent
-                          bg-transparent
-                          text-accent
-                          hover:border-secondary
-                          hover:bg-secondary
-                          hover:text-white
-                        `
+                      ${isActive
+                      ? "bg-accent/10 text-primary shadow-sm border border-brandGreen/20"
+                      : "bg-transparent text-slate-600 hover:bg-slate-100 hover:text-primary"
                     }
 
-                    ${
-                      isSidebarOpen
-                        ? "justify-between"
-                        : "justify-center"
-                    }
-                  `}
+                      ${isSidebarOpen ? "justify-between" : "justify-center px-0"}
+                    `}
                 >
                   {/* Active Indicator */}
-
                   {isActive && (
                     <span
                       className="
-                        absolute
-                        left-0
-                        top-1/2
-                        h-6
-                        w-[3px]
-                        -translate-y-1/2
-                        rounded-r-full
-                        bg-primary
-                      "
+                          absolute
+                          left-0
+                          top-1/2
+                          h-5
+                          w-[3px]
+                          -translate-y-1/2
+                          rounded-r-md
+                          bg-brandGreen
+                        "
                     />
                   )}
 
                   {/* Icon + Text */}
-
                   <div
                     className={`
-                      relative
-                      z-10
-                      flex
-                      min-w-0
-                      items-center
+                        relative
+                        z-10
+                        flex
+                        min-w-0
+                        items-center
 
-                      ${
-                        isSidebarOpen
-                          ? ""
-                          : "justify-center"
-                      }
-                    `}
+                        ${isSidebarOpen ? "" : "justify-center"}
+                      `}
                   >
                     {/* Icon */}
-
                     <div
                       className={`
-                        flex
-                        h-9
-                        w-9
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-lg
-                        transition-all
-                        duration-200
+                          flex
+                          h-8
+                          w-8
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-md
+                          transition-all
+                          duration-200
 
-                        ${
-                          isActive
-                            ? `
-                              bg-primary/10
-                              text-primary
-                            `
-                            : `
-                              bg-secondary/40
-                              text-accent
-                              group-hover:bg-accent/20
-                              group-hover:text-white
-                            `
+                          ${isActive
+                          ? "bg-brandGreen/10 text-brandGreen"
+                          : "bg-transparent text-slate-400 group-hover:text-primary"
                         }
-                      `}
+                        `}
                     >
                       {route?.icon && (
                         <route.icon
-                          className="
-                            h-[17px]
-                            w-[17px]
-                            shrink-0
-                          "
+                          className="h-[18px] w-[18px] shrink-0"
                           aria-hidden="true"
                         />
                       )}
                     </div>
 
                     {/* Text */}
-
                     {isSidebarOpen && (
                       <div
                         className={`
-                          ml-3
-                          overflow-hidden
-                          text-nowrap
-                          text-xs
-                          font-bold
-                          tracking-[-0.01em]
-
-                          ${
-                            isActive
-                              ? "text-primary"
-                              : "text-accent group-hover:text-white"
+                            ml-3
+                            overflow-hidden
+                            text-nowrap
+                            text-[13px]
+                            ${isActive
+                            ? "font-semibold text-primary"
+                            : "font-medium text-slate-600 group-hover:text-primary"
                           }
-                        `}
+                          `}
                       >
                         {t(`${route?.name}`)}
                       </div>
@@ -525,49 +435,37 @@ const SidebarContent = () => {
                   </div>
 
                   {/* Submenu Arrow */}
-
-                  {route?.subMenu?.length > 0 &&
-                    isSidebarOpen && (
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          handleIconClick(route);
-                        }}
-                        className={`
+                  {route?.subMenu?.length > 0 && isSidebarOpen && (
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        handleIconClick(route);
+                      }}
+                      className={`
                           relative
                           z-10
                           flex
-                          h-7
-                          w-7
+                          h-6
+                          w-6
                           shrink-0
                           items-center
                           justify-center
-                          rounded-lg
+                          rounded-md
                           border-0
                           bg-transparent
-                          transition-all
+                          transition-transform
                           duration-200
 
-                          ${
-                            openMenu === route.name ||
-                            isActive
-                              ? "-rotate-180"
-                              : ""
-                          }
-
-                          ${
-                            isActive
-                              ? "text-primary"
-                              : "text-accent hover:bg-secondary hover:text-white"
-                          }
+                          ${openMenu === route.name ? "-rotate-180" : ""}
+                          ${isActive ? "text-primary" : "text-slate-400 group-hover:text-primary"}
                         `}
-                        aria-label={`Toggle ${route.name} submenu`}
-                      >
-                        <IoIosArrowDown size={13} />
-                      </button>
-                    )}
+                      aria-label={`Toggle ${route.name} submenu`}
+                    >
+                      <IoIosArrowDown size={14} />
+                    </button>
+                  )}
                 </NavLink>
 
                 {/* =================================================
@@ -587,15 +485,15 @@ const SidebarContent = () => {
                       whitespace-nowrap
                       rounded-lg
                       border
-                      border-secondary
-                      bg-primary
+                      border-slate-200
+                      bg-slate-200
                       px-3
                       py-2
                       text-[10px]
                       font-bold
-                      text-accent
+                      text-slate-900
                       opacity-0
-                      shadow-[0_8px_20px_rgba(0,0,0,0.18)]
+                      shadow-xl
                       transition-all
                       duration-200
                       group-hover:translate-x-0
@@ -615,8 +513,8 @@ const SidebarContent = () => {
                         rotate-45
                         border-l
                         border-b
-                        border-secondary
-                        bg-primary
+                        border-slate-200
+                        bg-slate-200
                       "
                     />
                   </div>
@@ -627,7 +525,8 @@ const SidebarContent = () => {
                 ================================================== */}
 
                 {route?.subMenu?.length > 0 &&
-                  isSidebarOpen && (
+                  isSidebarOpen &&
+                  openMenu === route.name && (
                     <SidebarSubMenu
                       route={route?.subMenu}
                       parentLink={route?.path?.split("/")[1]}
@@ -649,23 +548,19 @@ const SidebarContent = () => {
 
       <div
         className={`
-          absolute
-          bottom-0
-          left-0
-          z-20
-          w-full
-          border-t
-          border-secondary
-          bg-primary
-          px-3
-          py-3
+            absolute
+            bottom-0
+            left-0
+            z-20
+            w-full
+            border-t
+            border-slate-200
+            bg-slate-50
+            px-3
+            py-3
 
-          ${
-            isSidebarOpen
-              ? "px-3"
-              : "flex justify-center"
-          }
-        `}
+            ${isSidebarOpen ? "" : "flex justify-center"}
+          `}
       >
         <AlertDialog
           onAgree={handleLogOut}
@@ -677,52 +572,50 @@ const SidebarContent = () => {
             <Button
               onClick={onClickFunc}
               size="large"
-              className="
-                !m-0
-                !min-h-[48px]
-                !w-full
-                !min-w-0
-                !overflow-hidden
-                !rounded-xl
-                !border
-                !border-secondary
-                !bg-secondary
-                !px-3
-                !normal-case
-                !text-accent
-                !shadow-none
-                transition-all
-                duration-200
-                hover:!border-accent
-                hover:!bg-secondary
-                hover:!text-primary
-              "
+              className={`
+                  !m-0
+                  !min-h-[44px]
+                  !w-full
+                  !min-w-0
+                  !overflow-hidden
+                  !rounded-lg
+                  !border-0
+                  !bg-transparent
+                  !px-2
+                  !normal-case
+                  !text-accent
+                  !shadow-none
+                  transition-all
+                  duration-200
+                  hover:!bg-slate-200
+                  hover:!text-slate-900
+                  ${!isSidebarOpen ? "!px-0" : ""}
+                `}
             >
               <span
                 className={`
-                  flex
-                  w-full
-                  items-center
+                    flex
+                    w-full
+                    items-center
 
-                  ${
-                    isSidebarOpen
-                      ? "gap-3"
-                      : "justify-center"
-                  }
-                `}
+                    ${isSidebarOpen ? "gap-3" : "justify-center"}
+                  `}
               >
                 <span
                   className="
-                    flex
-                    h-9
-                    w-9
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-lg
-                    bg-primary
-                    text-accent
-                  "
+                      flex
+                      h-8
+                      w-8
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-md
+                      bg-slate-200
+                      text-slate-600
+                      transition-colors
+                      group-hover:bg-slate-300
+                      group-hover:text-slate-900
+                    "
                 >
                   <IoLogOutOutline className="text-lg" />
                 </span>
@@ -730,11 +623,11 @@ const SidebarContent = () => {
                 {isSidebarOpen && (
                   <span
                     className="
-                      text-xs
-                      font-bold
-                      text-nowrap
-                      text-accent
-                    "
+                        text-[13px]
+                        font-medium
+                        text-nowrap
+                        text-slate-600
+                      "
                   >
                     {t("LogOut")}
                   </span>
@@ -761,10 +654,10 @@ const SidebarContent = () => {
               min-w-[190px]
               rounded-xl
               border
-              border-secondary
-              bg-primary
+              border-slate-200
+              bg-slate-200
               py-2
-              shadow-[0_10px_30px_rgba(0,0,0,0.18)]
+              shadow-xl
             "
             style={{
               top: panelPos,
@@ -778,7 +671,7 @@ const SidebarContent = () => {
                 font-bold
                 uppercase
                 tracking-[0.12em]
-                text-accent
+                text-slate-400
               "
             >
               {t(activePanel.name)}
@@ -800,20 +693,19 @@ const SidebarContent = () => {
                   transition-colors
                   duration-150
 
-                  ${
-                    pathname === child.path
-                      ? `
-                        border-accent
-                        bg-accent
+                  ${pathname === child.path
+                    ? `
+                        border-slate-800
+                        bg-slate-700
                         font-semibold
-                        text-primary
+                        text-slate-900
                       `
-                      : `
+                    : `
                         border-transparent
-                        text-accent
-                        hover:border-secondary
-                        hover:bg-secondary
-                        hover:text-white
+                        text-slate-600
+                        hover:border-slate-400
+                        hover:bg-slate-700
+                        hover:text-slate-900
                       `
                   }
                 `}

@@ -8,10 +8,11 @@ const config = {
   theme: {
     extend: {
       colors: {
-        primary: "#0A3024",
-        secondary: "#497367",
-        accent: "#B0D4CB",
-        background: "#F8F8FA",
+        primary: "#0a2540",
+        secondary: "#6B7280",
+        accent: "#d1fae5",
+        background: "#F7F8F7",
+        brandGreen: "#10b981",
       },
 
       fontFamily: {

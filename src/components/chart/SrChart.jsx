@@ -59,7 +59,7 @@ const SrChart = ({ recentSr = [] }) => {
     return {
       backgroundColor: COLORS.background,
       color: COLORS.secondary,
-      borderColor: "#E8EEEB",
+      borderColor: "#E2E8F0",
     };
   };
 
@@ -323,7 +323,7 @@ const SrChart = ({ recentSr = [] }) => {
       style: {
         minHeight: "42px",
         backgroundColor: COLORS.background,
-        borderBottom: `1px solid #E8EEEB`,
+        borderBottom: `1px solid #E2E8F0`,
         borderRadius: "10px",
       },
     },
@@ -344,7 +344,7 @@ const SrChart = ({ recentSr = [] }) => {
       style: {
         minHeight: "66px",
         backgroundColor: "#FFFFFF",
-        borderBottom: `1px solid #E8EEEB`,
+        borderBottom: `1px solid #E2E8F0`,
         transition: "all 0.2s ease",
       },
 
@@ -377,7 +377,7 @@ const SrChart = ({ recentSr = [] }) => {
     pagination: {
       style: {
         minHeight: "45px",
-        borderTop: `1px solid #E8EEEB`,
+        borderTop: `1px solid #E2E8F0`,
         backgroundColor: "#FFFFFF",
         color: COLORS.secondary,
         fontSize: "10px",
@@ -395,7 +395,7 @@ const SrChart = ({ recentSr = [] }) => {
         overflow-hidden
         rounded-xl
         border
-        border-[#E8EEEB]
+        border-[#E2E8F0]
         bg-white
       "
     >

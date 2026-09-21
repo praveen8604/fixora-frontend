@@ -84,7 +84,7 @@ const ServiceCenterLocation = () => {
 
         notifyError(
           decryptedData?.error?.message ||
-            "Failed to create service center."
+          "Failed to create service center."
         );
       });
   };
@@ -340,13 +340,13 @@ const ServiceCenterLocation = () => {
             PAGE HEADER
         ========================================================== */}
         <section className="mb-8">
-          <div className="relative overflow-hidden rounded-[30px] bg-primary px-6 py-7 shadow-[0_20px_55px_rgba(10,48,36,0.25)] sm:px-8 sm:py-9">
+          <div className="relative overflow-hidden rounded-[30px] bg-primary p-0 m-0 shadow-[0_20px_55px_rgba(15,23,42,0.25)]">
 
             <div className="pointer-events-none absolute -right-24 -top-28 h-[340px] w-[340px] rounded-full bg-secondary/25" />
 
             <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(#fff_1px,transparent_1px),linear-gradient(90deg,#fff_1px,transparent_1px)] [background-size:34px_34px]" />
 
-            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between px-4 py-4">
 
               <div>
                 <div className="mb-3 flex items-center gap-2.5">
@@ -424,7 +424,7 @@ const ServiceCenterLocation = () => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="group relative overflow-hidden rounded-[24px] border border-accent bg-white p-5 shadow-[0_6px_25px_rgba(10,48,36,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:border-secondary hover:shadow-[0_22px_45px_rgba(10,48,36,0.15)]"
+                className="group relative overflow-hidden rounded-[24px] border border-accent bg-white p-5 shadow-[0_6px_25px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:border-secondary hover:shadow-[0_22px_45px_rgba(15,23,42,0.15)]"
               >
                 <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-accent/25 transition-all duration-500 group-hover:scale-[1.7]" />
 
@@ -466,7 +466,7 @@ const ServiceCenterLocation = () => {
         {/* =========================================================
             TABLE
         ========================================================== */}
-        <div className="overflow-hidden rounded-[22px] border border-accent bg-white shadow-[0_18px_42px_rgba(10,48,36,0.10)]">
+        <div className="overflow-hidden rounded-[22px] border border-accent bg-white shadow-[0_18px_42px_rgba(15,23,42,0.10)]">
 
           <div className="flex flex-col gap-3 border-b border-accent px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
 
@@ -527,11 +527,10 @@ const ServiceCenterLocation = () => {
             fixedHeader
             fixedHeaderScrollHeight="65vh"
             highlightOnHover
-            className={`data_table_comp ${
-              isSidebarOpen
-                ? "data_table_comp_sidebar_opened"
-                : "data_table_comp_sidebar_closed"
-            }`}
+            className={`data_table_comp ${isSidebarOpen
+              ? "data_table_comp_sidebar_opened"
+              : "data_table_comp_sidebar_closed"
+              }`}
             customStyles={{
               table: {
                 style: {
@@ -622,7 +621,7 @@ const ServiceCenterLocation = () => {
               <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-primary opacity-[0.07]" />
 
               <div className="relative z-10 flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-primary text-white shadow-[0_8px_18px_rgba(10,48,36,0.20)]">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-primary text-white shadow-[0_8px_18px_rgba(15,23,42,0.20)]">
                   <FaMapLocationDot size={19} />
                 </div>
 
@@ -742,7 +741,7 @@ const ServiceCenterLocation = () => {
 
                 <button
                   type="submit"
-                  className="flex h-10 w-full items-center justify-center gap-2 rounded-[10px] bg-primary text-[11px] font-extrabold text-white shadow-[0_6px_16px_rgba(10,48,36,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
+                  className="flex h-10 w-full items-center justify-center gap-2 rounded-[10px] bg-primary text-[11px] font-extrabold text-white shadow-[0_6px_16px_rgba(15,23,42,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
                 >
                   <FaPlus size={10} />
                   Create Center
